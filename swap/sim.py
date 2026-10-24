@@ -373,7 +373,8 @@ class Sim:
         for a in self.members(p):
             self.wire("exchange", a.handle, "stopped", {"proposal": p.id, "step": p.done_steps + 1})
         for a in self.members(p):
-            self.dm(a, f"Stop: the chain broke at step {p.done_steps + 1}. {recovery[a.handle]}")
+            self.dm(a, f"Stop: the chain broke at step {p.done_steps + 1}. {recovery[a.handle]} This cycle's offers "
+                       "are off the exchange now; tell me if you want to list again.")
 
 
 def run(path: str | Path, out: TextIO = sys.stdout) -> Result:
