@@ -1,0 +1,160 @@
+{
+  "name": "chem-3way-stranger",
+  "about": "The chem-3way cycle again, but right after Ben (the anchor) drops #11999, a student outside the swap adds it. Ava's Swap into #11999 then fails, the chain stops, and every agent tells its student exactly where they stand. This is the risk Ben opted in to.",
+  "fixture": "tests/fixtures/chm113-2271.json",
+  "seed": 2271,
+  "seat_overrides": {
+    "10022": 386,
+    "11999": 181,
+    "17344": 181
+  },
+  "seat_override_note": "the fixture's real counts leave every in-person CHM 113 lecture with open seats, so the three lectures in the cycle are set to full. Everything else (times, days, capacity, instructors) is the fixture's.",
+  "extra_sections": [
+    {
+      "class_nbr": "90001",
+      "course": "ENG 101",
+      "section": "0101",
+      "component": "LEC",
+      "days": [
+        "TU",
+        "TH"
+      ],
+      "start": "1:30 PM",
+      "end": "2:45 PM",
+      "taken": 25,
+      "capacity": 25,
+      "campus": "TEMPE"
+    },
+    {
+      "class_nbr": "90002",
+      "course": "PSY 101",
+      "section": "0202",
+      "component": "LEC",
+      "days": [
+        "MO",
+        "WE",
+        "FR"
+      ],
+      "start": "9:05 AM",
+      "end": "9:55 AM",
+      "taken": 200,
+      "capacity": 200,
+      "campus": "TEMPE"
+    },
+    {
+      "class_nbr": "90003",
+      "course": "MAT 265",
+      "section": "0303",
+      "component": "LEC",
+      "days": [
+        "TU",
+        "TH"
+      ],
+      "start": "3:00 PM",
+      "end": "4:15 PM",
+      "taken": 40,
+      "capacity": 40,
+      "campus": "TEMPE"
+    },
+    {
+      "class_nbr": "90004",
+      "course": "HST 109",
+      "section": "0404",
+      "component": "LEC",
+      "days": [
+        "MO",
+        "WE"
+      ],
+      "start": "4:30 PM",
+      "end": "5:45 PM",
+      "taken": 60,
+      "capacity": 60,
+      "campus": "TEMPE"
+    }
+  ],
+  "students": [
+    {
+      "name": "Ava Moreno",
+      "holds": [
+        "10022",
+        "90001"
+      ],
+      "wants": [
+        {
+          "course": "CHM 113",
+          "days_in": [
+            "TU",
+            "TH"
+          ]
+        }
+      ],
+      "prefs": {
+        "not_before": "10:00 AM"
+      },
+      "reasons": {
+        "CHM 113": "I open the campus coffee cart MWF mornings."
+      },
+      "answers": {
+        "proposal": "yes",
+        "anchor": "no",
+        "plan": "yes"
+      }
+    },
+    {
+      "name": "Ben Tran",
+      "holds": [
+        "11999",
+        "90002"
+      ],
+      "wants": [
+        {
+          "course": "CHM 113",
+          "sections": [
+            "17344"
+          ]
+        }
+      ],
+      "reasons": {
+        "CHM 113": "Tu/Th mornings are my clinic shadowing."
+      },
+      "answers": {
+        "proposal": "yes",
+        "anchor": "yes",
+        "plan": "yes"
+      }
+    },
+    {
+      "name": "Cam Ibarra",
+      "holds": [
+        "17344",
+        "90003"
+      ],
+      "wants": [
+        {
+          "course": "CHM 113",
+          "days_in": [
+            "MO",
+            "WE",
+            "FR"
+          ],
+          "start_at_or_after": "10:00 AM",
+          "end_by": "12:00 PM"
+        }
+      ],
+      "reasons": {
+        "CHM 113": "I commute and the afternoon light rail is packed."
+      },
+      "answers": {
+        "proposal": "yes",
+        "anchor": "no",
+        "plan": "yes"
+      }
+    }
+  ],
+  "events": [
+    {
+      "after_step": 1,
+      "stranger_adds": "11999"
+    }
+  ]
+}

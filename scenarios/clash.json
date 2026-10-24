@@ -1,0 +1,27 @@
+{
+  "name": "clash",
+  "about": "Fay wants a Tu/Th CHM 113 lecture, not before 10 AM. The only one that fits her preference meets at the same time as her BIO 181 lecture, so her agent offers nothing. Gus holds that very section and wants Fay's, so a naive matcher would pair them and wreck Fay's BIO schedule.",
+  "fixture": "tests/fixtures/chm113-2271.json",
+  "seed": 181,
+  "seat_overrides": {"10022": 386, "11999": 181},
+  "seat_override_note": "both lectures are set to full, so a swap would be the only way in.",
+  "extra_sections": [
+    {"class_nbr": "90021", "course": "BIO 181", "section": "2101", "component": "LEC", "days": ["TU", "TH"], "start": "10:30 AM", "end": "11:45 AM", "taken": 300, "capacity": 300, "campus": "TEMPE"},
+    {"class_nbr": "90022", "course": "COM 100", "section": "2202", "component": "LEC", "days": ["TU", "TH"], "start": "1:30 PM", "end": "2:45 PM", "taken": 45, "capacity": 45, "campus": "TEMPE"}
+  ],
+  "students": [
+    {
+      "name": "Fay Lindqvist",
+      "holds": ["10022", "90021"],
+      "wants": [{"course": "CHM 113", "days_in": ["TU", "TH"]}],
+      "prefs": {"not_before": "10:00 AM"},
+      "reasons": {"CHM 113": "MWF mornings I care for my grandmother."}
+    },
+    {
+      "name": "Gus Romero",
+      "holds": ["11999", "90022"],
+      "wants": [{"course": "CHM 113", "sections": ["10022"]}],
+      "reasons": {"CHM 113": "I want my Tu/Th mornings for the gym."}
+    }
+  ]
+}

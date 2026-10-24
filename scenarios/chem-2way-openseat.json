@@ -1,0 +1,26 @@
+{
+  "name": "chem-2way-openseat",
+  "about": "Dev holds the full Tu/Th 9:00 lecture and wants Mon/Wed. Eli holds Mon/Wed and wants Tu/Th 9:00. Dev's target still has open seats, so Dev goes first with ASU's atomic Swap, which frees the seat Eli wants. Nobody has to drop.",
+  "fixture": "tests/fixtures/chm113-2271.json",
+  "seed": 113,
+  "seat_overrides": {"11989": 181},
+  "seat_override_note": "#11989 is set to full so that Eli cannot simply switch on his own. #17344 keeps its real count from the fixture (open seats).",
+  "extra_sections": [
+    {"class_nbr": "90011", "course": "CSE 110", "section": "1101", "component": "LEC", "days": ["MO", "WE"], "start": "9:00 AM", "end": "10:15 AM", "taken": 150, "capacity": 150, "campus": "TEMPE"},
+    {"class_nbr": "90012", "course": "SOC 101", "section": "1202", "component": "LEC", "days": ["MO", "WE"], "start": "10:30 AM", "end": "11:45 AM", "taken": 90, "capacity": 90, "campus": "TEMPE"}
+  ],
+  "students": [
+    {
+      "name": "Dev Patel",
+      "holds": ["11989", "90011"],
+      "wants": [{"course": "CHM 113", "days_in": ["MO", "WE"]}],
+      "reasons": {"CHM 113": "I want Tu/Th free for my research job."}
+    },
+    {
+      "name": "Eli Brooks",
+      "holds": ["17344", "90012"],
+      "wants": [{"course": "CHM 113", "days_in": ["TU", "TH"], "end_by": "10:30 AM"}],
+      "reasons": {"CHM 113": "Mon/Wed afternoons are swim practice."}
+    }
+  ]
+}
