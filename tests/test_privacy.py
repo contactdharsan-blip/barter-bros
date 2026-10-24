@@ -9,7 +9,10 @@ from pathlib import Path
 from swap.agent import OFFER_KEYS
 from swap.sim import run
 
-SCENARIOS = sorted((Path(__file__).resolve().parent.parent / "scenarios").glob("*.json"))
+# Section Swap scenarios only (they list "students"); Barter Bros scenarios ("people") share the
+# folder and are covered by tests/test_barter_privacy.py.
+SCENARIOS = sorted(p for p in (Path(__file__).resolve().parent.parent / "scenarios").glob("*.json")
+                   if "students" in json.loads(p.read_text()))
 
 # Envelope keys of the non-offer messages. Any dict that describes a student is an offer.
 ENVELOPE_KEYS = {"proposal", "cycle", "handle", "answer", "anchor", "risk", "steps", "at", "action",

@@ -1,0 +1,50 @@
+{
+  "name": "moveout-chain",
+  "about": "Tom wants a hoodie in size M and has nothing to trade. Ana wants a TI-84 and would pass on her hoodie. Ravi wants a desk and would pass on his TI-84. Nobody can trade until Maya, moving out, lists her desk as a giveaway: it starts a 3-step chain, desk to Ravi, TI-84 to Ana, hoodie to Tom.",
+  "seed": 4,
+  "window": {
+    "days": [
+      "SU"
+    ],
+    "start": "9:00 AM",
+    "end": "1:00 PM"
+  },
+  "people": [
+    {
+      "name": "Tom Becker",
+      "contact": "+1 602 555 0190",
+      "says": "Looking for a hoodie, size M. I don't have anything to trade.",
+      "reasons": "Just moved from Seattle and it's cold in the lecture halls.",
+      "free": [
+        "SU 10:00 AM-12:00 PM"
+      ]
+    },
+    {
+      "name": "Ana Lopez",
+      "contact": "ana.lopez@example.edu",
+      "says": "I have a hoodie, size M, good condition. Need a TI-84 calculator.",
+      "reasons": "My stats class requires one.",
+      "free": [
+        "SU 10:00 AM-1:00 PM"
+      ]
+    },
+    {
+      "name": "Ravi Iyer",
+      "contact": "ravi.iyer#0042",
+      "says": "Have a TI-84, need a desk. I'd want at least $41 for the calculator.",
+      "reasons": "I passed MAT 265 and I study on my bed.",
+      "free": [
+        "SU 9:30 AM-11:30 AM"
+      ]
+    },
+    {
+      "name": "Maya Chen",
+      "contact": "maya.chen@example.edu",
+      "says": "Moving out Sunday, giving away a desk for free.",
+      "reasons": "My lease ends and the desk won't fit in the car.",
+      "free": [
+        "SU 9:00 AM-1:00 PM"
+      ]
+    }
+  ]
+}

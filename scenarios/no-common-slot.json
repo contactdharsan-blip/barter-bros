@@ -1,0 +1,22 @@
+{
+  "name": "no-common-slot",
+  "about": "Nora and Omar want each other's things (a jacket for a chair) and both say yes to the trade, but Nora is free only 10-11 and Omar only 11-12. With no common 30-minute slot in the window, the trade unwinds with that reason and both stay listed.",
+  "seed": 30,
+  "window": {"days": ["SA"], "start": "10:00 AM", "end": "12:00 PM"},
+  "people": [
+    {
+      "name": "Nora Ellis",
+      "contact": "nora.ellis@example.edu",
+      "says": "Have a jacket, size S. Need a chair.",
+      "reasons": "My chair broke and I'm studying on the floor.",
+      "free": ["SA 10:00 AM-11:00 AM"]
+    },
+    {
+      "name": "Omar Saleh",
+      "contact": "+1 480 555 0171",
+      "says": "Got a chair, need a jacket size S.",
+      "reasons": "It's a gift for my sister.",
+      "free": ["SA 11:00 AM-12:00 PM"]
+    }
+  ]
+}

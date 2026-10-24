@@ -1,0 +1,36 @@
+{
+  "name": "unfair-refused",
+  "about": "Alex, Bea and Cal fit together by what they want: Alex's TI-84 to Cal, Cal's iPhone 14 case to Bea, Bea's USB-C charger to Alex. But a $15 charger is below Alex's private $61 floor for a calculator, so his agent says no and that loop never forms. When Dana joins, Cal and Dana make a fair 2-way trade instead. Alex and Bea stay listed.",
+  "seed": 61,
+  "window": {"days": ["FR"], "start": "3:00 PM", "end": "6:00 PM"},
+  "people": [
+    {
+      "name": "Alex Novak",
+      "contact": "alex.novak@example.edu",
+      "says": "Have a TI-84, need a USB-C charger. At least $61 for the calculator.",
+      "reasons": "I paid full price for it last year.",
+      "free": ["FR 3:00 PM-6:00 PM"]
+    },
+    {
+      "name": "Bea Torres",
+      "contact": "+1 480 555 0133",
+      "says": "Got a usb-c charger, need an iPhone 14 case.",
+      "reasons": "My case cracked.",
+      "free": ["FR 3:00 PM-6:00 PM"]
+    },
+    {
+      "name": "Cal Fischer",
+      "contact": "cal.fischer#7781",
+      "says": "Have an iPhone 14 case, need a TI-84 or a hoodie.",
+      "reasons": "I upgraded my phone.",
+      "free": ["FR 4:00 PM-6:00 PM"]
+    },
+    {
+      "name": "Dana Kim",
+      "contact": "dana.kim@example.edu",
+      "says": "I have a hoodie, size L. Looking for an iPhone 14 case.",
+      "reasons": "The hoodie is too big for me.",
+      "free": ["FR 3:00 PM-5:00 PM"]
+    }
+  ]
+}

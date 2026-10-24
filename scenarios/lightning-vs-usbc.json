@@ -1,0 +1,29 @@
+{
+  "name": "lightning-vs-usbc",
+  "about": "Quinn has an iPhone 15 case and needs a USB-C charger. Pia has a charger and wants that case, but hers is Lightning, so the exchange never draws the edge and nobody is even asked. When Ray lists a USB-C charger, Quinn and Ray trade. Pia stays listed.",
+  "seed": 15,
+  "window": {"days": ["WE"], "start": "11:00 AM", "end": "2:00 PM"},
+  "people": [
+    {
+      "name": "Pia Russo",
+      "contact": "pia.russo@example.edu",
+      "says": "Have a lightning charger, need an iPhone 15 case.",
+      "reasons": "Got a new phone for my birthday.",
+      "free": ["WE 11:00 AM-2:00 PM"]
+    },
+    {
+      "name": "Quinn Adler",
+      "contact": "+1 602 555 0124",
+      "says": "I have an iPhone 15 case. Need a type-c charger.",
+      "reasons": "My new phone came without a brick.",
+      "free": ["WE 12:00 PM-2:00 PM"]
+    },
+    {
+      "name": "Ray Osei",
+      "contact": "ray.osei#5150",
+      "says": "Got a USB C charger, 30W, need an iphone 15 case.",
+      "reasons": "Switching from a Pixel.",
+      "free": ["WE 1:00 PM-2:00 PM"]
+    }
+  ]
+}

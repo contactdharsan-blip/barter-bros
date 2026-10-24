@@ -1,0 +1,30 @@
+{
+  "name": "no-show-unwind",
+  "about": "Kai and Lena agree a 2-way trade, a Lightning charger for a desk lamp, and a meetup. Lena doesn't show. The trade unwinds and both are re-listed; that exact loop is never proposed again. When Mo lists a desk lamp, Kai trades with Mo instead.",
+  "seed": 7,
+  "window": {"days": ["TH"], "start": "12:00 PM", "end": "3:00 PM"},
+  "people": [
+    {
+      "name": "Kai Nguyen",
+      "contact": "kai.nguyen@example.edu",
+      "says": "Have a lightning charger, need a desk lamp.",
+      "reasons": "I switched to an Android phone.",
+      "free": ["TH 12:00 PM-3:00 PM"]
+    },
+    {
+      "name": "Lena Park",
+      "contact": "+1 602 555 0158",
+      "says": "Got a desk lamp, want a Lightning charger.",
+      "reasons": "My roommate keeps borrowing mine.",
+      "free": ["TH 1:00 PM-2:00 PM"],
+      "answers": {"handoff": "noshow"}
+    },
+    {
+      "name": "Mo Haddad",
+      "contact": "mo.haddad#3310",
+      "says": "I have a desk lamp, fair condition. Need a lightning charger.",
+      "reasons": "Moving my old iPad into the dorm.",
+      "free": ["TH 2:00 PM-3:00 PM"]
+    }
+  ]
+}

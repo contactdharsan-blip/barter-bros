@@ -27,6 +27,8 @@ class Scenarios(unittest.TestCase):
             "chem-3way-stranger.json": ["FAILED"],
         }
         for path in sorted(SCENARIOS.glob("*.json")):
+            if "students" not in json.loads(path.read_text()):
+                continue  # a Barter Bros scenario; see tests/test_barter_scenarios.py
             result = run(path, out=io.StringIO())
             self.assertEqual([p.state.value for p in result.proposals], expected[path.name], path.name)
 

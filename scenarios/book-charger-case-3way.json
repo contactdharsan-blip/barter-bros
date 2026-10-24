@@ -1,0 +1,39 @@
+{
+  "name": "book-charger-case-3way",
+  "about": "Jordan has a BIO 181 textbook and needs a USB-C charger. Nobody with a charger wants a textbook. But Sam has a phone case and needs the textbook, and Priya has a charger and needs a phone case. Leo also wants a USB-C charger, but nobody wants his desk lamp, so he waits.",
+  "seed": 181,
+  "window": {"days": ["SA"], "start": "10:00 AM", "end": "2:00 PM"},
+  "people": [
+    {
+      "name": "Jordan Rivera",
+      "contact": "jordan.rivera@example.edu",
+      "says": "I have a BIO 181 textbook I'll never open again. I need a USB-C charger, fast charging if possible. I'd give the textbook for anything worth at least $30 to me.",
+      "values": {"charger": 35},
+      "reasons": "My charger died and I have an exam Monday.",
+      "free": ["SA 10:00 AM-12:00 PM"],
+      "spots": ["Hayden Library", "Noble Library"]
+    },
+    {
+      "name": "Sam Okoye",
+      "contact": "+1 480 555 0117",
+      "says": "Got an iPhone 15 case, like new. Need a BIO 181 textbook.",
+      "reasons": "I'm retaking BIO 181 in the spring.",
+      "free": ["SA 11:00 AM-1:00 PM"]
+    },
+    {
+      "name": "Leo Marsh",
+      "contact": "leo.marsh#2207",
+      "says": "Have a desk lamp, need a usb-c charger.",
+      "reasons": "Mine is at my parents' place.",
+      "free": ["SA 10:00 AM-2:00 PM"]
+    },
+    {
+      "name": "Priya Shah",
+      "contact": "priya.shah@example.edu",
+      "says": "Have a 20W USB-C charger, good condition. Looking for an iPhone 15 case. Want at least $12 for the charger.",
+      "reasons": "Dropped my phone twice this week.",
+      "free": ["SA 10:30 AM-12:30 PM"],
+      "spots": ["Noble Library", "Student Pavilion"]
+    }
+  ]
+}
