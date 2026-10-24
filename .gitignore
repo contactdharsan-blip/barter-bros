@@ -5,3 +5,5 @@ out/
 .env
 .claude/
 .venv/
+web/node_modules/
+web/dist/

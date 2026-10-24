@@ -8,6 +8,8 @@ dependencies = []
 [project.optional-dependencies]
 # Only for the Claude parser backend. Everything else, including the tests, runs on the standard library.
 claude = ["anthropic==2.3.0"]
+# The web server (barter/server.py) and its tests. httpx is what FastAPI's TestClient runs on.
+web = ["fastapi==0.162.0", "uvicorn==0.54.0", "httpx==0.28.1"]
 
 [tool.setuptools]
 packages = ["swap", "barter"]
