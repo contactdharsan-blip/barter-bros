@@ -1,82 +1,89 @@
-# Section Swap — plan (Cubbie Hackathon, Track 2: Agent-to-Agent Coordination)
+# Barter Bros — plan (Cubbie Hackathon, Track 2: Agent-to-Agent Coordination)
 
-Team hercules · written 2026-10-24.
+Team hercules · 2026-10-24. Supersedes the Section Swap plan (same repo, renamed). Section swaps stay in
+as one item type.
 
 ## The moment
 
-"I got MWF 8 AM chem and would trade my soul for TTh." Somewhere on campus, someone in the TTh section
-wants MWF. Both sections are full, so neither can just switch, and neither will drop first in case a
-stranger takes the seat.
+"I have a BIO 181 textbook I'll never open again. I need a USB-C charger." Nobody who has a charger wants
+a textbook. But Sam has a phone case and needs a textbook, and Priya has a charger and needs a phone case.
+Three people, one trade loop, and none of them would ever have found it.
 
 ## What it does
 
-Each student has a personal agent. Agents meet in an exchange and find swaps (two-way, and three-way
-cycles nobody would find by asking around). They agree on a **synchronized drop/add plan** and walk each
-student through it on a shared countdown. Agents never touch registration; students do every step.
+You tell your agent, in plain words, over **Discord** or **iMessage**, what you have and what you want.
+Agents meet in an exchange and find **trade loops** (2, 3 or 4 people) and **chains** (someone giving
+things away at move-out starts a chain). They agree a meetup that works for everyone. Everyone confirms
+before anything happens.
 
-The three things Track 2 judges look for:
+Item types:
+- **Things**: books, chargers, cases, calculators, furniture, clothes. A meetup handoff.
+- **Class sections**: ASU sections from the public class-search API. The synchronized drop/add
+  countdown from the Section Swap build.
 
-| Judged on | How Section Swap shows it |
+## The three things Track 2 judges look for
+
+| Judged on | In Barter Bros |
 |---|---|
-| **Conflicting constraints** | Each student's other classes (no time clashes), time preferences ("nothing before 10 AM"), several students wanting the same section, and cycles longer than two. Settled by deterministic matching: shortest cycles first, first-come priority, each agent in one cycle at most |
-| **What they share** | Only `course · section I hold · sections I'd accept`, under a random handle. Never the name, the other classes, or the reasons. A test asserts the exchange payload has no other fields |
-| **When students confirm** | (1) every proposed swap, before anything is shared beyond the handle; (2) the execution plan, including which step carries risk; (3) "done" after each step. Any "no" cancels the whole cycle |
+| **Conflicting constraints** | Fairness: each person privately sets what they'd give up and the least they'd accept in return. A $90 textbook for a $15 charger is a no unless the loop balances for them. Item condition, edition or compatibility (USB-C vs Lightning). Meetup times and places. Several people wanting one item. Loops up to 4. |
+| **What they share** | A random handle and item listings (category, attributes, condition). Never the name, the contact info, the private value floor or the reasons. Contact info is never shared: the bot relays meetup messages. |
+| **When people confirm** | (1) the trade loop, (2) the meetup plan (a public campus spot and a time that works for all), (3) "got it" at handoff. Any no, or a no-show, unwinds the loop and re-lists everyone. |
 
-## Architecture (Python 3.12, stdlib only for the core)
+## Architecture (Python 3.12)
 
 ```text
-section-swap/
-├── swap/
-│   ├── models.py      Section, Meeting (days, start, end), Enrollment, Want
-│   ├── asu.py         ASU class-search reader (public API, Bearer null) + fixture loader
-│   ├── agent.py       StudentAgent: private state; computes acceptable sections that don't clash
-│   ├── exchange.py    Offer book + matcher (cycles of length 2–3, priority, one cycle per agent)
-│   ├── protocol.py    Proposal lifecycle and the execution plan (order of steps, risk, countdown)
-│   ├── sim.py         Scenario runner: plays a scripted semester through agents + exchange
-│   └── discord_bot.py (phase 3) DMs per student; one bot hosts many agents
-├── scenarios/*.yaml   Invented students; real ASU section data from fixtures
-├── tests/             Offline only; fixtures recorded from the ASU API
-└── README.md
+barter-bros/
+├── barter/
+│   ├── models.py      Listing (have/want), Item (category, attributes, condition, est_value), Person (private)
+│   ├── parse.py       Free text -> Listing. Claude (claude-opus-5-5, structured output) with a rule-based fallback
+│   ├── agent.py       Private state; fairness floor; availability; answers proposals
+│   ├── match.py       Compatibility (want spec vs item), loop and chain search, fairness check, selection
+│   ├── meetup.py      Common time window + public campus spot, by negotiation over availability
+│   ├── protocol.py    Lifecycle: proposed → accepted → meetup agreed → handed off | unwound
+│   ├── sections.py    The Section Swap code: ASU sections as items + the countdown plan
+│   ├── sim.py         Scenario runner (no accounts)
+│   └── platforms/
+│       ├── discord_bot.py   DMs per user; buttons for yes / no / got it
+│       └── imessage.py      Mac bridge: new messages from chat.db, replies through Messages (AppleScript)
+├── scenarios/*.json
+└── tests/
 ```
 
 ### Matching
 
-Directed graph: an edge A → B when B holds a section A would accept (and it doesn't clash with A's
-other classes). Find cycles of length 2, then 3 (bounded search; the graph per course is small). Choose
-a set of disjoint cycles that prefers shorter cycles, then the earliest requests. Recompute when an
-offer is added or withdrawn.
+- Edge A → B when B has an item that satisfies one of A's wants (category + attributes + condition) and the
+  trade is worth it to A.
+- Search: cycles of length 2–4, plus chains that start at a giveaway.
+- Selection: maximize the number of people who get something, then prefer shorter loops, then earlier
+  requests.
+- Fairness: an edge exists only if A's value for what they get ≥ A's floor for what they give. Values stay
+  inside each agent; only a yes or no about the edge leaves it.
 
-### Execution plan (the honest part)
+### The AI part, and its limits
 
-- **If the target section has an open seat** (`ENRLTOT < ENRLCAP` in the ASU data), the student uses
-  ASU's own Swap (an atomic drop+add). No risk; no countdown.
-- **If every section in the cycle is full**, ASU's Swap fails for everyone: the seat you want is held by
-  the person who wants yours. One student has to drop first. The plan names that "anchor", explains the
-  risk in one line ("for about 30 seconds your seat is open to anyone"), and runs a countdown:
-  T-0 anchor drops → T+5 s next student swaps into the freed seat → … → anchor adds the last freed seat.
-  The anchor is the student who opts in to it; if nobody opts in, the swap doesn't run.
-- After each step the student taps "done"; a timeout or "it failed" stops the chain and tells everyone
-  exactly what to do to get back.
+- `parse.py` turns "need a usb c charger, fast charging if possible" into a structured want. It uses the
+  Anthropic API (`claude-opus-5-5`, low effort, structured JSON output) with the server-side fallback enabled.
+- With no API key or on any error, a rule-based parser handles the same request. Matching, fairness and
+  meetups are plain code, so they are testable and nothing invents a trade.
+- The key lives in the owner's Keychain and is read at runtime; never in the repo.
+
+## Platforms
+
+- **Discord:** one bot (the "hercules" app), DM commands and buttons. Token from the Keychain.
+- **iMessage:** the Mac bridge watches chosen conversations in `~/Library/Messages/chat.db` (read-only) and
+  replies through the Messages app. It sends only to people who texted it first, and only replies; no
+  cold messages.
+- Both feed the same agent and exchange. A trade loop can mix a Discord user and an iMessage user.
 
 ## Phases
 
-1. **Core + simulator (no accounts).** Models, ASU reader with fixtures, agent, exchange, protocol,
-   `python -m swap.sim scenarios/chem-3way.yaml` prints a readable transcript of each agent's DMs.
-   Tests for clash filtering, cycle finding, priority, the privacy of the payload, and protocol states.
-2. **Web demo page.** A static page that replays a simulator transcript as three phones side by side.
-   Used for the demo video.
-3. **Discord.** One bot, DM commands: `/have`, `/want`, `/status`, buttons for accept / decline / done.
-   Needs a bot token from the owner (Keychain, never in the repo).
-4. **Video + submit.** Same pipeline as Track 1 (WebKit render, no Chromium). Submit preview → owner's
-   yes → send.
-
-## Done when
-
-- `python -m unittest discover -s tests` passes offline.
-- The simulator finds the 3-way cycle in the demo scenario, refuses a swap that would clash, and the
-  exchange payload carries nothing but the handle, the course and the sections.
-- (Phase 3) Three test accounts complete a swap end to end in Discord.
+1. **Generalize the engine:** items, the parser with fallback, fairness, loops and chains, meetups. Keep
+   sections working. Scenarios: the book/charger/case 3-way, a chain from a move-out giveaway, an unfair
+   loop refused, a no-show unwinding, and a mixed loop (one section swap still works). Tests offline.
+2. **Platforms:** the Discord bot and the iMessage bridge, both tested against fakes. No live sends during
+   the build.
+3. **Live test:** the owner and teammates on Discord and iMessage. Then the demo video and the submission.
 
 ## Not doing
 
-Touching ASU registration, storing ASU credentials, or claiming a seat is guaranteed.
+Payments, shipping, anything off campus, or touching ASU registration.
