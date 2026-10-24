@@ -62,7 +62,8 @@ _CONNECTOR = [
     (re.compile(r"\bmicro[\s-]?usb\b"), "micro-usb"),
 ]
 _WATTS = re.compile(r"\b(\d{1,3})\s?-?\s?w(?:atts?)?\b")
-_COURSE = re.compile(r"\b([a-z]{3})\s?-?(\d{3})\b")
+_COURSE = re.compile(r"\b([a-z]{3}|chem|math|psych|phys|stats)\s?-?(\d{3})\b")
+_SUBJECT = {"chem": "CHM", "math": "MAT", "psych": "PSY", "phys": "PHY", "stats": "STP"}  # what students say
 _EDITION = re.compile(r"\b(\d{1,2})(?:st|nd|rd|th)?\s*(?:ed\.?|edition)(?=\W|$)")
 _TITLE = re.compile(r"[\"“']([^\"”']{3,})[\"”']")
 _TI = re.compile(r"\bti[\s-]?(84|83|89|30|36|nspire)")
@@ -129,7 +130,7 @@ def _thing(text: str) -> tuple[str, dict] | None:
     if _TEXTBOOK.search(text) or (_COURSE.search(text) and _EDITION.search(text)):
         course, edition, title = _COURSE.search(text), _EDITION.search(text), _TITLE.search(text)
         return "textbook", {
-            "course": f"{course.group(1).upper()} {course.group(2)}" if course else None,
+            "course": f"{_SUBJECT.get(course.group(1), course.group(1).upper())} {course.group(2)}" if course else None,
             "title": title.group(1).strip() if title else None,
             "edition": edition.group(1) if edition else None,
         }
