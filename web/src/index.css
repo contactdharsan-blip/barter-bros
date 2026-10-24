@@ -1,0 +1,131 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource/archivo-black/400.css";
+@import "@fontsource/space-grotesk/400.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/700.css";
+
+/* Neobrutalism theme tokens (neobrutalism.com/docs/installation, "Add the theme"), light only,
+   plus one ink per person in a loop: you are electric blue; the others coral, lime, purple. */
+@theme inline {
+  --font-head: var(--font-head);
+  --font-heading: var(--font-head);
+  --font-sans: var(--font-sans);
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: var(--radius);
+  --shadow-xs: 1px 1px 0 0 var(--border);
+  --shadow-sm: 2px 2px 0 0 var(--border);
+  --shadow: 3px 3px 0 0 var(--border);
+  --shadow-md: 4px 4px 0 0 var(--border);
+  --shadow-lg: 6px 6px 0 0 var(--border);
+  --shadow-xl: 10px 10px 0 1px var(--border);
+  --shadow-2xl: 16px 16px 0 1px var(--border);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--coral);
+  --color-chart-2: var(--lime-ink);
+  --color-you: var(--you);
+  --color-coral: var(--coral);
+  --color-lime: var(--lime);
+  --color-lime-ink: var(--lime-ink);
+  --color-purple: var(--purple);
+  --color-sunny: var(--primary);
+}
+
+:root {
+  --font-head: "Archivo Black", "Arial Black", sans-serif;
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --radius: 0.5rem;
+  --background: #fff7e8;
+  --foreground: #000;
+  --card: #fff;
+  --card-foreground: #000;
+  --primary: #ffdc58;
+  --primary-hover: #ffd12e;
+  --primary-foreground: #000;
+  --secondary: #000;
+  --secondary-foreground: #fff;
+  --secondary-hover: #222;
+  --muted: #efe7d6;
+  --muted-foreground: #5c5446;
+  --accent: #ffe7a3;
+  --accent-foreground: #000;
+  --destructive: #e63946;
+  --destructive-foreground: #fff;
+  --border: #000;
+  --input: #fff;
+  --ring: #000;
+  --you: #2563ff;
+  --coral: #ff6b57;
+  --lime: #a3e635;
+  --lime-ink: #2f7d10;
+  --purple: #9b5cff;
+  color-scheme: light;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+    background-image: radial-gradient(rgb(0 0 0 / 0.07) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-head);
+    letter-spacing: -0.01em;
+  }
+  :focus-visible {
+    outline: 3px solid var(--you);
+    outline-offset: 2px;
+  }
+}
+
+/* Springy pops for new cards and ticks. Snappy, never slow; off for reduced motion. */
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes rise {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes dash {
+  to { stroke-dashoffset: -24; }
+}
+.pop { animation: pop 260ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.rise { animation: rise 200ms ease-out both; }
+.flow { stroke-dasharray: 6 6; animation: dash 900ms linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
