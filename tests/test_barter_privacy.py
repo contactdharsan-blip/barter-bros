@@ -42,7 +42,19 @@ def scalars(value):
         yield value
 
 
+def leak(secret: str, traffic: str):
+    """Whole-token match, so "Mo" doesn't hit "memorial", but "+1 480..." and "...monday." still do."""
+    return re.search(rf"(?<![a-z0-9]){re.escape(secret.lower())}(?![a-z0-9])", traffic)
+
+
 class Privacy(unittest.TestCase):
+    def test_the_needle_check_bites(self):
+        self.assertTrue(leak("My charger died and I have an exam Monday.",
+                             '{"reason": "my charger died and i have an exam monday."}'))
+        self.assertTrue(leak("+1 480 555 0117", '{"to": "+1 480 555 0117"}'))
+        self.assertTrue(leak("Mo", '{"from": "mo"}'))
+        self.assertIsNone(leak("Mo", '{"spot": "memorial union"}'))
+
     @classmethod
     def setUpClass(cls):
         cls.runs = {p.name: (json.loads(p.read_text()), run(p, out=io.StringIO())) for p in SCENARIOS}
@@ -84,8 +96,8 @@ class Privacy(unittest.TestCase):
             for person in scenario["people"]:
                 secrets = person["name"].split() + [person.get("contact", ""), person.get("reasons", "")]
                 secrets += person.get("free", [])
-                for secret in filter(None, secrets):  # whole words: "Mo" must not match "memorial"
-                    self.assertIsNone(re.search(rf"\b{re.escape(secret.lower())}\b", traffic), f"{name}: {secret!r} leaked")
+                for secret in filter(None, secrets):
+                    self.assertIsNone(leak(secret, traffic), f"{name}: {secret!r} leaked")
             for extra in scenario.get("extra_sections", []):  # everyone's other classes
                 self.assertNotIn(extra["class_nbr"], traffic, name)
 
