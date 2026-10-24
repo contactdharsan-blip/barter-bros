@@ -1,0 +1,13 @@
+[project]
+name = "barter-bros"
+version = "0.1.0"
+description = "Campus barter exchange: agents find trade loops and chains (Cubbie Hackathon, Track 2)"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+# Only for the Claude parser backend. Everything else, including the tests, runs on the standard library.
+claude = ["anthropic==2.3.0"]
+
+[tool.setuptools]
+packages = ["swap", "barter"]
