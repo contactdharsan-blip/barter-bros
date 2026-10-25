@@ -140,9 +140,18 @@ _ABOUT_ME = re.compile(
 )
 
 
+# "snap alice99", "my insta is ana.r", "ig: ana_r", "add me on discord anar#1234": the name after an app.
+_APP_HANDLE = re.compile(
+    r"\b(?:snap(?:chat)?|sc|insta(?:gram)?|ig|discord|whatsapp|telegram|tiktok|twitter|venmo|cash ?app|zelle)\b"
+    r"(?:\s*(?:is|at|me|on|handle|username|user|name|:|-))*\s*"
+    r"(?!(?:too|also|and|or|the|now|here|there|later|then|either|instead)\b)[\w.#@-]*\w",
+    re.I,
+)
+
+
 def scrub_contact(text: str) -> tuple[str, bool]:
-    """(text with emails, links, @handles and phone numbers removed, whether anything was)."""
-    clean = _CONTACT.sub("[contact left out]", text)
+    """(text with emails, links, @handles, app usernames and phone numbers removed, whether anything was)."""
+    clean = _CONTACT.sub("[contact left out]", _APP_HANDLE.sub("[contact left out]", text))
     return clean, clean != text
 
 

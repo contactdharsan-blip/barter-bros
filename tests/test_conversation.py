@@ -131,13 +131,32 @@ class MeetupMoves(Pair):
 
 class FreeTimes(Pair):
     def test_phrases(self):
-        self.assertEqual(parse_availability("I'm only free sunday afternoon")[0], [Block("SU", 12 * 60, 17 * 60)])
-        self.assertEqual(parse_availability("free sat 1-3pm")[0], [Block("SA", 13 * 60, 15 * 60)])
-        self.assertEqual(parse_availability("available sat or sun after 2")[0],
+        self.assertEqual(parse_availability("I'm only free sunday afternoon").free, [Block("SU", 12 * 60, 17 * 60)])
+        self.assertEqual(parse_availability("free sat 1-3pm").free, [Block("SA", 13 * 60, 15 * 60)])
+        self.assertEqual(parse_availability("available sat or sun after 2").free,
                          [Block("SA", 14 * 60, 24 * 60), Block("SU", 14 * 60, 24 * 60)])
         for text in ("Free couch, come grab it", "Moving out Sunday, giving away a desk for free.",
-                     "running 10 min late, red shirt", "I have a TI-84, need a desk chair"):
+                     "running 10 min late, red shirt", "I have a TI-84, need a desk chair", "are you free sunday?"):
             self.assertIsNone(parse_availability(text), text)
+
+    def test_not_free_and_times_bind_to_their_own_day(self):
+        t = parse_availability("I'm not free saturday")
+        self.assertEqual((t.free, t.busy), ([], ("SA",)))
+        t = parse_availability("I can't do saturday, I'm free sunday")
+        self.assertEqual((t.free, t.busy), ([Block("SU", 0, 24 * 60)], ("SA",)))
+        t = parse_availability("busy saturday, free sunday after 2")
+        self.assertEqual((t.free, t.busy), ([Block("SU", 14 * 60, 24 * 60)], ("SA",)))
+        t = parse_availability("Bob, I'm not free saturday, are you free sunday?")
+        self.assertEqual((t.free, t.busy, t.other), ([], ("SA",), True))  # the question is about Bob
+
+    def test_a_question_to_the_others_is_relayed_and_my_own_times_still_count(self):
+        t = self.accepted()
+        self.pushed.clear()
+        self.dm("1", "Ben, I'm not free saturday, are you free sunday?")
+        self.assertEqual(self.to("2").count("Ana Reyes"), 2)  # the relayed question, and the moved plan
+        self.assertIn("Ana Reyes (T1): Ben, I'm not free saturday, are you free sunday?", self.to("2"))
+        self.assertEqual(t.plan.slot.label(), "Sun 10:00 AM-10:30 AM")
+        self.assertEqual({b.day for b in self.service.by_user[("discord", "1")].agent.availability}, {"SU"})
 
     def test_mid_trade_free_times_are_used_not_bounced(self):
         t = self.accepted()
@@ -182,6 +201,10 @@ class Relay(Pair):
         self.assertNotIn("480", self.to("2"))
         self.assertNotIn("asu.edu", self.to("2"))
         self.assertIn("left out the contact details", texts(replies))
+        for text in ("snap alice99", "my insta is ana.r", "ig: ana_r", "add me on discord anar#1234"):
+            self.pushed.clear()
+            self.dm("1", text)
+            self.assertNotRegex(self.to("2"), r"alice99|ana\.r|ana_r|anar", text)
 
     def test_never_before_everyone_accepts(self):
         self.dm("1", A_SAYS, "Ana Reyes")
@@ -241,6 +264,13 @@ class Withdraw(Pair):
         self.assertIn("can't take your listing down mid-trade", texts(replies))
         self.assertEqual(t.state.value, "accepted_by_all")
         self.assertEqual(self.to("2"), "")
+
+    def test_cancel_with_more_to_say_after_everyone_accepted_is_relayed(self):
+        t = self.accepted()
+        self.pushed.clear()
+        self.dm("1", "cancel, i'm running late")
+        self.assertIn("cancel, i'm running late", self.to("2"))
+        self.assertEqual(t.state.value, "accepted_by_all")
 
     def test_stop_by_the_entrance_is_a_message_not_a_cancel(self):
         self.accepted()

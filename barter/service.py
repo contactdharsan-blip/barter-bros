@@ -75,7 +75,7 @@ from swap.models import parse_clock
 from . import parse as parser
 from .agent import StudentAgent
 from .market import MARKET
-from .meetup import Block, Window, negotiate, parse_availability
+from .meetup import Block, Times, Window, negotiate, parse_availability
 from .models import Item, Listing, Want
 from .profiles import Profile, demo_profile
 from .protocol import Exchange, State, Trade
@@ -105,6 +105,10 @@ HELP = (
     "your open trade."
 )
 _HELP_ASK = re.compile(r"^\s*(?:/?help|\?|what can you do|how does (?:this|it) work)\s*[?.!]*\s*$", re.I)
+# In a trade everyone has accepted, only a bare "cancel" is about the listing; "cancel, i'm running
+# late" is news for the others.
+_WITHDRAW_BARE = re.compile(r"^\s*(?:cancel|stop|remove me|never ?mind|nvm|withdraw)"
+                            r"(?:\s+(?:my listing|my post|it|that|me|please|everything))?\s*[.!]*\s*$", re.I)
 _WITHDRAW = re.compile(r"^\s*(?:cancel|stop|remove me|never ?mind|nvm|withdraw)"
                        r"(?:\s+(?:my listing|my post|it|that|me|please|everything))?\s*(?:[.!,;].*)?$", re.I | re.S)
 LIVE = (State.PROPOSED, State.ACCEPTED_BY_ALL, State.MEETUP_AGREED)
@@ -322,14 +326,15 @@ class ExchangeService:
                 self._say(s, HELP)
                 return
             live = self._live_trade(s.handle)
-            if _WITHDRAW.match(text):
+            revealed = live is not None and live.id in self.revealed
+            if (_WITHDRAW_BARE if revealed else _WITHDRAW).match(text):
                 self._withdraw(s, live)
                 return
             times = parse_availability(text)
             if times is not None:
-                self._set_times(s, *times, live)
+                self._set_times(s, times, live)
             if live is not None:
-                if times is None and live.id in self.revealed:
+                if revealed and (times is None or times.other):  # a question or news for the others
                     self._relay(s, live, text)
                 elif times is None:
                     self._say(s, f"You're in trade {live.id} right now, so I can't change your listing. Decline it, or "
@@ -405,15 +410,18 @@ class ExchangeService:
         self._say(s, "Done: your listing is down, and I won't propose any trades for you. Tell me what you have and "
                      "what you want to list again.")
 
-    def _set_times(self, s: Session, blocks: list[Block], said: str, live: Trade | None) -> None:
+    def _set_times(self, s: Session, times: Times, live: Trade | None) -> None:
         """Free times from what the student said. Private: the exchange only ever hears yes or no
-        about one slot. A pending meetup plan that no longer fits gets a "no", so the agents move it."""
-        s.agent.availability, s.times, s.times_said = blocks, "told", said
+        about one slot. A pending meetup plan that no longer fits gets a "no", so the agents move it.
+        "Not free saturday" alone takes Saturday out of what the agent had."""
+        blocks = times.free or [b for b in s.agent.availability if b.day not in times.busy]
+        s.agent.availability, s.times, s.times_said = blocks, "told", times.said
         s.agent.refused.clear()  # what they say now replaces what they turned down before
         inside = any(b.covers(slot) for slot in self.window.slots() for b in blocks)
         where = ("That stays with me: the exchange only hears yes or no about one meetup slot at a time." if inside
-                 else f"That's outside the meetup window ({self.window.label()}), so I can't offer a meetup then.")
-        self._say(s, f"Got it: you're free {said}. {where}")
+                 else f"That leaves nothing in the meetup window ({self.window.label()}), so I can't offer a "
+                      "meetup then.")
+        self._say(s, f"Got it: {times.said}. {where}")
         self.exchange.reopen(s.handle)
         if live is None or live.plan is None or s.agent.free(live.plan.slot):
             return

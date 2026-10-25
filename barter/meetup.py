@@ -102,9 +102,14 @@ _DAY_WORDS = {"mon": "MO", "monday": "MO", "tue": "TU", "tues": "TU", "tuesday":
               "wednesday": "WE", "thu": "TH", "thur": "TH", "thurs": "TH", "thursday": "TH", "fri": "FR",
               "friday": "FR", "sat": "SA", "saturday": "SA", "sun": "SU", "sunday": "SU"}
 _DAY = r"(?:" + "|".join(sorted(_DAY_WORDS, key=len, reverse=True)) + r")s?|weekends?"
-# "free", "available" or "can meet", then a day within a few words: "only free sunday afternoon",
-# "free sat 1-3pm", "available saturday or sunday after 2". "Free couch" names no day.
-_AVAILABLE = re.compile(rf"\b(?:free|available|around|can meet)\b[^.;!?]{{0,25}}?\b(?:{_DAY})\b")
+# Read clause by clause, so a time binds to its own day: "busy saturday, free sunday after 2".
+# A clause about the student's own times names a day and says free ("free", "available",
+# "around", "can meet", "can do", "works") or not ("not free", "can't do", "busy", "no").
+# A question or a clause about "you" is about someone else and is left alone.
+_FREE = re.compile(r"\b(?:free|available|around|can meet|can do|works?)\b")
+_NOT = re.compile(r"\bnot\b|n't\b|\b(?:cant|dont|wont|cannot|busy|no|unavailable)\b")
+_ASKS = re.compile(r"\byou\b|\byour\b|^(?:are|is|do|does|would|could|will|how|what|when)\b")
+_CLAUSE = re.compile(r"(.*?)([,;.!?]+|\s+but\s+|$)")
 _DAYS_SAID = re.compile(rf"\b({_DAY})\b")
 _PART = {"morning": (8 * 60, 12 * 60), "afternoon": (12 * 60, 17 * 60), "evening": (17 * 60, 21 * 60)}
 _T = r"(\d{1,2})(?::(\d\d))?\s*(am|pm)?"
@@ -121,37 +126,75 @@ def _clock(hour: str, minute: str | None, half: str | None) -> int:
     return h * 60 + int(minute or 0)
 
 
-def parse_availability(text: str) -> tuple[list[Block], str] | None:
-    """('I'm only free sunday afternoon') -> ([Block('SU', 12:00, 17:00)], 'Sun 12:00 PM-5:00 PM'),
-    or None when the text says nothing about when the student is free. Private to their agent."""
-    low = re.sub(r"\b(?:noon|midday)\b", "12pm", text.lower())
-    if not _AVAILABLE.search(low):
-        return None
+@dataclass(frozen=True)
+class Times:
+    """What a student said about their own times. Private to their agent."""
+
+    free: list[Block]  # when they said they're free
+    busy: tuple[str, ...]  # days they said they can't do
+    said: str  # read back to them: "you can't do Sat; you're free Sun after 2:00 PM"
+    other: bool  # the message also says something else (a question, a name, news) worth relaying
+
+
+def _days(clause: str) -> list[str]:
     days: list[str] = []
-    for word in _DAYS_SAID.findall(low):
+    for word in _DAYS_SAID.findall(clause):
         word = word.rstrip("s") if word not in ("tues", "thurs") else word
         for day in (("SA", "SU") if word.startswith("weekend") else (_DAY_WORDS.get(word) or _DAY_WORDS[word + "s"],)):
             if day not in days:
                 days.append(day)
-    if m := _RANGE.search(low):
+    return sorted(days, key=DAYS.index)
+
+
+def _span(clause: str) -> tuple[tuple[int, int], str]:
+    """The stretch of a day one clause names, and how to read it back."""
+    if m := _RANGE.search(clause):
         h1, m1, a1, h2, m2, a2 = m.groups()
         end = _clock(h2, m2, a2)
         start = _clock(h1, m1, a1 or a2)
         if start >= end and a1 is None:  # "11-1pm" is 11 AM to 1 PM
             start = _clock(h1, m1, "am")
-        span = (start, end)
-        when = f"{format_clock(start)}-{format_clock(end)}"
-    elif m := _AFTER.search(low):
-        span = (_clock(*m.groups()), ALL_DAY[1])
-        when = f"after {format_clock(span[0])}"
-    elif m := _BEFORE.search(low):
-        span = (ALL_DAY[0], _clock(*m.groups()))
-        when = f"before {format_clock(span[1])}"
-    else:
-        part = next((k for k in _PART if k in low), None)
-        span = _PART[part] if part else ALL_DAY
-        when = f"{part} ({format_clock(span[0])}-{format_clock(span[1])})" if part else "any time"
-    if span[0] >= span[1]:
+        return (start, end), f"{format_clock(start)}-{format_clock(end)}"
+    if m := _AFTER.search(clause):
+        start = _clock(*m.groups())
+        return (start, ALL_DAY[1]), f"after {format_clock(start)}"
+    if m := _BEFORE.search(clause):
+        end = _clock(*m.groups())
+        return (ALL_DAY[0], end), f"before {format_clock(end)}"
+    part = next((k for k in _PART if k in clause), None)
+    if part:
+        return _PART[part], f"{part} ({format_clock(_PART[part][0])}-{format_clock(_PART[part][1])})"
+    return ALL_DAY, "any time"
+
+
+def parse_availability(text: str) -> Times | None:
+    """("I'm only free sunday afternoon") -> Times(free=[Block('SU', 12:00, 17:00)], busy=(), ...),
+    or None when the text says nothing about when the student is or isn't free."""
+    low = re.sub(r"\b(?:noon|midday)\b", "12pm", text.lower().replace("\u2019", "'"))
+    free: list[Block] = []
+    busy: list[str] = []
+    said: list[str] = []
+    other = False
+    for m in _CLAUSE.finditer(low):
+        clause = m.group(1).strip()
+        if not clause:
+            continue
+        days = _days(clause)
+        asks = "?" in m.group(2) or _ASKS.search(clause)
+        if not days or asks or not (_FREE.search(clause) or _NOT.search(clause)):
+            other = True
+            continue
+        if _NOT.search(clause):
+            busy += [d for d in days if d not in busy]
+            said.append("you can't do " + "/".join(_DAY_NAME[d] for d in days))
+            continue
+        span, when = _span(clause)
+        if span[0] >= span[1]:
+            other = True
+            continue
+        free += [Block(d, *span) for d in days]
+        said.append(f"you're free {'/'.join(_DAY_NAME[d] for d in days)} {when}")
+    if not free and not busy:
         return None
-    days.sort(key=DAYS.index)
-    return [Block(d, *span) for d in days], f"{'/'.join(_DAY_NAME[d] for d in days)} {when}"
+    free = [b for b in free if b.day not in busy]
+    return Times(free, tuple(busy), "; ".join(said), other)
