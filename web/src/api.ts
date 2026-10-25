@@ -203,7 +203,8 @@ export function useExchange(enabled: boolean) {
     }
     es.addEventListener("wire", (e) => {
       pending.push(JSON.parse((e as MessageEvent).data))
-      if (!frame) frame = requestAnimationFrame(flush)
+      // A timer, not requestAnimationFrame: frames pause in a background tab and the log would stay empty.
+      if (!frame) frame = window.setTimeout(flush, 16)
     })
     es.addEventListener("exchange", (e) => setView(JSON.parse((e as MessageEvent).data)))
     es.addEventListener("reset", () => {
@@ -212,7 +213,7 @@ export function useExchange(enabled: boolean) {
     })
     return () => {
       es.close()
-      if (frame) cancelAnimationFrame(frame)
+      if (frame) window.clearTimeout(frame)
     }
   }, [enabled])
   return { view, wire }
