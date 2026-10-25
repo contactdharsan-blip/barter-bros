@@ -41,6 +41,7 @@ class StudentAgent:
     rng: random.Random | None = None
     handle: str = ""
     decisions: list[tuple[str, Decision]] = field(default_factory=list)  # private log
+    refused: set[Slot] = field(default_factory=set)  # meetup slots the student said they can't make
 
     def __post_init__(self) -> None:
         if not self.handle:
@@ -74,7 +75,7 @@ class StudentAgent:
         return decision.yes
 
     def free(self, slot: Slot) -> bool:
-        return any(block.covers(slot) for block in self.availability)
+        return slot not in self.refused and any(block.covers(slot) for block in self.availability)
 
     def spot_ok(self, spot: str) -> bool:
         return not self.spots or spot in self.spots

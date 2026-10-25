@@ -1,12 +1,15 @@
 """Trade lifecycle and the exchange's offer book.
 
     proposed -> accepted_by_all -> meetup_agreed -> handed_off
-        any "no" to the loop, no common slot or spot, a "no" to the plan,
+        any "no" to the loop, no common slot or spot left,
         a no-show or a "didn't get it"                     -> unwound
 
 The three confirmations: (1) the loop, (2) the meetup plan, (3) "got it" from every
-receiver at the handoff. An unwound trade re-lists everyone in it, and that exact loop is
-never proposed again. A section-swap trade uses the same states; its "plan" is the drop/add
+receiver at the handoff. A "no" to one meetup slot (`reject_plan`) keeps the trade at
+accepted_by_all with no plan, so the agents can propose the next slot. An unwound trade re-lists
+everyone in it. If someone refused the trade, that exact loop is never proposed again; if it
+only ran out of meetup times (`stalled`), it waits until a member's listing or times change
+(`Exchange.reopen`). A section-swap trade uses the same states; its "plan" is the drop/add
 countdown from swap/protocol.py and its "got it" is the last countdown step done.
 """
 
@@ -47,6 +50,7 @@ class Trade:
     plan_votes: dict[str, bool] = field(default_factory=dict)
     receipts: dict[str, bool] = field(default_factory=dict)
     reason: str = ""
+    stalled: bool = False  # unwound for want of a meetup everyone can make, not because anyone said no to it
 
     @property
     def handles(self) -> list[str]:
@@ -73,9 +77,9 @@ class Trade:
         if self.state not in states:
             raise ProtocolError(f"{self.id} is {self.state.value}, expected {'/'.join(s.value for s in states)}")
 
-    def unwind(self, reason: str) -> None:
+    def unwind(self, reason: str, stalled: bool = False) -> None:
         self._require(*LIVE)
-        self.state, self.reason = State.UNWOUND, reason
+        self.state, self.reason, self.stalled = State.UNWOUND, reason, stalled
 
     # (1) the loop
     def vote(self, handle: str, yes: bool) -> None:
@@ -97,9 +101,17 @@ class Trade:
             raise ProtocolError(f"{self.id} has no plan to confirm")
         self.plan_votes[handle] = yes
         if not yes:
-            self.unwind("someone said no to the meetup plan")
+            self.unwind("someone said no to the meetup plan", stalled=True)
         elif all(self.plan_votes.get(h) for h in self.handles):
             self.state = State.MEETUP_AGREED
+
+    def reject_plan(self, handle: str) -> None:
+        """A "no" to this slot that keeps the trade: the plan is dropped, and the caller proposes
+        another one or unwinds when none is left."""
+        self._require(State.ACCEPTED_BY_ALL)
+        if self.plan is None:
+            raise ProtocolError(f"{self.id} has no plan to reject")
+        self.plan, self.plan_votes = None, {}
 
     # (3) "got it" at the handoff
     def receipt(self, handle: str, got_it: bool) -> None:
@@ -133,7 +145,8 @@ class Exchange:
     book: dict[str, Offer] = field(default_factory=dict)
     seq: dict[str, int] = field(default_factory=dict)
     locked: set[str] = field(default_factory=set)
-    declined: set[Loop] = field(default_factory=set)
+    declined: set[Loop] = field(default_factory=set)  # someone said no: never proposed again
+    stalled: set[Loop] = field(default_factory=set)  # no meetup time worked: proposed again after `reopen`
     trades: dict[str, Trade] = field(default_factory=dict)
     answers: dict = field(default_factory=dict)  # cached edge yes/no
     log: list[Message] = field(default_factory=list)
@@ -158,7 +171,7 @@ class Exchange:
 
     def match(self, ask: EdgeAsk) -> list[Trade]:
         """New trades from the open offers. `ask` relays an edge question to the receiver's agent."""
-        chosen, _ = find(self.open_offers(), self.seq, ask, self.declined, self.answers)
+        chosen, _ = find(self.open_offers(), self.seq, ask, self.declined | self.stalled, self.answers)
         new = []
         for loop in chosen:
             trade = Trade(f"T{next(self._ids)}", loop, {h: self.book[h] for h in loop.members})
@@ -168,14 +181,25 @@ class Exchange:
         return new
 
     def close(self, trade: Trade) -> None:
-        """A handed-off trade takes everyone's listing off the book. An unwound one re-lists everyone
-        and is never proposed again."""
+        """A handed-off trade takes everyone's listing off the book. An unwound one re-lists everyone;
+        it is never proposed again if someone refused it, and waits for `reopen` if it stalled on the
+        meetup."""
         if trade.state in LIVE:
             raise ProtocolError(f"{trade.id} is still {trade.state.value}")
         self.locked -= set(trade.handles)
         if trade.state is State.UNWOUND:
-            self.declined.add(trade.loop)
+            (self.stalled if trade.stalled else self.declined).add(trade.loop)
             return
         for h in trade.handles:
             self.book.pop(h, None)
             self.seq.pop(h, None)
+
+    def reopen(self, handle: str) -> None:
+        """A member's listing or free times changed: loops with them that stalled may work now."""
+        self.stalled = {loop for loop in self.stalled if handle not in loop.members}
+
+    def withdraw(self, handle: str) -> None:
+        """Take a listing off the book. A trade it is in still has to be declined by the caller."""
+        self.book.pop(handle, None)
+        self.seq.pop(handle, None)
+        self.reopen(handle)

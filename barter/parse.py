@@ -51,7 +51,12 @@ _HAVE = re.compile(
 # Listing has no field for that (floor is the opposite: the least they'll accept), so the rules
 # read it and drop it, rather than letting it become an item called "cheap".
 _CHEAP = re.compile(r"\b(?:as )?cheap(?:ly)?(?: as possible)?\b|\blow[\s-]?cost\b")
-_GIVEAWAY = re.compile(r"\b(giving away|give away|free|for free|no need for anything|free to (?:a )?good home)\b")
+# Saying it is free, in so many words. A listing with an item and no wants is posted as a giveaway
+# only when this matches; otherwise the agent asks first (`says_giveaway`).
+_GIVEAWAY = re.compile(
+    r"\b(giving (?:it |them )?away|give (?:it |them )?away|free|for free|no need for anything|free to (?:a )?good home|"
+    r"(?:do not|don'?t) need anything|(?:do not|don'?t) want anything|nothing (?:back|in return)|for nothing)\b"
+)
 _FLOOR = re.compile(
     r"(?:at least|no less than|min(?:imum)?(?: of)?|worth(?: at least)?|floor(?: of)?|>=|≥)\s*\$\s?(\d+(?:\.\d+)?)"
     r"|\$\s?(\d+(?:\.\d+)?)\s*(?:or more|minimum|min)\b"
@@ -133,6 +138,17 @@ _ABOUT_ME = re.compile(
     r"snap|snapchat|discord|venmo|zelle|cashapp|number|phone number|name|named|live|living|room|dorm|"
     r"apt|apartment|address|from|i'm|im|i am|this is|it's me)\b"
 )
+
+
+def scrub_contact(text: str) -> tuple[str, bool]:
+    """(text with emails, links, @handles and phone numbers removed, whether anything was)."""
+    clean = _CONTACT.sub("[contact left out]", text)
+    return clean, clean != text
+
+
+def says_giveaway(text: str) -> bool:
+    """Whether the student said, in so many words, that they want nothing back."""
+    return bool(_GIVEAWAY.search(text.lower().replace("\u2019", "'")))
 
 
 def _kind(text: str) -> str | None:

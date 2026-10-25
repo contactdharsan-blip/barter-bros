@@ -34,12 +34,12 @@ import sys
 from collections.abc import Awaitable, Callable
 
 from ..profiles import PUBLIC_KEYS
-from ..service import ExchangeService, ServiceError
+from ..service import HELP, ExchangeService, ServiceError
 
 CHANNEL = "discord"
 ACCOUNT, SERVICE = "hercules", "discord-bot-token"
 ADD_TOKEN = f"security add-generic-password -a {ACCOUNT} -s {SERVICE} -w"
-ACTION_TEMPLATE = r"T\d+:(?:loop|meetup|receipt):(?:yes|no)"  # every id `ExchangeService` puts on a button
+ACTION_TEMPLATE = r"(?:T\d+:(?:loop|meetup|receipt)|L\d+:giveaway):(?:yes|no)"  # every id the service puts on a button
 GUILD_HINT = "DM me what you have and what you want"
 STALE = "I don't know you yet (the exchange restarted since that message). DM me what you have and what you want."
 LIVE_STATES = ("proposed", "accepted_by_all", "meetup_agreed")
@@ -47,17 +47,6 @@ WAITING = {"proposed": "everyone to accept", "accepted_by_all": "everyone to say
            "meetup_agreed": "the handoff (tap \"Got it\" when you have your item)"}
 # The web app's avatar inks (web/src/index.css), as Discord embed colours.
 COLORS = {"blue": 0x2563FF, "coral": 0xFF6B57, "lime": 0xA3E635, "purple": 0x9B5CFF, "yellow": 0xFFDC58}
-HELP = (
-    "**Barter Bros** finds trades between students, including 3-way loops nobody would spot alone.\n"
-    "1. DM me what you have and what you want, in your own words: \"need a usb-c charger, cheap; "
-    "I can give my BIO 181 textbook\".\n"
-    "2. I post it under a random handle and ask the other agents. When a trade fits, I DM you an offer: "
-    "**Accept** or **Decline**.\n"
-    "3. Once everyone accepts, you see who you're trading with, then a meetup plan at a public spot.\n"
-    "4. At the handoff, tap **Got it ✓**.\n"
-    "Nobody sees your name until everyone in a trade says yes, and nobody ever gets your contact details. "
-    "`/barter profile` sets your campus and bio; `/barter status` shows your open trade."
-)
 
 
 # ------------------------------------------------------------------ rendering ---

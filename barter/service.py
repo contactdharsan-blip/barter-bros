@@ -16,9 +16,21 @@ A reply is {"id", "text", "actions": [{"id", "label", "style"}]}, plus "profiles
 `profiles.PUBLIC_KEYS` dicts) on the one reply that reveals who the partners are. Discord renders
 `actions` as buttons (style: primary, secondary, success) and `profiles` as embeds, and sends a
 pressed id back to `press`; iMessage can list the labels and map a typed "accept" to the id.
-Action ids look like "T1:loop:yes", "T1:meetup:no", "T1:receipt:yes". A press that is no longer
-open replies "That one's already settled." Both create the session on first contact, keyed by
-(channel, user_ref); `name` on first contact becomes the profile's display name.
+Action ids look like "T1:loop:yes", "T1:meetup:no", "T1:receipt:yes", and "L4:giveaway:yes" for
+the one question asked before a listing goes up (an item and no wants, without the word "free" or
+the like: give it away, or ask for something?). A press that is no longer open replies "That one's
+already settled"; a press on a trade you're not in is refused with `NOT_YOURS` (403). Both create
+the session on first contact, keyed by (channel, user_ref); `name` on first contact becomes the
+profile's display name.
+
+A DM is read in this order: "help"; "cancel" / "stop" / "remove me" / "never mind" (takes your
+listing down); free times ("only free sunday afternoon", "free sat 1-3pm", kept private by your
+agent and used for meetups); then, in a trade everyone has accepted, a message the agent relays to
+the others under your name; otherwise a listing.
+
+"Can't make it" on a meetup rules that slot out for you, and the agents propose the next slot
+everyone is free; the trade unwinds only when no slot in the window is left, and then waits (not
+declined forever) until someone's times or listing change.
 
 Demo seeding the bot can reuse: `seed_scenario(name, human=None, channel="discord")` resets and
 loads a scenario with that person as the student (user_ref "demo-<first name>"), and
@@ -30,7 +42,9 @@ and are what `press` calls; `update_profile(session_id, name, campus, bio)` edit
 
 What crosses between agents (the wire, `self.exchange.log`, written only through
 `Exchange.transmit`): offers, edge questions and yes/no, proposals, votes, an `identity` message
-once everyone in a loop has accepted, free?/spot? questions, the meetup, receipts, done/unwound.
+once everyone in a loop has accepted, free?/spot? questions, the meetup, plan-votes (naming the slot
+said no to), receipts, done/unwound, `relay` (handle to handle: that a message was passed on, never
+its text) and `withdraw` (a handle taking its listing down).
 Until a loop is accepted by all, a partner is a handle and an item listing. The `identity` message
 carries each other member's public profile (`profiles.PUBLIC_KEYS`), so people know who they're
 meeting. Contact info, value floors, private values, calendars and reasons never cross, at any
@@ -47,6 +61,7 @@ bot answers at once on the caller's thread.
 from __future__ import annotations
 
 import json
+import re
 import secrets
 import threading
 import time
@@ -59,7 +74,7 @@ from swap.models import parse_clock
 from . import parse as parser
 from .agent import StudentAgent
 from .market import MARKET
-from .meetup import Block, Window, negotiate
+from .meetup import Block, Window, negotiate, parse_availability
 from .models import Item, Listing, Want
 from .profiles import Profile, demo_profile
 from .protocol import Exchange, State, Trade
@@ -69,9 +84,27 @@ ROOT = Path(__file__).resolve().parent.parent
 SCENARIOS = ROOT / "scenarios"
 CHANNELS = ("web", "discord", "imessage")
 BOT_CHANNELS = ("discord", "imessage", "discord", "web", "imessage")  # a mix, for the badges
-WINDOW = Window(("SA",), parse_clock("10:00 AM"), parse_clock("4:00 PM"))
+WINDOW = Window(("SA", "SU"), parse_clock("10:00 AM"), parse_clock("4:00 PM"))  # this weekend
 GOT_IT, DIDNT = "got it", "didn't get it"
 NOT_YOURS = "That button isn't for a trade you're in."
+HELP = (
+    "**Barter Bros** finds trades between students, including 3-way loops nobody would spot alone.\n"
+    "1. DM me what you have and what you want, in your own words: \"need a usb-c charger, cheap; "
+    "I can give my BIO 181 textbook\".\n"
+    "2. I post it under a random handle and ask the other agents. When a trade fits, I DM you an offer: "
+    "**Accept** or **Decline**.\n"
+    "3. Once everyone accepts, you see who you're trading with, then a meetup time at a public spot. Tell me "
+    "when you're free (\"only free Sunday afternoon\") and I'll only say yes to those times. **Can't make it** "
+    "moves the meetup to the next time that works for everyone.\n"
+    "4. Once everyone has accepted, anything else you DM me goes to the others in your trade. At the handoff, "
+    "tap **Got it ✓**.\n"
+    "Say \"cancel\" to take your listing down. Nobody sees your name until everyone in a trade says yes, and "
+    "nobody ever gets your contact details. `/barter profile` sets your campus and bio; `/barter status` shows "
+    "your open trade."
+)
+_HELP_ASK = re.compile(r"^\s*(?:/?help|\?|what can you do|how does (?:this|it) work)\s*[?.!]*\s*$", re.I)
+_WITHDRAW = re.compile(r"^\s*(?:cancel|stop|remove me|never ?mind|nvm|withdraw)"
+                       r"(?:\s+(?:my listing|my post|it|that|me|please|everything))?\s*(?:[.!,;].*)?$", re.I | re.S)
 LIVE = (State.PROPOSED, State.ACCEPTED_BY_ALL, State.MEETUP_AGREED)
 
 Listener = Callable[[str, str | None, dict], None]
@@ -96,6 +129,10 @@ class Session:
     posted: bool = False  # has put an offer on the book at least once
     chat: list[dict] = field(default_factory=list)  # {"id", "from": "you"|"agent", "text", "t", "actions"}
     history: list[dict] = field(default_factory=list)  # trades this student finished or that unwound
+    times: str = "window"  # where the agent's free times came from: "window" (nothing said), "calendar", "told"
+    times_said: str = ""  # what they told me, read back ("Sun afternoon (12:00 PM-5:00 PM)")
+    pending: Listing | None = None  # a have-only listing waiting on "give it away?", or on what they'd want
+    pending_id: str = ""  # the open giveaway question's id ("L4"), "" once answered
 
     @property
     def handle(self) -> str:
@@ -168,7 +205,7 @@ class ExchangeService:
                 if agent.handle not in self.by_handle:
                     break
             session = Session(secrets.token_urlsafe(12), channel, agent, profile or demo_profile(name),
-                              user_ref=user_ref, bot=bot)
+                              user_ref=user_ref, bot=bot, times="calendar" if free is not None else "window")
             self.sessions[session.id] = session
             self.by_handle[agent.handle] = session
             if user_ref is not None:
@@ -253,7 +290,8 @@ class ExchangeService:
             try:
                 trade_id, kind, answer = action_id.split(":")
                 yes = {"yes": True, "no": False}[answer]
-                do = {"loop": self.vote, "meetup": self.answer_meetup, "receipt": self.receipt}[kind]
+                do = {"loop": self.vote, "meetup": self.answer_meetup, "receipt": self.receipt,
+                      "giveaway": self.answer_giveaway}[kind]
             except (ValueError, KeyError) as e:
                 raise ServiceError(f"unknown action {action_id!r}") from e
             since = len(s.chat)
@@ -275,13 +313,32 @@ class ExchangeService:
         with self.lock:
             s = self.session(session_id)
             self._say(s, text, "you")
+            if _HELP_ASK.match(text):
+                self._say(s, HELP)
+                return
             live = self._live_trade(s.handle)
+            if _WITHDRAW.match(text):
+                self._withdraw(s, live)
+                return
+            times = parse_availability(text)
+            if times is not None:
+                self._set_times(s, *times, live)
             if live is not None:
-                self._say(s, f"You're in trade {live.id} right now, so I can't change your listing. Decline it, or "
-                             "finish the handoff, and then tell me.")
+                if times is None and live.id in self.revealed:
+                    self._relay(s, live, text)
+                elif times is None:
+                    self._say(s, f"You're in trade {live.id} right now, so I can't change your listing. Decline it, or "
+                                 "finish the handoff, and then tell me. Once everyone has said yes, I pass messages "
+                                 "like this on to the others.")
                 return
             listing = parser.parse(text, backend=self.backend, client=self.client)
+            if s.pending is not None and listing.have is None and listing.wants:
+                listing.have = s.pending.have  # "I want something for it", then what they want
+                listing.floor = listing.floor if listing.floor is not None else s.pending.floor
             if listing.have is None and not listing.wants:
+                if times is not None:  # it was only about when they're free
+                    self._match()
+                    return
                 if listing.floor is not None and s.agent.listing.have is not None:
                     s.agent.listing.floor = listing.floor
                     self._say(s, f"Got it: your floor for your {s.agent.listing.have.label()} is now "
@@ -294,9 +351,87 @@ class ExchangeService:
                 return
             if listing.floor is None and listing.have is not None and s.agent.listing.floor is not None:
                 listing.floor = s.agent.listing.floor  # a new message about the same listing keeps the floor
+            if listing.is_giveaway and not parser.says_giveaway(text):
+                self._ask_giveaway(s, listing)
+                return
             self._post(s, listing)
 
+    def _ask_giveaway(self, s: Session, listing: Listing) -> None:
+        """An item and no wants, and they never said "free": ask before giving it away."""
+        s.pending, s.pending_id = listing, f"L{len(s.chat) + 1}"
+        self._say(s, f"I read that as: you have {listing.have.label()}, and you didn't say what you'd want for it. "
+                     "Should I list it as a giveaway, or is there something you want for it?",
+                  actions=[{"id": f"{s.pending_id}:giveaway:yes", "label": "Give it away", "style": "primary"},
+                           {"id": f"{s.pending_id}:giveaway:no", "label": "I want something for it",
+                            "style": "secondary"}])
+
+    def answer_giveaway(self, session_id: str, ref: str, yes: bool) -> None:
+        """The answer to "give it away?": post the giveaway, or wait to hear what they'd want."""
+        with self.lock:
+            s = self.session(session_id)
+            if s.pending is None or not s.pending_id or ref != s.pending_id:
+                raise ServiceError("that question isn't open", 409)
+            self._say(s, "Give it away" if yes else "I want something for it", "you")
+            s.pending_id = ""
+            if yes:
+                self._post(s, s.pending)
+            else:
+                self._say(s, f"OK. What would you take for your {s.pending.have.label()}? Tell me, e.g. "
+                             "\"I want a desk lamp\".")
+
+    def _withdraw(self, s: Session, live: Trade | None) -> None:
+        """'cancel': take the listing down. A trade still waiting for answers is declined first; once
+        everyone has accepted, the agent won't pull out on the others."""
+        if live is not None and live.state is not State.PROPOSED:
+            self._say(s, f"Everyone in {live.id} has said yes, so I can't take your listing down mid-trade. If "
+                         "something changed, tell me here and I'll pass it on to the others.")
+            return
+        s.pending, s.pending_id = None, ""
+        if s.handle not in self.exchange.book:
+            self._say(s, "You don't have a listing up, so there's nothing to take down. Tell me what you have and "
+                         "what you want whenever you're ready.")
+            return
+        self.exchange.withdraw(s.handle)  # off the book first, so the unwind below can't re-match it
+        self._forget(s.handle)
+        self._wire(s.handle, "exchange", "withdraw", {"handle": s.handle})
+        s.agent.listing, s.posted = Listing(None, []), False
+        if live is not None:
+            self._vote(live, s.handle, False)
+        self._say(s, "Done: your listing is down, and I won't propose any trades for you. Tell me what you have and "
+                     "what you want to list again.")
+
+    def _set_times(self, s: Session, blocks: list[Block], said: str, live: Trade | None) -> None:
+        """Free times from what the student said. Private: the exchange only ever hears yes or no
+        about one slot. A pending meetup plan that no longer fits gets a "no", so the agents move it."""
+        s.agent.availability, s.times, s.times_said = blocks, "told", said
+        s.agent.refused.clear()  # what they say now replaces what they turned down before
+        inside = any(b.covers(slot) for slot in self.window.slots() for b in blocks)
+        where = ("That stays with me: the exchange only hears yes or no about one meetup slot at a time." if inside
+                 else f"That's outside the meetup window ({self.window.label()}), so I can't offer a meetup then.")
+        self._say(s, f"Got it: you're free {said}. {where}")
+        self.exchange.reopen(s.handle)
+        if live is None or live.plan is None or s.agent.free(live.plan.slot):
+            return
+        if live.state is State.ACCEPTED_BY_ALL:
+            self._say(s, f"{live.plan.slot.label()} isn't in those times, so I said no to it.")
+            self._plan_vote(live, s.handle, False)
+        else:
+            self._say(s, f"Your meetup for {live.id} is already agreed: {live.plan.label()}. If you can't make it, "
+                         "tell me here and I'll pass it on to the others.")
+
+    def _relay(self, s: Session, trade: Trade, text: str) -> None:
+        """After everyone accepted: a DM goes to the others in the trade under the sender's name. The
+        wire hears only that a message passed, never what it said."""
+        clean, cut = parser.scrub_contact(text)
+        others = [o for o in self._members(trade) if o is not s]
+        for o in others:
+            self._wire(s.handle, o.handle, "relay", {"trade": trade.id})
+            self._say(o, f"{s.profile.name} ({trade.id}): {clean}")
+        note = " I left out the contact details: messages go through me." if cut else ""
+        self._say(s, f"Passed that on to {', '.join(o.profile.name for o in others)}.{note}")
+
     def _post(self, s: Session, listing: Listing) -> None:
+        s.pending, s.pending_id = None, ""
         s.agent.listing = listing
         have = listing.have.label() if listing.have else "nothing to give"
         wants = "; ".join(w.label() for w in listing.wants) or "nothing back (a giveaway)"
@@ -321,6 +456,7 @@ class ExchangeService:
         """Drop cached edge answers involving a listing that changed, so its agent is asked again."""
         for key in [k for k in self.exchange.answers if handle in k[:2]]:
             del self.exchange.answers[key]
+        self.exchange.reopen(handle)
 
     def _live_trade(self, handle: str) -> Trade | None:
         return next((t for t in self.exchange.trades.values() if handle in t.handles and t.state in LIVE), None)
@@ -459,7 +595,18 @@ class ExchangeService:
             self._say(s, f"Everyone said yes, so now you can see who you're trading with: {names}. Contact details "
                          "still aren't shared; I relay messages.", profiles=[o.profile.public(o.handle) for o in others])
 
-    def _meetup(self, trade: Trade) -> None:
+    def _times_note(self, s: Session) -> str:
+        """What the agent used to answer "free then?", in the student's terms."""
+        if s.times == "calendar":
+            return "I asked your calendar, not you, and only said yes or no."
+        if s.times == "told":
+            return f"I checked it against the times you gave me ({s.times_said}) and only said yes or no."
+        return (f"You haven't told me when you're free, so I said yes to any time in the window "
+                f"({self.window.label()}). Tell me (\"only free Sunday afternoon\") if that's wrong.")
+
+    def _meetup(self, trade: Trade, moved: tuple[str, object] | None = None) -> None:
+        """Ask for the earliest slot and spot everyone says yes to. `moved` is (handle, slot) when
+        someone just said they can't make the last plan."""
         def free(h: str, slot) -> bool:
             self._wire("exchange", h, "free?", {"trade": trade.id, "slot": slot.label()})
             yes = self.by_handle[h].agent.free(slot)
@@ -474,25 +621,35 @@ class ExchangeService:
 
         meetup, why = negotiate(trade.handles, self.window, free, spot_ok)
         if meetup is None:
-            trade.unwind(why)
+            trade.unwind(why, stalled=True)
             self._unwound(trade)
             return
         trade.propose_plan(meetup)
         for s in self._members(trade):
             self._wire("exchange", s.handle, "meetup", {"trade": trade.id, "slot": meetup.slot.label(), "spot": meetup.spot})
         for s in self._members(trade):
-            self._say(s, f"Meetup plan: {meetup.label()}, a public spot. I asked your calendar, not you, and only said "
-                         "yes or no. I'll relay messages there, so nobody swaps phone numbers. Does this work?",
+            lead = ""
+            if moved is not None:
+                who = "You" if moved[0] == s.handle else self.by_handle[moved[0]].profile.name
+                lead = f"{who} can't make {moved[1].label()}, so the agents found the next time everyone is free. "
+            self._say(s, f"{lead}Meetup plan: {meetup.label()}, a public spot. {self._times_note(s)} I relay "
+                         "messages, so nobody swaps phone numbers. Does this work?",
                       actions=[_action(trade, "meetup", True, "Works for me", "primary"),
                                _action(trade, "meetup", False, "Can't make it", "secondary")])
         self._bots(trade, "meetup")
 
     def _plan_vote(self, trade: Trade, handle: str, yes: bool) -> None:
-        self._wire(handle, "exchange", "plan-vote", {"trade": trade.id, "handle": handle, "answer": "yes" if yes else "no"})
+        """A "no" rules that slot out for this student only, and the agents look for the next one."""
+        slot = trade.plan.slot
+        self._wire(handle, "exchange", "plan-vote",
+                   {"trade": trade.id, "handle": handle, "answer": "yes" if yes else "no", "slot": slot.label()})
+        if not yes:
+            self.by_handle[handle].agent.refused.add(slot)
+            trade.reject_plan(handle)
+            self._meetup(trade, moved=(handle, slot))
+            return
         trade.confirm_plan(handle, yes)
-        if trade.state is State.UNWOUND:
-            self._unwound(trade)
-        elif trade.state is State.MEETUP_AGREED:
+        if trade.state is State.MEETUP_AGREED:
             for s in self._members(trade):
                 got = trade.gets(s.handle)
                 text = f"Meetup agreed by all {len(trade.handles)}: {trade.plan.label()}. Bring your item."
@@ -540,8 +697,14 @@ class ExchangeService:
             mine = trade.gives(s.handle)
             keep = f"You keep your {mine.label()}." if mine else "Nothing changed hands for you."
             reason = trade.reason.replace(s.handle, "you")
-            self._say(s, f"The trade is off: {reason}. {keep} You're re-listed, and this exact loop won't be proposed "
-                         "again.")
+            if s.handle not in self.exchange.book:
+                after = "Your listing is down."
+            elif trade.stalled:
+                after = ("You're re-listed. I'll try this trade again if someone's free times or listing change: tell "
+                         "me when you're free (\"free sat 1-3pm\").")
+            else:
+                after = "You're re-listed, and this exact loop won't be proposed again."
+            self._say(s, f"The trade is off: {reason}. {keep} {after}")
         self.exchange.close(trade)
         self._match()
 
@@ -664,6 +827,8 @@ class ExchangeService:
 
     def _action_open(self, s: Session, action: dict) -> bool:
         trade_id, kind, _ = action["id"].split(":")
+        if kind == "giveaway":
+            return trade_id == s.pending_id
         t = self.exchange.trades.get(trade_id)
         if t is None:
             return False
