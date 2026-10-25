@@ -31,9 +31,15 @@ _WANT = re.compile(
     r"would like|in exchange for|trade (?:it |them )?for|swap (?:it |them )?for|in return)\b"
 )
 _HAVE = re.compile(
-    r"\b(i have|i've got|ive got|i got|have|has|got|giving away|giving|give away|selling|offering|"
+    r"\b(i can give up|i can give|can give up|can give|i'll give|i will give|i could give|i could part with|"
+    r"could part with|can part with|i can trade|can trade|i can swap|can swap|"
+    r"i have|i've got|ive got|i got|have|has|got|giving away|giving|give away|selling|offering|"
     r"trading|free to (?:a )?good home|getting rid of)\b"
 )
+# "cheap", "as cheap as possible", "low cost": the student wants to give up as little as they can.
+# Listing has no field for that (floor is the opposite: the least they'll accept), so the rules
+# read it and drop it, rather than letting it become an item called "cheap".
+_CHEAP = re.compile(r"\b(?:as )?cheap(?:ly)?(?: as possible)?\b|\blow[\s-]?cost\b")
 _GIVEAWAY = re.compile(r"\b(giving away|give away|free|for free|no need for anything|free to (?:a )?good home)\b")
 _FLOOR = re.compile(
     r"(?:at least|no less than|min(?:imum)?(?: of)?|worth(?: at least)?|floor(?: of)?|>=|≥)\s*\$\s?(\d+(?:\.\d+)?)"
@@ -76,7 +82,8 @@ _FILLER = re.compile(
     r"\b(i|i'd|i'll|i've|ive|have|has|got|need|needs|want|wants|a|an|the|my|some|any|for|of|to|and|or|it|"
     r"giving|away|give|free|looking|selling|offering|trading|that|this|one|in|good|new|used|condition|"
     r"never|again|open|will|would|take|like|anything|something|worth|me|back|return|exchange|if|possible|"
-    r"please|really|just|old|spare|extra|from|last|semester|year|is|it's|its|with|nothing)\b"
+    r"please|really|just|old|spare|extra|from|last|semester|year|is|it's|its|with|nothing|"
+    r"can|could|up|part|swap|trade)\b"
 )
 
 
@@ -180,7 +187,7 @@ def _split_clauses(text: str) -> list[tuple[str, str]]:
 
 
 def parse_rules(text: str) -> Listing:
-    low = text.lower()
+    low = _CHEAP.sub(" ", text.lower())
     floor = None
     if m := _FLOOR.search(low):
         floor = float(m.group(1) or m.group(2))
@@ -192,7 +199,7 @@ def parse_rules(text: str) -> Listing:
             if found:
                 have = Item(found[0], found[1], _condition(clause) or "good")
         elif role == "want":
-            for part in re.split(r"\s+or\s+|/", clause):
+            for part in re.split(r"\s+or\s+|\s+and\s+|/", clause):  # "a TI-84, a lamp and a charger"
                 found = _thing(part)
                 if found:
                     wants.append(Want(found[0], found[1], _condition(part)))
