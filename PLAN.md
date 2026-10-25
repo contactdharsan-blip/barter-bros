@@ -11,7 +11,7 @@ Three people, one trade loop, and none of them would ever have found it.
 
 ## What it does
 
-You tell your agent, in plain words, over **Discord** or **iMessage**, what you have and what you want.
+You tell your agent, in plain words, over **Discord** (or **iMessage**, planned) what you have and what you want.
 Agents meet in an exchange and find **trade loops** (2, 3 or 4 people) and **chains** (someone giving
 things away at move-out starts a chain). They agree a meetup that works for everyone. Everyone confirms
 before anything happens.
@@ -44,7 +44,7 @@ barter-bros/
 │   ├── sim.py         Scenario runner (no accounts)
 │   └── platforms/
 │       ├── discord_bot.py   DMs per user; buttons for yes / no / got it
-│       └── imessage.py      Mac bridge: new messages from chat.db, replies through Messages (AppleScript)
+│       └── imessage.py      (planned, not built) Mac bridge: chat.db in, Messages (AppleScript) out
 ├── scenarios/*.json
 └── tests/
 ```
@@ -70,8 +70,8 @@ barter-bros/
 ## Platforms
 
 - **Discord:** one bot (the "hercules" app), DM commands and buttons. Token from the Keychain.
-- **iMessage:** the Mac bridge watches chosen conversations in `~/Library/Messages/chat.db` (read-only) and
-  replies through the Messages app. It sends only to people who texted it first, and only replies; no
+- **iMessage (planned, not built):** the Mac bridge would watch chosen conversations in `~/Library/Messages/chat.db` (read-only) and
+  reply through the Messages app. It would send only to people who texted it first, and only replies; no
   cold messages.
 - Both feed the same agent and exchange. A trade loop can mix a Discord user and an iMessage user.
 
@@ -80,8 +80,8 @@ barter-bros/
 1. **Generalize the engine:** items, the parser with fallback, fairness, loops and chains, meetups. Keep
    sections working. Scenarios: the book/charger/case 3-way, a chain from a move-out giveaway, an unfair
    loop refused, a no-show unwinding, and a mixed loop (one section swap still works). Tests offline.
-2. **Platforms:** the Discord bot and the iMessage bridge, both tested against fakes. No live sends during
-   the build.
+2. **Platforms:** the Discord bot, tested against fakes (done; never connected live). The iMessage bridge is
+   planned and not built. No live sends during the build.
 3. **Live test:** the owner and teammates on Discord and iMessage. Then the demo video and the submission.
 
 ## Not doing
