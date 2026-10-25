@@ -140,6 +140,9 @@ class Session:
     times_said: str = ""  # what they told me, read back ("Sun afternoon (12:00 PM-5:00 PM)")
     pending: Listing | None = None  # a have-only listing waiting on "give it away?", or on what they'd want
     pending_id: str = ""  # the open giveaway question's id ("L4"), "" once answered
+    times_pending: Times | None = None  # free times read from a DM, waiting on "That's right"
+    times_id: str = ""  # the open free-times question's id ("F7"), "" once answered or replaced
+    times_shared: bool = False  # the DM they came in was also relayed to the others
 
     @property
     def handle(self) -> str:
@@ -298,7 +301,7 @@ class ExchangeService:
                 trade_id, kind, *plan_round, answer = action_id.split(":")
                 yes = {"yes": True, "no": False}[answer]
                 do = {"loop": self.vote, "meetup": self.answer_meetup, "receipt": self.receipt,
-                      "giveaway": self.answer_giveaway}[kind]
+                      "giveaway": self.answer_giveaway, "times": self.answer_times}[kind]
                 if len(plan_round) > (kind == "meetup"):
                     raise ValueError(action_id)
                 extra = {"plan_round": int(plan_round[0]) if plan_round else -1} if kind == "meetup" else {}
@@ -332,12 +335,12 @@ class ExchangeService:
                 self._withdraw(s, live)
                 return
             times = parse_availability(text)
+            if live is not None and revealed and (times is None or times.other):  # a question or news for the others
+                self._relay(s, live, text)
             if times is not None:
-                self._set_times(s, times, live, shared=revealed and times.other)
+                self._ask_times(s, times, shared=revealed and times.other)
             if live is not None:
-                if revealed and (times is None or times.other):  # a question or news for the others
-                    self._relay(s, live, text)
-                elif times is None:
+                if not revealed and times is None:
                     self._say(s, f"You're in trade {live.id} right now, so I can't change your listing. Decline it, or "
                                  "finish the handoff, and then tell me. Once everyone has said yes, I pass messages "
                                  "like this on to the others.")
@@ -348,7 +351,6 @@ class ExchangeService:
                 listing.floor = listing.floor if listing.floor is not None else s.pending.floor
             if listing.have is None and not listing.wants:
                 if times is not None:  # it was only about when they're free
-                    self._match()
                     return
                 if listing.floor is not None and s.agent.listing.have is not None:
                     s.agent.listing.floor = listing.floor
@@ -411,6 +413,33 @@ class ExchangeService:
         self._say(s, "Done: your listing is down, and I won't propose any trades for you. Tell me what you have and "
                      "what you want to list again.")
 
+    def _ask_times(self, s: Session, times: Times, shared: bool) -> None:
+        """Free times read from text are a reading, not a fact: nothing changes until the student
+        says it's right. A newer reading replaces an unanswered one."""
+        s.times_pending, s.times_id, s.times_shared = times, f"F{len(s.chat) + 1}", shared
+        self._say(s, f"I read that as: {times.said}. Right?",
+                  actions=[{"id": f"{s.times_id}:times:yes", "label": "That's right", "style": "primary"},
+                           {"id": f"{s.times_id}:times:no", "label": "Not quite", "style": "secondary"}])
+
+    def answer_times(self, session_id: str, ref: str, yes: bool) -> None:
+        """The answer to "I read that as: ... Right?". Only "That's right" changes the agent's times
+        (and may move a meetup plan); "Not quite" changes nothing."""
+        with self.lock:
+            s = self.session(session_id)
+            if s.times_pending is None or not s.times_id or ref != s.times_id:
+                raise ServiceError("that question isn't open", 409)
+            times, shared = s.times_pending, s.times_shared
+            s.times_pending, s.times_id = None, ""
+            self._say(s, "That's right" if yes else "Not quite", "you")
+            if not yes:
+                self._say(s, "OK, I left your times as they were. Tell me again, like \"free sun 2-4pm\" or "
+                             "\"can't do sat\".")
+                return
+            live = self._live_trade(s.handle)
+            self._set_times(s, times, live, shared)
+            if live is None:
+                self._match()
+
     def _set_times(self, s: Session, times: Times, live: Trade | None, shared: bool = False) -> None:
         """Free times from what the student said. Private: the exchange only ever hears yes or no
         about one slot. A pending meetup plan that no longer fits gets a "no", so the agents move it.
@@ -419,7 +448,7 @@ class ExchangeService:
         s.agent.availability, s.times, s.times_said = blocks, "told", times.said
         s.agent.refused.clear()  # what they say now replaces what they turned down before
         inside = any(b.covers(slot) for slot in self.window.slots() for b in blocks)
-        where = ("I'm passing your whole message on to the others too, so they'll see those times." if shared and inside
+        where = ("Your message went to the others too, so they've seen those times." if shared and inside
                  else "That stays with me: the exchange only hears yes or no about one meetup slot at a time." if inside
                  else f"That leaves nothing in the meetup window ({self.window.label()}), so I can't offer a "
                       "meetup then.")
@@ -848,6 +877,8 @@ class ExchangeService:
         trade_id, kind, *plan_round, _ = action["id"].split(":")
         if kind == "giveaway":
             return trade_id == s.pending_id
+        if kind == "times":
+            return trade_id == s.times_id
         t = self.exchange.trades.get(trade_id)
         if t is None:
             return False

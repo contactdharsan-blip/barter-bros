@@ -15,6 +15,9 @@ A_SAYS = "I have a TI-84, need a desk chair"
 B_SAYS = "I have a desk chair, need a TI-84"
 
 
+NONE = type("NoTimes", (), {"free": [], "busy": ()})
+
+
 def texts(replies):
     return " ".join(r["text"] for r in replies)
 
@@ -54,6 +57,11 @@ class Pair(unittest.TestCase):
     def meetup(self, t, yes):
         """The id on the newest meetup plan's button."""
         return f"{t.id}:meetup:{t.plan_round}:{'yes' if yes else 'no'}"
+
+    def times_answer(self, user, replies, yes=True):
+        """Press [That's right] (or [Not quite]) on the free-times question in `replies`."""
+        label = "That's right" if yes else "Not quite"
+        return self.press(user, next(a["id"] for r in replies for a in r["actions"] if a["label"] == label))
 
     def kinds(self):
         return [m["kind"] for m in self.service.wire_view()]
@@ -114,7 +122,7 @@ class MeetupMoves(Pair):
         self.assertNotIn(t.loop, self.service.exchange.declined)
         self.assertIn("I'll try this trade again", self.to("1"))
         self.assertEqual(len(self.service.exchange.trades), 1)  # not re-proposed while nothing changed
-        self.dm("2", "free sunday 1-3pm")  # B's times change: the same pair forms again
+        self.times_answer("2", self.dm("2", "free sunday 1-3pm"))  # B's times change: the same pair forms again
         again = self.trade()
         self.assertNotEqual(again.id, t.id)
         self.assertEqual(set(again.handles), set(t.handles))
@@ -167,9 +175,10 @@ class FreeTimes(Pair):
     def test_a_question_to_the_others_is_relayed_and_my_own_times_still_count(self):
         t = self.accepted()
         self.pushed.clear()
-        self.dm("1", "Ben, I'm not free saturday, are you free sunday?")
-        self.assertEqual(self.to("2").count("Ana Reyes"), 2)  # the relayed question, and the moved plan
-        self.assertIn("Ana Reyes (T1): Ben, I'm not free saturday, are you free sunday?", self.to("2"))
+        replies = self.dm("1", "Ben, I'm not free saturday, are you free sunday?")
+        self.assertEqual(self.to("2"), "Ana Reyes (T1): Ben, I'm not free saturday, are you free sunday?")
+        self.assertEqual(t.plan.slot.label(), "Sat 10:00 AM-10:30 AM")  # relayed at once; times wait for a yes
+        self.times_answer("1", replies)
         self.assertEqual(t.plan.slot.label(), "Sun 10:00 AM-10:30 AM")
         self.assertEqual({b.day for b in self.service.by_user[("discord", "1")].agent.availability}, {"SU"})
 
@@ -177,14 +186,15 @@ class FreeTimes(Pair):
         t = self.accepted()
         replies = self.dm("2", "I'm only free sunday afternoon, can we do 2pm?")
         self.assertNotIn("can't change your listing", texts(replies))
-        self.assertIn("you're free Sun afternoon (12:00 PM-5:00 PM)", texts(replies))
+        self.assertIn("I read that as: you're free Sun afternoon (12:00 PM-5:00 PM). Right?", texts(replies))
+        replies = self.times_answer("2", replies)
         self.assertEqual(t.plan.slot.label(), "Sun 12:00 PM-12:30 PM")
         self.assertIn("the times you gave me", texts(replies))
         self.assertNotIn("asked your calendar", self.to("1") + texts(replies))
         self.assertIn("You haven't told me when you're free", self.to("1"))
 
     def test_free_times_stay_private(self):
-        self.dm("2", "free sat 1-3pm")
+        self.times_answer("2", self.dm("2", "free sat 1-3pm"))
         self.accepted()
         self.assertEqual(self.trade().plan.slot.label(), "Sat 1:00 PM-1:30 PM")
         wire = json.dumps(self.service.wire_view()).lower()
@@ -193,8 +203,46 @@ class FreeTimes(Pair):
 
     def test_free_times_with_no_listing_just_say_so(self):
         replies = self.dm("1", "free sat 1-3pm")
-        self.assertIn("Got it: you're free Sat 1:00 PM-3:00 PM", texts(replies))
+        self.assertIn("I read that as: you're free Sat 1:00 PM-3:00 PM. Right?", texts(replies))
         self.assertNotIn("couldn't find", texts(replies))
+        self.assertIn("Got it: you're free Sat 1:00 PM-3:00 PM", texts(self.times_answer("1", replies)))
+
+
+class TimesConfirmation(Pair):
+    """Times read from a DM are only a reading until the student says it's right."""
+
+    def availability(self, user):
+        return list(self.service.by_user[("discord", user)].agent.availability)
+
+    def test_times_wait_for_that_s_right(self):
+        t = self.accepted()
+        before = self.availability("1")
+        replies = self.dm("1", "I won't be available saturday")
+        self.assertIn("I read that as: you can't do Sat. Right?", texts(replies))
+        self.assertEqual(labels(replies), ["That's right", "Not quite"])
+        self.assertEqual((t.plan.slot.label(), self.availability("1")), ("Sat 10:00 AM-10:30 AM", before))
+        self.assertNotIn("no", [m["payload"].get("answer") for m in self.service.wire_view() if m["kind"] == "plan-vote"])
+        self.times_answer("1", replies)
+        self.assertEqual(t.plan.slot.label(), "Sun 10:00 AM-10:30 AM")
+        self.assertEqual({b.day for b in self.availability("1")}, {"SU"})
+
+    def test_not_quite_changes_nothing(self):
+        t = self.accepted()
+        before = self.availability("1")
+        replies = self.times_answer("1", self.dm("1", "I have work saturday, free sunday"), yes=False)
+        self.assertIn("Tell me again", texts(replies))
+        self.assertEqual((t.plan.slot.label(), self.availability("1")), ("Sat 10:00 AM-10:30 AM", before))
+        sid = self.service.by_user[("discord", "1")].id
+        self.assertFalse([a for e in self.service.session_view(sid)["chat"] for a in e["actions"]
+                          if a["open"] and ":times:" in a["id"]])
+
+    def test_an_older_reading_can_t_be_confirmed(self):
+        first = self.dm("1", "free sat 1-3pm")
+        second = self.dm("1", "free sun 2-4pm")
+        self.assertEqual(texts(self.times_answer("1", first)), "That one's already settled.")
+        self.assertEqual(self.service.by_user[("discord", "1")].times, "window")
+        self.times_answer("1", second)
+        self.assertEqual(self.availability("1"), [Block("SU", 14 * 60, 16 * 60)])
 
 
 class Relay(Pair):
@@ -224,7 +272,10 @@ class Relay(Pair):
     def test_times_inside_a_relayed_message_are_not_called_private(self):
         self.accepted()
         replies = self.dm("1", "I'm only free sunday afternoon, see you then")
-        self.assertIn("passing your whole message on", texts(replies))
+        self.assertIn("Passed that on to Ben Cho", texts(replies))
+        self.assertNotIn("stays with me", texts(replies))
+        replies = self.times_answer("1", replies)
+        self.assertIn("went to the others too", texts(replies))
         self.assertNotIn("stays with me", texts(replies))
 
     def test_never_before_everyone_accepts(self):

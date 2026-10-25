@@ -394,6 +394,7 @@ class Wiring(unittest.TestCase):
             self.assertTrue(ActionButton.__discord_ui_compiled_template__.fullmatch("T12:receipt:no"))
             self.assertFalse(ActionButton.__discord_ui_compiled_template__.fullmatch("T1:dance:yes"))
             self.assertTrue(ActionButton.__discord_ui_compiled_template__.fullmatch("L4:giveaway:no"))
+            self.assertTrue(ActionButton.__discord_ui_compiled_template__.fullmatch("F7:times:yes"))
             self.assertTrue(ActionButton.__discord_ui_compiled_template__.fullmatch("T3:meetup:2:yes"))
             self.assertFalse(ActionButton.__discord_ui_compiled_template__.fullmatch("T3:meetup:yes"))
 
