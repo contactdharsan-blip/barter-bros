@@ -1,5 +1,12 @@
 # Barter Bros
 
+- **Live demo (recorded replay):** https://contactdharsan-blip.github.io/barter-bros/
+- **Demo video:** https://contactdharsan-blip.github.io/barter-bros/demo.mp4 (80 s; also in the repo as `docs/demo.mp4`)
+
+The site is the same web app with no server behind it: it steps through a recording of a real
+run of the agents (`web/public/demo-replay.json`, written by `scripts/record_demo.py`). Run it
+locally, below, for the live version.
+
 ```sh
 python3 -m barter.sim scenarios/book-charger-case-3way.json   # a 3-way trade loop, every wire message printed
 python3 -m unittest discover -s tests                         # offline, standard library; never calls the network
@@ -26,6 +33,8 @@ students to confirm three times. The spec is `PLAN.md`.
 | Claude parser (`--claude`) | Opt-in and tested only against a mocked client; never called live from this repo |
 | iMessage bridge | Planned, not built |
 | People, names, calendars | Invented |
+| Replay site (GitHub Pages) | A recording, not a live run: `scripts/record_demo.py` drives the real service in-process (rule parser, scripted bots, no network) and stores what the page would have shown after each step. Only the recorded next button plays |
+| Demo video (`docs/demo.mp4`) | The real web app against a local server, driven in WebKit by `scripts/record_video.mjs`. The DM pane is the web replay of the service the Discord bot calls, not a Discord session |
 
 <p>
   <img src="docs/screens/iphone-01-landing.png" alt="The judges' page on a phone" width="220">
@@ -33,8 +42,7 @@ students to confirm three times. The spec is `PLAN.md`.
 </p>
 <img src="docs/screens/desktop-05-meetup-agreed.jpg" alt="Meetup agreed: Jordan's Discord replay beside the exchange rings and the wire log" width="780">
 
-Screenshots from `node scripts/smoke_web.mjs` (WebKit), taken 2026-10-24, before the 2026-10-25 changes
-to meetups and the agents' wording.
+Screenshots from `node scripts/smoke_web.mjs` (WebKit), taken 2026-10-25 from the current code.
 
 ## The moment
 
@@ -157,6 +165,22 @@ driver" under the replay presses Jordan's open button through the same chat-adap
 Discord client would use. The chat adapters can also run out of process through
 `POST /api/channels/{channel}/{user_ref}/messages` and `.../press`; the server binds to
 127.0.0.1 and has no authentication.
+
+### The static site and the video
+
+When `./api/health` doesn't answer, the page plays `web/public/demo-replay.json` instead of the
+live exchange, with a "Recorded demo" banner. Asset and API URLs are relative, so the build works
+under a subpath.
+
+```sh
+.venv/bin/python scripts/record_demo.py          # re-record web/public/demo-replay.json (deterministic)
+scripts/build_pages.sh /tmp/site                 # build + docs/demo.mp4 + .nojekyll; publish /tmp/site
+node scripts/record_video.mjs docs/demo.mp4      # needs web/dist and ffmpeg (FFMPEG=...); WebKit only
+```
+
+The recording is Jordan's run: the seeded DM, the busy market, a free-times DM confirmed with
+"That's right", Accept, "Works for me", "Got it". `tests/test_record_demo.py` fails when the
+committed recording no longer matches what the service produces.
 
 ## Run the Discord bot
 
