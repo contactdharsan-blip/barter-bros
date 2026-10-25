@@ -181,6 +181,14 @@ def create_app(service: ExchangeService, dist: Path = DIST) -> FastAPI:
     return app
 
 
+def make_service(claude: bool = False) -> ExchangeService:
+    """The live service, with bots answering on a timer. Shared by this server and the Discord bot."""
+    client = parser.make_client() if claude else None  # only with --claude does anything touch the Keychain
+    if claude and client is None:
+        print("--claude: no SDK or no key configured, so the rule parser is used")
+    return ExchangeService(backend="claude" if client is not None else "rules", client=client, delay=BOT_DELAY)
+
+
 def main(argv: list[str] | None = None) -> int:
     import uvicorn
 
@@ -189,10 +197,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--port", type=int, default=8787)
     ap.add_argument("--claude", action="store_true", help="parse with Claude when a key is configured")
     args = ap.parse_args(argv)
-    client = parser.make_client() if args.claude else None  # only with --claude does anything touch the Keychain
-    service = ExchangeService(backend="claude" if client is not None else "rules", client=client, delay=BOT_DELAY)
-    if args.claude and client is None:
-        print("--claude: no SDK or no key configured, so the rule parser is used")
+    service = make_service(args.claude)
     uvicorn.run(create_app(service), host=args.host, port=args.port, log_level="warning")
     return 0
 
