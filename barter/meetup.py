@@ -107,11 +107,11 @@ _DAY = r"(?:" + "|".join(sorted(_DAY_WORDS, key=len, reverse=True)) + r")s?|week
 # "around", "can meet", "can do", "works") or not ("not free", "can't do", "busy", "no").
 # A question or a clause about "you" is about someone else and is left alone.
 _FREE = re.compile(r"\b(?:free|available|around|can meet|can do|works?)\b")
-# A negation has to be about being free: "not free", "can't do", "busy". A bare "no" isn't one
-# ("free saturday no problem", "no class saturday so I'm free").
+# Any negation in a clause with a day rules the day out ("I won't be available saturday", "free
+# except saturday"), except a bare "no", which is usually about something else ("free saturday no
+# problem", "no class saturday so I'm free").
 _NOT = re.compile(
-    r"\bnot\s+(?:free|available|around)\b|n't\s+(?:do|make|meet|come|work|be\s+(?:free|around|there))\b"
-    r"|\b(?:cant|cannot|wont|dont)\s+(?:do|make|meet|come|work)\b|\b(?:busy|unavailable)\b|\bno\s+(?:good|go)\b"
+    r"\bnot\b|n't\b|\b(?:cant|cannot|wont|dont|aint|never|except|busy|unavailable|bad)\b|\bno\s+(?:good|go)\b"
 )
 _ASKS = re.compile(r"\byou\b|\byour\b|^(?:are|is|do|does|would|could|will|how|what|when)\b")
 _CLAUSE = re.compile(r"(.*?)([,;.!?]+|\s+but\s+|$)")
