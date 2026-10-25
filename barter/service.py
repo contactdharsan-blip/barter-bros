@@ -1,31 +1,39 @@
 """The live exchange: agent sessions that stay up, unlike `sim.py`'s scripted run.
 
-A session is one student: an id (a secret token, used only by their own client), a display name
-(private, never leaves this module), a channel badge (web, discord, imessage) and their agent.
-Every channel calls the same methods:
+Students talk to their agent in a messaging app (Discord, iMessage). The web app is a companion:
+profiles, trades, meetups and the judges' Exchange view. A chat adapter stays thin, because the
+whole conversation lives here:
 
-    post_message(session, text)        free text to your agent; it parses, posts, matches
-    vote(session, trade, yes)          (1) the loop
-    answer_meetup(session, trade, yes) (2) the meetup plan
-    receipt(session, trade, got_it)    (3) "got it" at the handoff
-    session_view(session)              everything your agent knows, for you only
-    updates(cursor)                    what changed since a cursor, for SSE or a chat adapter
+    handle_message(channel, user_ref, text, name=None) -> [reply]   a DM to your agent
+    press(channel, user_ref, action_id) -> [reply]                   a button: accept/decline the
+                                                                     loop, yes/no to the meetup,
+                                                                     got it / didn't get it
+    subscribe(listener)                                              replies that come later (when
+                                                                     the others answer), pushed as
+                                                                     listener(channel, user_ref, reply)
 
-The web server (`barter/server.py`) is one caller. A Discord or iMessage adapter would create a
-session with its channel badge, pass the student's messages to `post_message`, map buttons or
-replies to the three confirmations, and relay the session's agent messages back from `updates`.
+A reply is {"id", "text", "actions": [{"id", "label", "style"}]}. Discord renders `actions` as
+buttons and sends the pressed id back to `press`; iMessage can list the labels and map a typed
+"accept" to the id. Both create the session on first contact, keyed by (channel, user_ref).
 
-Two logs, kept apart:
-- the wire: `self.exchange.log`, written only through `Exchange.transmit`. Every message that
-  crosses between agents and the exchange: offers, edge questions and yes/no, proposals, votes,
-  free?/spot? questions, the meetup, receipts, done/unwound. It is public, so it carries handles,
-  listings, a public slot or spot, and yes/no. Nothing else.
-- each session's chat: what an agent tells its own student, which may mention their floor and
-  their private values. It is only ever returned to that session.
+A session is one student: an id (a secret token, used only by their own web companion), a channel
+badge, an agent, and a profile. The web companion calls `vote`, `answer_meetup` and `receipt`
+directly, by session id.
 
-Bots are sessions too. They answer as their scenario scripts them (`sim.scripted`), after
-`delay` seconds on a timer, so a person in the web app watches the ticks arrive. With
-`delay=None` (the tests) a bot answers at once on the caller's thread.
+What crosses between agents (the wire, `self.exchange.log`, written only through
+`Exchange.transmit`): offers, edge questions and yes/no, proposals, votes, an `identity` message
+once everyone in a loop has accepted, free?/spot? questions, the meetup, receipts, done/unwound.
+Until a loop is accepted by all, a partner is a handle and an item listing. The `identity` message
+carries each other member's public profile (`profiles.PUBLIC_KEYS`), so people know who they're
+meeting. Contact info, value floors, private values, calendars and reasons never cross, at any
+stage; meetup messages still go through the relay.
+
+Each session's chat is what an agent tells its own student, which may mention their floor. It is
+only ever returned to that student.
+
+Bots are sessions too. They answer as their scenario scripts them (`sim.scripted`), after `delay`
+seconds on a timer, so a person watching sees the ticks arrive. With `delay=None` (the tests) a
+bot answers at once on the caller's thread.
 """
 
 from __future__ import annotations
@@ -45,6 +53,7 @@ from .agent import StudentAgent
 from .market import MARKET
 from .meetup import Block, Window, negotiate
 from .models import Item, Listing, Want
+from .profiles import Profile, demo_profile
 from .protocol import Exchange, State, Trade
 from .sim import scripted
 
@@ -54,6 +63,9 @@ CHANNELS = ("web", "discord", "imessage")
 BOT_CHANNELS = ("discord", "imessage", "discord", "web", "imessage")  # a mix, for the badges
 WINDOW = Window(("SA",), parse_clock("10:00 AM"), parse_clock("4:00 PM"))
 GOT_IT, DIDNT = "got it", "didn't get it"
+LIVE = (State.PROPOSED, State.ACCEPTED_BY_ALL, State.MEETUP_AGREED)
+
+Listener = Callable[[str, str | None, dict], None]
 
 
 class ServiceError(Exception):
@@ -67,12 +79,14 @@ class ServiceError(Exception):
 @dataclass
 class Session:
     id: str
-    name: str  # private: never in a view, an event or the wire
     channel: str
     agent: StudentAgent
+    profile: Profile
+    user_ref: str | None = None  # the chat app's id for this student (Discord user id, iMessage handle)
     bot: bool = False
     posted: bool = False  # has put an offer on the book at least once
-    chat: list[dict] = field(default_factory=list)  # {"from": "you" | "agent", "text", "t"}
+    chat: list[dict] = field(default_factory=list)  # {"id", "from": "you"|"agent", "text", "t", "actions"}
+    history: list[dict] = field(default_factory=list)  # trades this student finished or that unwound
 
     @property
     def handle(self) -> str:
@@ -91,6 +105,10 @@ def want_view(want: Want) -> dict:
     return {"category": want.category, "attributes": attrs, "min_condition": want.min_condition, "label": want.label()}
 
 
+def _action(trade: Trade, kind: str, yes: bool, label: str, style: str) -> dict:
+    return {"id": f"{trade.id}:{kind}:{'yes' if yes else 'no'}", "label": label, "style": style}
+
+
 class ExchangeService:
     def __init__(self, backend: str = "rules", client=None, delay: float | None = None,
                  window: Window = WINDOW, clock: Callable[[], float] = time.time):
@@ -100,6 +118,7 @@ class ExchangeService:
         self.window = window
         self.clock = clock
         self.lock = threading.RLock()
+        self.listeners: list[Listener] = []
         self._timers: list[threading.Timer] = []
         self.generation = 0
         self.reset()
@@ -116,16 +135,21 @@ class ExchangeService:
             self.exchange = Exchange()
             self.sessions: dict[str, Session] = {}
             self.by_handle: dict[str, Session] = {}
+            self.by_user: dict[tuple[str, str], Session] = {}
+            self.revealed: set[str] = set()  # trade ids whose members have seen each other's profiles
             self.market_seeded = False
 
-    def create_session(self, name: str = "Guest", channel: str = "web", *, bot: bool = False,
-                       values: dict | None = None, free: list[str] | None = None, spots: tuple[str, ...] = (),
-                       reasons: str = "", contact: str = "", answers: dict | None = None) -> Session:
+    def create_session(self, name: str = "Guest", channel: str = "web", *, user_ref: str | None = None,
+                       bot: bool = False, profile: Profile | None = None, values: dict | None = None,
+                       free: list[str] | None = None, spots: tuple[str, ...] = (), reasons: str = "",
+                       contact: str = "", answers: dict | None = None) -> Session:
         """A new student and their agent. With no `free` blocks, the agent is free all through the
         meetup window; with no `spots`, any public spot works."""
         if channel not in CHANNELS:
             raise ServiceError(f"channel must be one of {', '.join(CHANNELS)}")
         with self.lock:
+            if user_ref is not None and (channel, user_ref) in self.by_user:
+                raise ServiceError(f"{channel} user {user_ref} already has a session", 409)
             availability = ([Block.parse(b) for b in free] if free is not None
                             else [Block(d, self.window.start, self.window.end) for d in self.window.days])
             while True:
@@ -134,9 +158,12 @@ class ExchangeService:
                                      answer=scripted(answers or {}))
                 if agent.handle not in self.by_handle:
                     break
-            session = Session(secrets.token_urlsafe(12), name, channel, agent, bot=bot)
+            session = Session(secrets.token_urlsafe(12), channel, agent, profile or demo_profile(name),
+                              user_ref=user_ref, bot=bot)
             self.sessions[session.id] = session
             self.by_handle[agent.handle] = session
+            if user_ref is not None:
+                self.by_user[(channel, user_ref)] = session
             return session
 
     def session(self, session_id: str) -> Session:
@@ -145,12 +172,79 @@ class ExchangeService:
             raise ServiceError("no such session", 404)
         return s
 
-    def _say(self, s: Session, text: str, sender: str = "agent") -> None:
-        if not s.bot:
-            s.chat.append({"from": sender, "text": text, "t": int(self.clock())})
+    def update_profile(self, session_id: str, name: str | None = None, campus: str | None = None,
+                       bio: str | None = None) -> None:
+        with self.lock:
+            p = self.session(session_id).profile
+            for key, value in (("name", name), ("campus", campus), ("bio", bio)):
+                if value is not None:
+                    value = value.strip()[:40 if key != "bio" else 160]
+                    if key == "name" and not value:
+                        raise ServiceError("a profile needs a name")
+                    setattr(p, key, value)
+
+    def _say(self, s: Session, text: str, sender: str = "agent", actions: list[dict] | None = None) -> None:
+        if s.bot:
+            return
+        entry = {"id": len(s.chat) + 1, "from": sender, "text": text, "t": int(self.clock()), "actions": actions or []}
+        s.chat.append(entry)
+        if sender == "agent":
+            reply = {"id": entry["id"], "text": text, "actions": entry["actions"]}
+            for listener in list(self.listeners):
+                listener(s.channel, s.user_ref, reply)
 
     def _wire(self, sender: str, recipient: str, kind: str, payload: dict) -> dict:
         return self.exchange.transmit(int(self.clock()), sender, recipient, kind, payload).payload
+
+    # ------------------------------------------------------------ the chat-app API
+
+    def subscribe(self, listener: Listener) -> None:
+        """Every agent reply to a student, including the ones that arrive later. Called under the
+        service lock, so a listener should queue the reply, not send it inline."""
+        with self.lock:
+            self.listeners.append(listener)
+
+    def user_session(self, channel: str, user_ref: str, name: str | None = None) -> Session:
+        """The session for a chat-app user, created on first contact."""
+        with self.lock:
+            s = self.by_user.get((channel, user_ref))
+            if s is None:
+                s = self.create_session(name or "New student", channel, user_ref=user_ref)
+                self._say(s, "Hi, I'm your Barter Bros agent. Tell me what you have and what you want, in your own "
+                             "words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.")
+            return s
+
+    def _replies(self, s: Session, since: int) -> list[dict]:
+        return [{"id": e["id"], "text": e["text"], "actions": e["actions"]} for e in s.chat[since:] if e["from"] == "agent"]
+
+    def handle_message(self, channel: str, user_ref: str, text: str, name: str | None = None) -> list[dict]:
+        """A DM to your agent from a chat app. Returns the agent's replies to it."""
+        with self.lock:
+            s = self.user_session(channel, user_ref, name)
+            since = len(s.chat)
+            self.post_message(s.id, text)
+            return self._replies(s, since)
+
+    def press(self, channel: str, user_ref: str, action_id: str) -> list[dict]:
+        """A button press (an action id from a reply). Returns the agent's replies to it."""
+        with self.lock:
+            s = self.by_user.get((channel, user_ref))
+            if s is None:
+                raise ServiceError("no such user", 404)
+            try:
+                trade_id, kind, answer = action_id.split(":")
+                yes = {"yes": True, "no": False}[answer]
+                do = {"loop": self.vote, "meetup": self.answer_meetup, "receipt": self.receipt}[kind]
+            except (ValueError, KeyError) as e:
+                raise ServiceError(f"unknown action {action_id!r}") from e
+            since = len(s.chat)
+            try:
+                do(s.id, trade_id, yes)
+            except ServiceError as e:
+                if e.status != 409:
+                    raise
+                self._say(s, "That one's already settled.")
+            return self._replies(s, since)
 
     # ------------------------------------------------------------ talking to your agent
 
@@ -210,9 +304,7 @@ class ExchangeService:
             del self.exchange.answers[key]
 
     def _live_trade(self, handle: str) -> Trade | None:
-        return next((t for t in self.exchange.trades.values()
-                     if handle in t.handles and t.state in (State.PROPOSED, State.ACCEPTED_BY_ALL,
-                                                            State.MEETUP_AGREED)), None)
+        return next((t for t in self.exchange.trades.values() if handle in t.handles and t.state in LIVE), None)
 
     # ------------------------------------------------------------ matching
 
@@ -244,8 +336,10 @@ class ExchangeService:
             get = f"you get {trade.loop.giver_to(s.handle)}'s {gets.label()}" if gets else "you get nothing back"
             shape = "a chain that starts with a giveaway" if trade.loop.kind == "chain" else (
                 f"a {len(trade.handles)}-way trade loop")
-            self._say(s, f"Found {shape}: {give}, and {get}. The others are only handles to me. One no unwinds it "
-                         "for everyone. Accept or decline on the Trades tab.")
+            self._say(s, f"Found {shape}: {give}, and {get}. The others are only handles until everyone says yes. "
+                         "One no unwinds it for everyone. Do you want this trade?",
+                      actions=[_action(trade, "loop", True, "Accept", "primary"),
+                               _action(trade, "loop", False, "Decline", "secondary")])
         self._bots(trade, "loop")
 
     # ------------------------------------------------------------ bots
@@ -278,7 +372,7 @@ class ExchangeService:
                 if answer == "noshow":
                     self._wire("exchange", handle, "no-show", {"trade": trade.id, "handle": handle})
                     trade.no_show(handle)
-                    self._unwound(trade)
+                    self._unwound(trade, no_show=handle)
                 elif answer in (GOT_IT, DIDNT) and handle in trade.loop.receivers():
                     self._receipt(trade, handle, answer == GOT_IT)
                 # anything else ("later"): the bot hasn't been to the meetup yet
@@ -298,7 +392,7 @@ class ExchangeService:
             trade = self._trade_for(s, trade_id)
             if trade.state is not State.PROPOSED or s.handle in trade.votes:
                 raise ServiceError(f"{trade.id} isn't waiting for your answer to the loop", 409)
-            self._say(s, "Accept." if yes else "Decline.", "you")
+            self._say(s, "Accept" if yes else "Decline", "you")
             self._vote(trade, s.handle, yes)
 
     def answer_meetup(self, session_id: str, trade_id: str, yes: bool) -> None:
@@ -308,7 +402,7 @@ class ExchangeService:
             trade = self._trade_for(s, trade_id)
             if trade.state is not State.ACCEPTED_BY_ALL or trade.plan is None or s.handle in trade.plan_votes:
                 raise ServiceError(f"{trade.id} isn't waiting for your answer to the meetup", 409)
-            self._say(s, "Yes, that meetup works." if yes else "No, that meetup doesn't work.", "you")
+            self._say(s, "Works for me" if yes else "Can't make it", "you")
             self._plan_vote(trade, s.handle, yes)
 
     def receipt(self, session_id: str, trade_id: str, got_it: bool = True) -> None:
@@ -319,7 +413,7 @@ class ExchangeService:
             if (trade.state is not State.MEETUP_AGREED or s.handle not in trade.loop.receivers()
                     or s.handle in trade.receipts):
                 raise ServiceError(f"{trade.id} isn't waiting for your receipt", 409)
-            self._say(s, "Got it." if got_it else "I didn't get it.", "you")
+            self._say(s, "Got it ✓" if got_it else "Didn't get it", "you")
             self._receipt(trade, s.handle, got_it)
 
     def _vote(self, trade: Trade, handle: str, yes: bool) -> None:
@@ -328,7 +422,20 @@ class ExchangeService:
         if trade.state is State.UNWOUND:
             self._unwound(trade)
         elif trade.state is State.ACCEPTED_BY_ALL:
+            self._reveal(trade)
             self._meetup(trade)
+
+    def _reveal(self, trade: Trade) -> None:
+        """Everyone said yes: each member now sees who the others are. Public profile fields only."""
+        members = self._members(trade)
+        for s in members:
+            others = [o.profile.public(o.handle) for o in members if o is not s]
+            self._wire("exchange", s.handle, "identity", {"trade": trade.id, "profiles": others})
+        self.revealed.add(trade.id)
+        for s in members:
+            names = ", ".join(f"{o.profile.name} ({o.handle})" for o in members if o is not s)
+            self._say(s, f"Everyone said yes, so now you can see who you're trading with: {names}. Their profiles are "
+                         "in the Barter Bros app. Contact details still aren't shared; I relay messages.")
 
     def _meetup(self, trade: Trade) -> None:
         def free(h: str, slot) -> bool:
@@ -352,9 +459,10 @@ class ExchangeService:
         for s in self._members(trade):
             self._wire("exchange", s.handle, "meetup", {"trade": trade.id, "slot": meetup.slot.label(), "spot": meetup.spot})
         for s in self._members(trade):
-            self._say(s, f"Everyone said yes. Meetup plan: {meetup.label()}, a public spot. I asked your calendar, not "
-                         "you, and only said yes or no. I'll relay messages there, so nobody swaps phone numbers. "
-                         "Does this work?")
+            self._say(s, f"Meetup plan: {meetup.label()}, a public spot. I asked your calendar, not you, and only said "
+                         "yes or no. I'll relay messages there, so nobody swaps phone numbers. Does this work?",
+                      actions=[_action(trade, "meetup", True, "Works for me", "primary"),
+                               _action(trade, "meetup", False, "Can't make it", "secondary")])
         self._bots(trade, "meetup")
 
     def _plan_vote(self, trade: Trade, handle: str, yes: bool) -> None:
@@ -365,8 +473,13 @@ class ExchangeService:
         elif trade.state is State.MEETUP_AGREED:
             for s in self._members(trade):
                 got = trade.gets(s.handle)
-                self._say(s, f"Meetup agreed by all {len(trade.handles)}: {trade.plan.label()}. Bring your item."
-                          + (f" Tap \"Got it\" when you have {trade.loop.giver_to(s.handle)}'s {got.label()}." if got else ""))
+                text = f"Meetup agreed by all {len(trade.handles)}: {trade.plan.label()}. Bring your item."
+                if got:
+                    self._say(s, text + f" Tap \"Got it\" when you have {trade.loop.giver_to(s.handle)}'s {got.label()}.",
+                              actions=[_action(trade, "receipt", True, "Got it ✓", "success"),
+                                       _action(trade, "receipt", False, "Didn't get it", "secondary")])
+                else:
+                    self._say(s, text)
             self._bots(trade, "handoff")
 
     def _receipt(self, trade: Trade, handle: str, got_it: bool) -> None:
@@ -379,14 +492,29 @@ class ExchangeService:
                 self._wire("exchange", s.handle, "done", {"trade": trade.id})
             for s in self._members(trade):
                 got = trade.gets(s.handle)
+                s.profile.completed += 1
+                s.profile.showed_up += 1
+                self._record(s, trade)
                 self._say(s, (f"Done: you have the {got.label()}." if got else "Done: thanks for giving it away.")
                           + " Your listing is closed; tell me if you want to list something else.")
             self.exchange.close(trade)
 
-    def _unwound(self, trade: Trade) -> None:
+    def _record(self, s: Session, trade: Trade) -> None:
+        gives, gets = trade.gives(s.handle), trade.gets(s.handle)
+        s.history.append({"trade": trade.id, "state": trade.state.value, "t": int(self.clock()),
+                          "gave": gives.label() if gives else None, "got": gets.label() if gets else None,
+                          "people": len(trade.handles), "reason": trade.reason})
+
+    def _unwound(self, trade: Trade, no_show: str | None = None) -> None:
         for s in self._members(trade):
             self._wire("exchange", s.handle, "unwound", {"trade": trade.id, "reason": trade.reason})
         for s in self._members(trade):
+            if no_show is not None:
+                if s.handle == no_show:
+                    s.profile.no_shows += 1
+                else:
+                    s.profile.showed_up += 1
+            self._record(s, trade)
             mine = trade.gives(s.handle)
             keep = f"You keep your {mine.label()}." if mine else "Nothing changed hands for you."
             reason = trade.reason.replace(s.handle, "you")
@@ -397,10 +525,12 @@ class ExchangeService:
 
     # ------------------------------------------------------------ demo seeding
 
-    def seed_scenario(self, name: str, human: str | None = None) -> dict:
-        """Reset, then load a scenario: one person is the human on the web (the first, or `human` by
-        first name); everyone else is a bot that posts their listing now and answers as scripted.
-        The human has their scenario's private values, calendar and spots, and no listing yet."""
+    def seed_scenario(self, name: str, human: str | None = None, channel: str = "discord") -> dict:
+        """Reset, then load a scenario. One person (the first, or `human` by first name) is the
+        student being demoed: they DM their agent over `channel` with their scripted message, and
+        a web companion can follow along by session id. Everyone else is a bot that posts their
+        listing first and answers as scripted. The student keeps their scenario's private values,
+        calendar and spots."""
         path = SCENARIOS / f"{name}.json"
         if "/" in name or not path.is_file():
             raise ServiceError(f"no scenario named {name!r}", 404)
@@ -409,24 +539,25 @@ class ExchangeService:
         if not people or any("section" in p for p in people):
             raise ServiceError(f"{name} isn't a things-only Barter Bros scenario")
         firsts = [p["name"].split()[0].lower() for p in people]
-        me = firsts.index(human.lower()) if human else 0
         if human and human.lower() not in firsts:
             raise ServiceError(f"nobody called {human} in {name}")
+        me = firsts.index(human.lower()) if human else 0
         with self.lock:
             self.reset()
-            if "window" in scenario:
-                w = scenario["window"]
-                self.window = Window(tuple(w["days"]), parse_clock(w["start"]), parse_clock(w["end"]))
-            else:
-                self.window = WINDOW
+            w = scenario.get("window")
+            self.window = Window(tuple(w["days"]), parse_clock(w["start"]), parse_clock(w["end"])) if w else WINDOW
             spec = people[me]
-            you = self.create_session(spec["name"], "web", values=spec.get("values"), free=spec.get("free"),
-                                      spots=tuple(spec.get("spots", ())), reasons=spec.get("reasons", ""),
-                                      contact=spec.get("contact", ""))
-            self._say(you, "Hi. Tell me what you have and what you want, in your own words. I'll find the trade.")
+            user_ref = f"demo-{firsts[me]}"
+            you = self.create_session(spec["name"], channel, user_ref=user_ref, values=spec.get("values"),
+                                      free=spec.get("free"), spots=tuple(spec.get("spots", ())),
+                                      reasons=spec.get("reasons", ""), contact=spec.get("contact", ""))
+            self._say(you, "Hi, I'm your Barter Bros agent. Tell me what you have and what you want, in your own "
+                           "words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.")
             bots = [p for i, p in enumerate(people) if i != me]
             self._seed_bots(bots)
-            return {"session": you.id, "handle": you.handle, "suggested": spec["says"], "bots": len(bots)}
+            self.handle_message(channel, user_ref, spec["says"])
+            return {"session": you.id, "handle": you.handle, "channel": channel, "user_ref": user_ref,
+                    "bots": len(bots)}
 
     def seed_market(self) -> dict:
         """Add the twelve market bots (once per reset)."""
@@ -449,7 +580,30 @@ class ExchangeService:
 
     # ------------------------------------------------------------ views
 
+    def _listing_now(self, s: Session) -> dict:
+        offer = s.agent.offer()
+        return {"have": item_view(offer.have), "wants": [want_view(w)["label"] for w in offer.wants],
+                "open": s.handle in self.exchange.book}
+
+    def _can_see(self, viewer: str, handle: str) -> bool:
+        return viewer == handle or any(
+            t.id in self.revealed and viewer in t.handles and handle in t.handles for t in self.exchange.trades.values())
+
+    def profile_view(self, session_id: str, handle: str | None = None) -> dict:
+        """Your own profile, or a trade partner's once everyone in a loop you share has accepted."""
+        with self.lock:
+            s = self.session(session_id)
+            target = self.by_handle.get(handle or s.handle)
+            if target is None or not self._can_see(s.handle, target.handle):
+                raise ServiceError("profiles are shown only after everyone in your loop accepts", 403)
+            view = {**target.profile.public(target.handle), "channel": target.channel,
+                    "listing": self._listing_now(target), "you": target is s}
+            if target is s:
+                view["history"] = list(reversed(s.history))
+            return view
+
     def _trade_view(self, trade: Trade, me: str | None) -> dict:
+        revealed = me is not None and trade.id in self.revealed
         members = []
         for h in trade.handles:
             members.append({
@@ -462,6 +616,7 @@ class ExchangeService:
                 "vote": trade.votes.get(h),
                 "plan_vote": trade.plan_votes.get(h),
                 "receipt": trade.receipts.get(h),
+                "profile": self.by_handle[h].profile.public(h) if revealed and h != me else None,
             })
         plan = trade.plan
         view = {
@@ -469,6 +624,7 @@ class ExchangeService:
             "state": trade.state.value,
             "shape": trade.loop.kind,
             "reason": trade.reason,
+            "revealed": revealed,
             "members": members,
             "plan": {"slot": plan.slot.label(), "spot": plan.spot} if plan is not None else None,
         }
@@ -484,17 +640,30 @@ class ExchangeService:
                             "from": trade.loop.giver_to(me), "worth": worth}
         return view
 
+    def _action_open(self, s: Session, action: dict) -> bool:
+        trade_id, kind, _ = action["id"].split(":")
+        t = self.exchange.trades.get(trade_id)
+        if t is None:
+            return False
+        if kind == "loop":
+            return t.state is State.PROPOSED and s.handle not in t.votes
+        if kind == "meetup":
+            return t.state is State.ACCEPTED_BY_ALL and s.handle not in t.plan_votes
+        return t.state is State.MEETUP_AGREED and s.handle not in t.receipts
+
     def session_view(self, session_id: str) -> dict:
         """Everything your agent will show you. Only ever returned to your own session."""
         with self.lock:
             s = self.session(session_id)
             listing = s.agent.listing
             trades = [t for t in self.exchange.trades.values() if s.handle in t.handles]
+            chat = [{**e, "actions": [{**a, "open": self._action_open(s, a)} for a in e["actions"]]} for e in s.chat]
             return {
                 "id": s.id,
                 "handle": s.handle,
                 "channel": s.channel,
-                "chat": list(s.chat),
+                "profile": s.profile.public(s.handle),
+                "chat": chat,
                 "listing": {
                     "have": item_view(listing.have),
                     "est_value": listing.have.est_value if listing.have else None,
@@ -505,11 +674,13 @@ class ExchangeService:
                     "open": s.handle in self.exchange.book and s.handle not in self.exchange.locked,
                 },
                 "trades": [self._trade_view(t, s.handle) for t in reversed(trades)],
+                "history": list(reversed(s.history)),
                 "generation": self.generation,
             }
 
     def exchange_view(self) -> dict:
-        """The judge's view: anonymous listings and trades, built only from what crossed the wire."""
+        """The judge's view: anonymous listings and trades. Profiles appear only on the wire, in the
+        `identity` messages sent once a loop is accepted by all."""
         with self.lock:
             trades = list(self.exchange.trades.values())
             latest = {}
