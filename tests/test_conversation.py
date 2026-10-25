@@ -151,12 +151,17 @@ class FreeTimes(Pair):
 
     def test_a_no_that_isnt_about_being_free_is_not_busy(self):
         for text, day in (("free saturday no problem", "SA"), ("I'm free sunday so no worries", "SU"),
-                          ("no I'm free sunday", "SU"), ("I have no class saturday so I'm free", "SA")):
+                          ("no I'm free sunday", "SU"), ("I have no class saturday so I'm free", "SA"),
+                          ("I don't work saturday, free all day", "SA"), ("I don't have class saturday so I'm free", "SA"),
+                          ("never mind I'm free saturday", "SA"), ("free saturday don't worry", "SA"),
+                          ("free saturday not bad", "SA"), ("I'm free saturday and can't wait", "SA"),
+                          ("free saturday if that's not too late", "SA")):
             t = parse_availability(text)
             self.assertEqual((t.free, t.busy), ([Block(day, 0, 24 * 60)], ()), text)
         for text in ("saturday doesn't work", "can't make saturday", "I won't be available saturday",
                      "saturday isn't free for me", "I wont be free saturday", "I'm not really free saturday",
-                     "I'm never free saturday", "I'm free except saturday", "i aint free saturday", "saturday is bad"):
+                     "I'm never free saturday", "I'm free except saturday", "i aint free saturday", "saturday is bad", "can't saturday", "not saturday",
+                     "I can not do saturday", "saturday's no good"):
             self.assertEqual(parse_availability(text).busy, ("SA",), text)
 
     def test_a_question_to_the_others_is_relayed_and_my_own_times_still_count(self):

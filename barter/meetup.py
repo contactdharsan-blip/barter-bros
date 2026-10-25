@@ -107,12 +107,26 @@ _DAY = r"(?:" + "|".join(sorted(_DAY_WORDS, key=len, reverse=True)) + r")s?|week
 # "around", "can meet", "can do", "works") or not ("not free", "can't do", "busy", "no").
 # A question or a clause about "you" is about someone else and is left alone.
 _FREE = re.compile(r"\b(?:free|available|around|can meet|can do|works?)\b")
-# Any negation in a clause with a day rules the day out ("I won't be available saturday", "free
-# except saturday"), except a bare "no", which is usually about something else ("free saturday no
-# problem", "no class saturday so I'm free").
-_NOT = re.compile(
-    r"\bnot\b|n't\b|\b(?:cant|cannot|wont|dont|aint|never|except|busy|unavailable|bad)\b|\bno\s+(?:good|go)\b"
+# A negation counts only when it's about meeting. In a clause that says "free", it has to be close
+# before that word ("I won't be available saturday", "saturday isn't free for me", "not really
+# free"); elsewhere in the clause it's about something else ("free saturday, can't wait", "I don't
+# have class saturday so I'm free"). Without "free", it has to be about doing or making the day
+# ("can't do saturday", "saturday doesn't work", "not saturday"), or say busy/bad/no good.
+_NEG = r"(?:\b(?:not|cant|cannot|wont|dont|aint|never)\b|n't\b)"
+_NOT_FREE = re.compile(rf"{_NEG}(?:\s+\w+){{0,3}}?\s+(?:free|available|around|works?)\b")
+_NOT_DAY = re.compile(
+    rf"{_NEG}\s+(?:\w+\s+)?(?:do|make|meet|come|works?|(?:on\s+)?(?:{_DAY}))\b"
+    rf"|\b(?:busy|unavailable|bad|except)\b|\bno\s+(?:good|go\b|(?:{_DAY})\b)"
 )
+_NOT_ME = re.compile(r"\bnever\s*mind\b|\bi\s+(?:don't|dont|do not)\s+work\b")  # "I don't work saturday" = free
+
+
+def _not(clause: str) -> bool:
+    clause = _NOT_ME.sub(" ", clause)
+    return bool((_NOT_FREE if _FREE.search(clause) else _NOT_DAY).search(clause)
+                or re.search(r"\bexcept\s+(?:on\s+)?(?:" + _DAY + r")\b", clause))
+
+
 _ASKS = re.compile(r"\byou\b|\byour\b|^(?:are|is|do|does|would|could|will|how|what|when)\b")
 _CLAUSE = re.compile(r"(.*?)([,;.!?]+|\s+but\s+|$)")
 _DAYS_SAID = re.compile(rf"\b({_DAY})\b")
@@ -186,10 +200,10 @@ def parse_availability(text: str) -> Times | None:
             continue
         days = _days(clause)
         asks = "?" in m.group(2) or _ASKS.search(clause)
-        if not days or asks or not (_FREE.search(clause) or _NOT.search(clause)):
+        if not days or asks or not (_FREE.search(clause) or _not(clause)):
             other = True
             continue
-        if _NOT.search(clause):
+        if _not(clause):
             busy += [d for d in days if d not in busy]
             said.append("you can't do " + "/".join(_DAY_NAME[d] for d in days))
             continue
