@@ -1,7 +1,8 @@
 # Barter Bros
 
 Cubbie Hackathon, Track 2 (agent-to-agent coordination). Phase 1: the engine and a simulator.
-The spec is `PLAN.md`. Discord and iMessage come in phase 2.
+The spec is `PLAN.md`. The live service and a web page for judges are in; the Discord and
+iMessage adapters come next.
 
 ## The moment
 
@@ -73,6 +74,38 @@ To try the Claude parser: `uv venv && uv pip install anthropic==2.3.0`, then
 `.venv/bin/python -m barter.sim --claude scenarios/<name>.json`. The key is read at runtime from
 the macOS Keychain (`barter/keychain.py`, account `hercules`, service `anthropic-api-key`) or
 from `ANTHROPIC_API_KEY`, and is never printed or written to disk. Without a key it uses the rules.
+
+## The live service and the web page
+
+`barter/service.py` keeps agent sessions up and is what a chat app calls. Students talk to their
+agent in Discord or iMessage, never on the website:
+
+- `handle_message(channel, user_ref, text, name=None) -> [reply]`: a DM to your agent.
+- `press(channel, user_ref, action_id) -> [reply]`: a button. Ids look like `T1:loop:yes`,
+  `T1:meetup:no`, `T1:receipt:yes`.
+- `subscribe(listener)`: replies that arrive later, as `listener(channel, user_ref, reply)`.
+- A reply is `{"id", "text", "actions": [{"id", "label", "style"}]}`, plus `"profiles"` on the
+  reply that reveals who the partners are.
+- `seed_scenario(name)` and `seed_market()` load demo bots.
+
+Profiles: until everyone in a loop accepts, partners are handles and item listings. Then an
+`identity` message on the wire carries each other member's public profile (name, initials and
+colour, campus, bio, member since, trade record). Contact info, value floors and reasons never
+cross. `tests/test_service.py` checks both sides of that.
+
+```sh
+uv pip install --python .venv/bin/python -e '.[web]'
+cd web && npm install && npm run build && cd ..
+.venv/bin/python -m barter.server --port 8787   # then open http://127.0.0.1:8787
+node scripts/smoke_web.mjs                       # WebKit only; screenshots in out/screens/
+```
+
+The page shows the live Exchange (trades as rings, waiting listings, the wire log with an
+"identity revealed" filter) and a read-only, Discord-styled replay of Jordan's DMs. A "demo
+driver" under the replay presses Jordan's open button through the same chat-adapter endpoint a
+Discord client would use. The chat adapters can also run out of process through
+`POST /api/channels/{channel}/{user_ref}/messages` and `.../press`; the server binds to
+127.0.0.1 and has no authentication.
 
 ## Honest limits
 
