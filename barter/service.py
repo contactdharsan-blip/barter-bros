@@ -16,7 +16,8 @@ A reply is {"id", "text", "actions": [{"id", "label", "style"}]}, plus "profiles
 `profiles.PUBLIC_KEYS` dicts) on the one reply that reveals who the partners are. Discord renders
 `actions` as buttons (style: primary, secondary, success) and `profiles` as embeds, and sends a
 pressed id back to `press`; iMessage can list the labels and map a typed "accept" to the id.
-Action ids look like "T1:loop:yes", "T1:meetup:no", "T1:receipt:yes", and "L4:giveaway:yes" for
+Action ids look like "T1:loop:yes", "T1:meetup:2:no" (the 2nd plan proposed for T1, so a tap on
+an older plan's button is answered "That time changed"), "T1:receipt:yes", and "L4:giveaway:yes" for
 the one question asked before a listing goes up (an item and no wants, without the word "free" or
 the like: give it away, or ask for something?). A press that is no longer open replies "That one's
 already settled"; a press on a trade you're not in is refused with `NOT_YOURS` (403). Both create
@@ -87,6 +88,7 @@ BOT_CHANNELS = ("discord", "imessage", "discord", "web", "imessage")  # a mix, f
 WINDOW = Window(("SA", "SU"), parse_clock("10:00 AM"), parse_clock("4:00 PM"))  # this weekend
 GOT_IT, DIDNT = "got it", "didn't get it"
 NOT_YOURS = "That button isn't for a trade you're in."
+STALE_PLAN = "That time changed; use the newest plan."
 HELP = (
     "**Barter Bros** finds trades between students, including 3-way loops nobody would spot alone.\n"
     "1. DM me what you have and what you want, in your own words: \"need a usb-c charger, cheap; "
@@ -288,15 +290,18 @@ class ExchangeService:
             if s is None:
                 raise ServiceError("no such user", 404)
             try:
-                trade_id, kind, answer = action_id.split(":")
+                trade_id, kind, *plan_round, answer = action_id.split(":")
                 yes = {"yes": True, "no": False}[answer]
                 do = {"loop": self.vote, "meetup": self.answer_meetup, "receipt": self.receipt,
                       "giveaway": self.answer_giveaway}[kind]
+                if len(plan_round) > (kind == "meetup"):
+                    raise ValueError(action_id)
+                extra = {"plan_round": int(plan_round[0]) if plan_round else -1} if kind == "meetup" else {}
             except (ValueError, KeyError) as e:
                 raise ServiceError(f"unknown action {action_id!r}") from e
             since = len(s.chat)
             try:
-                do(s.id, trade_id, yes)
+                do(s.id, trade_id, yes, **extra)
             except ServiceError as e:
                 if e.status != 409:
                     raise
@@ -552,11 +557,15 @@ class ExchangeService:
             self._say(s, "Accept" if yes else "Decline", "you")
             self._vote(trade, s.handle, yes)
 
-    def answer_meetup(self, session_id: str, trade_id: str, yes: bool) -> None:
-        """(2) Yes or no to the meetup plan."""
+    def answer_meetup(self, session_id: str, trade_id: str, yes: bool, plan_round: int | None = None) -> None:
+        """(2) Yes or no to the meetup plan. A button carries the `plan_round` it was shown with, so
+        a tap on an older plan's button never answers a newer time."""
         with self.lock:
             s = self.session(session_id)
             trade = self._trade_for(s, trade_id)
+            if trade.state is State.ACCEPTED_BY_ALL and plan_round is not None and plan_round != trade.plan_round:
+                self._say(s, STALE_PLAN)
+                return
             if trade.state is not State.ACCEPTED_BY_ALL or trade.plan is None or s.handle in trade.plan_votes:
                 raise ServiceError(f"{trade.id} isn't waiting for your answer to the meetup", 409)
             self._say(s, "Works for me" if yes else "Can't make it", "you")
@@ -634,8 +643,8 @@ class ExchangeService:
                 lead = f"{who} can't make {moved[1].label()}, so the agents found the next time everyone is free. "
             self._say(s, f"{lead}Meetup plan: {meetup.label()}, a public spot. {self._times_note(s)} I relay "
                          "messages, so nobody swaps phone numbers. Does this work?",
-                      actions=[_action(trade, "meetup", True, "Works for me", "primary"),
-                               _action(trade, "meetup", False, "Can't make it", "secondary")])
+                      actions=[_action(trade, f"meetup:{trade.plan_round}", True, "Works for me", "primary"),
+                               _action(trade, f"meetup:{trade.plan_round}", False, "Can't make it", "secondary")])
         self._bots(trade, "meetup")
 
     def _plan_vote(self, trade: Trade, handle: str, yes: bool) -> None:
@@ -826,7 +835,7 @@ class ExchangeService:
         return view
 
     def _action_open(self, s: Session, action: dict) -> bool:
-        trade_id, kind, _ = action["id"].split(":")
+        trade_id, kind, *plan_round, _ = action["id"].split(":")
         if kind == "giveaway":
             return trade_id == s.pending_id
         t = self.exchange.trades.get(trade_id)
@@ -835,7 +844,8 @@ class ExchangeService:
         if kind == "loop":
             return t.state is State.PROPOSED and s.handle not in t.votes
         if kind == "meetup":
-            return t.state is State.ACCEPTED_BY_ALL and s.handle not in t.plan_votes
+            return (t.state is State.ACCEPTED_BY_ALL and s.handle not in t.plan_votes
+                    and plan_round == [str(t.plan_round)])
         return t.state is State.MEETUP_AGREED and s.handle not in t.receipts
 
     def session_view(self, session_id: str) -> dict:

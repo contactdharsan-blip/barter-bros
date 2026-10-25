@@ -48,6 +48,7 @@ class Trade:
     votes: dict[str, bool] = field(default_factory=dict)
     plan: object | None = None  # a meetup.Meetup, or a swap.protocol.Plan for sections
     plan_votes: dict[str, bool] = field(default_factory=dict)
+    plan_round: int = 0  # how many plans have been proposed; the current one is number plan_round
     receipts: dict[str, bool] = field(default_factory=dict)
     reason: str = ""
     stalled: bool = False  # unwound for want of a meetup everyone can make, not because anyone said no to it
@@ -94,6 +95,7 @@ class Trade:
     def propose_plan(self, plan: object) -> None:
         self._require(State.ACCEPTED_BY_ALL)
         self.plan, self.plan_votes = plan, {}
+        self.plan_round += 1
 
     def confirm_plan(self, handle: str, yes: bool) -> None:
         self._require(State.ACCEPTED_BY_ALL)

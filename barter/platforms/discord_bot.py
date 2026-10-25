@@ -39,7 +39,7 @@ from ..service import HELP, ExchangeService, ServiceError
 CHANNEL = "discord"
 ACCOUNT, SERVICE = "hercules", "discord-bot-token"
 ADD_TOKEN = f"security add-generic-password -a {ACCOUNT} -s {SERVICE} -w"
-ACTION_TEMPLATE = r"(?:T\d+:(?:loop|meetup|receipt)|L\d+:giveaway):(?:yes|no)"  # every id the service puts on a button
+ACTION_TEMPLATE = r"(?:T\d+:(?:loop|receipt)|T\d+:meetup:\d+|L\d+:giveaway):(?:yes|no)"  # every id the service puts on a button
 GUILD_HINT = "DM me what you have and what you want"
 STALE = "I don't know you yet (the exchange restarted since that message). DM me what you have and what you want."
 LIVE_STATES = ("proposed", "accepted_by_all", "meetup_agreed")

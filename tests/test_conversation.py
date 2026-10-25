@@ -51,6 +51,10 @@ class Pair(unittest.TestCase):
         self.press("2", f"{t.id}:loop:yes")
         return t
 
+    def meetup(self, t, yes):
+        """The id on the newest meetup plan's button."""
+        return f"{t.id}:meetup:{t.plan_round}:{'yes' if yes else 'no'}"
+
     def kinds(self):
         return [m["kind"] for m in self.service.wire_view()]
 
@@ -60,7 +64,7 @@ class MeetupMoves(Pair):
         t = self.accepted()
         self.assertEqual(t.plan.slot.label(), "Sat 10:00 AM-10:30 AM")
         self.pushed.clear()
-        replies = self.press("2", f"{t.id}:meetup:no")
+        replies = self.press("2", self.meetup(t, False))
         self.assertEqual(t.state.value, "accepted_by_all")
         self.assertEqual(t.plan.slot.label(), "Sat 10:30 AM-11:00 AM")
         self.assertIn("You can't make Sat 10:00 AM-10:30 AM", texts(replies))
@@ -76,15 +80,33 @@ class MeetupMoves(Pair):
         self.assertIn(("free", b, "Sat 10:00 AM-10:30 AM", "no"),
                       [(m["kind"], m["sender"], m["payload"].get("slot"), m["payload"].get("answer")) for m in after])
         self.assertEqual([m["payload"]["slot"] for m in after if m["kind"] == "meetup"], ["Sat 10:30 AM-11:00 AM"] * 2)
-        self.press("1", f"{t.id}:meetup:yes")
-        self.press("2", f"{t.id}:meetup:yes")
+        self.press("1", self.meetup(t, True))
+        self.press("2", self.meetup(t, True))
         self.assertEqual(t.state.value, "meetup_agreed")
+
+    def test_an_old_plans_button_does_not_say_yes_to_the_new_time(self):
+        self.dm("1", A_SAYS)
+        self.dm("2", B_SAYS)
+        t = self.trade()
+        self.press("1", f"{t.id}:loop:yes")
+        replies = self.press("2", f"{t.id}:loop:yes")
+        old_yes = next(a["id"] for r in replies for a in r["actions"] if a["label"] == "Works for me")
+        self.press("1", self.meetup(t, False))  # the plan moves to 10:30
+        self.assertEqual(t.plan.slot.label(), "Sat 10:30 AM-11:00 AM")
+        replies = self.press("2", old_yes)  # B taps the first plan's button
+        self.assertEqual(texts(replies), "That time changed; use the newest plan.")
+        self.assertEqual(t.plan_votes, {})
+        sid = self.service.by_user[("discord", "2")].id
+        opened = [a["id"] for e in self.service.session_view(sid)["chat"] for a in e["actions"] if a["open"]]
+        self.assertEqual(opened, [self.meetup(t, True), self.meetup(t, False)])
+        self.press("2", self.meetup(t, True))
+        self.assertIn(self.service.by_user[("discord", "2")].handle, t.plan_votes)
 
     def test_it_unwinds_only_when_no_slot_is_left_and_can_form_again(self):
         t = self.accepted()
         refusals = 0
         while t.state.value == "accepted_by_all":
-            self.press("2", f"{t.id}:meetup:no")
+            self.press("2", self.meetup(t, False))
             refusals += 1
         self.assertEqual(refusals, len(self.service.window.slots()))
         self.assertEqual(t.state.value, "unwound")
