@@ -338,6 +338,8 @@ const KIND: Record<string, string> = {
   identity: "pill-reveal",
   unwound: "pill-bad",
   "no-show": "pill-bad",
+  relay: "pill-plan",
+  withdraw: "pill-bad",
 }
 
 function clock(t: number) {
