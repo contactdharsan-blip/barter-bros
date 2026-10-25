@@ -1,8 +1,8 @@
 # Barter Bros
 
 Cubbie Hackathon, Track 2 (agent-to-agent coordination). Phase 1: the engine and a simulator.
-The spec is `PLAN.md`. The live service and a web page for judges are in; the Discord and
-iMessage adapters come next.
+The spec is `PLAN.md`. The live service, a web page for judges and a Discord bot are in; the
+iMessage adapter comes next.
 
 ## The moment
 
@@ -107,6 +107,42 @@ Discord client would use. The chat adapters can also run out of process through
 `POST /api/channels/{channel}/{user_ref}/messages` and `.../press`; the server binds to
 127.0.0.1 and has no authentication.
 
+## Run the Discord bot
+
+Discord is the front end: a student DMs their agent, and the agent DMs back. The flow on screen is
+DM -> offer [Accept / Decline] -> partners' profiles (as embeds) once everyone accepts -> meetup
+[Works for me / Can't make it] -> [Got it ✓] -> done. Agents trade in the background through the
+same `ExchangeService`, and `--web-port` serves the web page from the same process, so the
+Exchange view shows the Discord traffic live.
+
+```sh
+uv venv && uv pip install --python .venv/bin/python -e '.[web,discord]'
+security add-generic-password -a hercules -s discord-bot-token -w   # prompts for the token
+.venv/bin/python -m barter.platforms.discord_bot --guild <server id> --web-port 8787 --market
+.venv/bin/python -m barter.platforms.discord_bot --dry-run           # prints the config, connects to nothing
+```
+
+`--market` seeds the twelve demo bots, `--claude` parses DMs with Claude when a key is configured,
+and without `--guild` the commands register globally (Discord can take up to an hour to show them).
+The bot shares the Keychain item with the Group Chat Wrapped bot, so only one of them runs at a time.
+
+Developer Portal setup (https://discord.com/developers/applications):
+
+1. **Bot** tab: copy the token into the Keychain with the command above. No privileged intents are
+   needed: DMs and messages that @mention the bot carry their text without the Message Content
+   intent.
+2. **OAuth2 > URL Generator**: scopes `bot` and `applications.commands`; bot permissions
+   `Send Messages` and `Embed Links`. Open the URL and add the bot to a server you share with the
+   students. Discord lets a bot DM only people it shares a server with.
+3. Turn on Developer Mode in Discord (Settings > Advanced), right-click the server, and copy its id
+   for `--guild`.
+
+What it does: a DM goes to your agent. In a server channel it answers only an @mention, with "DM me
+what you have and what you want". `/barter help`, `/barter profile campus:<…> bio:<…>` and
+`/barter status` reply privately. Buttons carry the action id (`T1:loop:yes`) and are registered as
+persistent, so they still respond after a restart. The exchange itself is in memory, though: after
+a restart, pressing an old button disables it and privately asks the student to DM their listing again.
+
 ## Honest limits
 
 - The rule parser knows the categories in `barter/models.py` and common phrasings. Anything
@@ -118,3 +154,7 @@ Discord client would use. The chat adapters can also run out of process through
   except the receiver saying "got it".
 - The Claude backend is tested only against a mocked client. No live call has been made from
   this repo.
+- The Discord bot is tested only against fakes (`tests/test_discord_bot.py`). It has not yet
+  been run against Discord itself.
+- The rule parser needs "I have X" / "I need Y" phrasing. "I can give my BIO 181 textbook" is
+  not read as something to give.
