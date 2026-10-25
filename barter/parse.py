@@ -46,7 +46,10 @@ _FLOOR = re.compile(
     r"|\$\s?(\d+(?:\.\d+)?)\s*(?:or more|minimum|min)\b"
 )
 _FOR = re.compile(r"\s(?:in exchange for|in return for|for)\s+(?=(?:a|an|any|some|your|someone's)\b)")
-_CLAUSE = re.compile(r"[,;.!?\n]+|\s+but\s+|\s+and\s+(?=(?:i\b|i'|need|want|have|got|looking|in exchange))")
+_CLAUSE = re.compile(
+    r"[,;.!?\n]+|\s+but\s+|\s+and\s+(?=(?:i\b|i'|need|want|have|got|looking|in exchange))"
+    r"|\s+(?=(?:i\s+)?(?:need|looking for)\b)"  # "have a skateboard text me ... need a bike"
+)
 
 _CALCULATOR = re.compile(r"\bcalc(?:ulator)?s?\b|\bti[\s-]?(?:84|83|89|30|36|nspire)|\bcasio\s?fx")
 _CASE = re.compile(r"\b(?:phone )?case\b")
@@ -108,7 +111,22 @@ def _condition(text: str) -> str | None:
     return None
 
 
+# Contact details and identity never reach the wire. Emails, links, @handles and phone numbers are
+# removed before anything is parsed; an unknown item's name stops at the first word that starts
+# talking about the student ("dm me", "my insta", "I live in", "from jordan").
+_CONTACT = re.compile(
+    r"\S+@\S+|https?://\S+|www\.\S+|@\w[\w.]*|\+?\d[\d\s().-]{6,}\d"
+)
+_ABOUT_ME = re.compile(
+    r"\b(?:dm|dms|pm|text|txt|call|email|e-mail|mail|contact|reach|hmu|message|msg|insta|instagram|ig|"
+    r"snap|snapchat|discord|venmo|zelle|cashapp|number|phone number|name|named|live|living|room|dorm|"
+    r"apt|apartment|address|from|i'm|im|i am|this is|it's me)\b"
+)
+
+
 def _kind(text: str) -> str | None:
+    if cut := _ABOUT_ME.search(text):
+        text = text[: cut.start()]
     words = [w for w in re.sub(r"[^a-z0-9\- ]", " ", _FILLER.sub(" ", text)).split() if w]
     return " ".join(words[:3]) or None
 
@@ -187,7 +205,7 @@ def _split_clauses(text: str) -> list[tuple[str, str]]:
 
 
 def parse_rules(text: str) -> Listing:
-    low = _CHEAP.sub(" ", text.lower())
+    low = _CHEAP.sub(" ", _CONTACT.sub(" ", text.lower()))
     floor = None
     if m := _FLOOR.search(low):
         floor = float(m.group(1) or m.group(2))

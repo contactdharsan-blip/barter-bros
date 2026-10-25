@@ -65,6 +65,21 @@ class Sessions(unittest.TestCase):
         self.assertNotIn("Morgan", public)  # nobody has accepted a loop with Morgan
         self.assertTrue(s.handle.startswith("h-"))
 
+    def test_contact_details_typed_beside_an_item_never_reach_the_wire(self):
+        service = ExchangeService()
+        texts = {
+            "1": "have a skateboard, dm jordan_r on insta. need a bike",
+            "2": "I have a bike, my email is jo.smith@asu.edu, need a skateboard",
+            "3": "I have a scooter, I live in Manzanita room 812, need a bike",
+            "4": "have a longboard text me 480-555-1234 need a scooter",
+        }
+        for user, text in texts.items():
+            service.handle_message("discord", user, text)
+        public = json.dumps([service.exchange_view(), service.wire_view()]).lower()
+        for leak in ("jordan", "insta", "jo.smith", "asu.edu", "email", "manzanita", "812", "480", "555"):
+            self.assertNotIn(leak, public)
+        self.assertIn('"skateboard"', public)  # the item itself still goes out, and can match
+
     def test_unknown_channel_and_session_are_refused(self):
         service = ExchangeService()
         with self.assertRaises(ServiceError):
