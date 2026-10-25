@@ -349,7 +349,7 @@ function WireLine({ m }: { m: WireMessage }) {
     const profiles = (m.payload.profiles ?? []) as { handle: string; name: string; campus: string }[]
     return (
       <li className="rise row-reveal rounded-md border-b border-white/[0.06] py-1 pr-1.5 pl-2.5 [overflow-wrap:anywhere]">
-        <span className="text-slate-500">{clock(m.t)} </span>
+        <span className="text-slate-400">{clock(m.t)} </span>
         <span className="pill pill-reveal">identity revealed (all accepted)</span>{" "}
         <span className="text-slate-400">exchange →</span> <span className="font-semibold text-slate-100">{m.recipient}</span>{" "}
         <span className="text-emerald-100/80">
@@ -361,9 +361,9 @@ function WireLine({ m }: { m: WireMessage }) {
   const body = JSON.stringify(m.payload)
   return (
     <li className="rise border-b border-white/[0.06] pb-1 [overflow-wrap:anywhere]">
-      <span className="text-slate-500">{clock(m.t)} </span>
+      <span className="text-slate-400">{clock(m.t)} </span>
       <span className={cn("pill", KIND[m.kind])}>{m.kind}</span>{" "}
-      <span className="font-semibold text-slate-100">{m.sender}</span> <span className="text-slate-500">→</span>{" "}
+      <span className="font-semibold text-slate-100">{m.sender}</span> <span className="text-slate-400">→</span>{" "}
       <span className="font-semibold text-slate-100">{m.recipient}</span>{" "}
       <span className="text-slate-400">{body.length > 220 ? `${body.slice(0, 219)}…` : body}</span>
     </li>
