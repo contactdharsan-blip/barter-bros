@@ -85,7 +85,7 @@ left does the trade unwind, and then it forms again once someone's times or list
 is a handle, a trade id, a public slot or spot, and a yes or no. Names, contact info, floors,
 private values, calendars, the free times a student typed, and reasons never leave the agent.
 Once everyone in a trade has accepted, the agents relay messages between the members ("running 10
-min late, red shirt") under each sender's name, with any phone number, email or handle left out;
+min late, red shirt") under each sender's name, with any phone number, email, @handle or app username ("snap alice99") left out;
 the wire carries only a `relay` record that a message passed, never its text.
 `tests/test_barter_privacy.py` checks every message in every scenario.
 
@@ -126,7 +126,8 @@ agent in Discord (iMessage is planned, not built), never on the website:
 
 - `handle_message(channel, user_ref, text, name=None) -> [reply]`: a DM to your agent.
 - `press(channel, user_ref, action_id) -> [reply]`: a button. Ids look like `T1:loop:yes`,
-  `T1:meetup:no`, `T1:receipt:yes`, and `L4:giveaway:yes` for the giveaway question.
+  `T1:meetup:2:no` (the plan's number, so an older plan's button can't answer a newer time),
+  `T1:receipt:yes`, and `L4:giveaway:yes` for the giveaway question.
 - A DM can also be "help", "cancel" (or "stop", "remove me", "never mind": takes your listing
   down), your free times, or, in a trade everyone has accepted, a message for the others.
 - `subscribe(listener)`: replies that arrive later, as `listener(channel, user_ref, reply)`.
@@ -196,9 +197,11 @@ a restart, pressing an old button disables it and privately asks the student to 
   else becomes `other` with a short kind. Kinds match loosely only in a few ways (a "lamp" fits a
   "desk lamp", plurals and leading counts are ignored, hoodie and sweatshirt are one kind);
   otherwise the words have to agree.
-- Free times are read from simple phrases: a day ("sat", "sunday", "weekends") after "free",
-  "available" or "can meet", with an optional range ("1-3pm", "after 2", "before noon",
-  "morning" 8-12, "afternoon" 12-5, "evening" 5-9). Meetups are proposed only inside the window
+- Free times are read clause by clause from simple phrases: a day ("sat", "sunday", "weekends")
+  with "free", "available", "can meet" or "works", and an optional range for that day only
+  ("1-3pm", "after 2", "before noon", "morning" 8-12, "afternoon" 12-5, "evening" 5-9). "Not
+  free", "can't do", "busy" or "no" with a day rules that day out. A question or a clause about
+  "you" is never read as the sender's own times; in an accepted trade it is relayed. Meetups are proposed only inside the window
   (this weekend, 10 AM-4 PM, unless a scenario sets one). "Can't make it" is taken to mean the
   time, not the place.
 - One listing per person: one item to give, any number of wants.
@@ -210,5 +213,6 @@ a restart, pressing an old button disables it and privately asks the student to 
   this repo.
 - The Discord bot is tested only against fakes (`tests/test_discord_bot.py`). It has not yet
   been run against Discord itself.
-- Once everyone in a trade has accepted, nobody can back out by DM ("cancel" is refused); they can
+- Once everyone in a trade has accepted, nobody can back out by DM (a bare "cancel" is refused, and
+  "cancel, I'm running late" is relayed); they can
   say no to every meetup time, not show up, or tell the others through the relay.

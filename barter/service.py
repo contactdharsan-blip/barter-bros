@@ -25,9 +25,10 @@ the session on first contact, keyed by (channel, user_ref); `name` on first cont
 profile's display name.
 
 A DM is read in this order: "help"; "cancel" / "stop" / "remove me" / "never mind" (takes your
-listing down); free times ("only free sunday afternoon", "free sat 1-3pm", kept private by your
-agent and used for meetups); then, in a trade everyone has accepted, a message the agent relays to
-the others under your name; otherwise a listing.
+listing down; once everyone in your trade has accepted, only the bare word does); your own times
+("only free sunday afternoon", "busy saturday, free sunday after 2", kept private by your agent and
+used for meetups); then, in a trade everyone has accepted, anything else (a question, news) is
+relayed to the others under your name; otherwise a listing.
 
 "Can't make it" on a meetup rules that slot out for you, and the agents propose the next slot
 everyone is free; the trade unwinds only when no slot in the window is left, and then waits (not
