@@ -93,5 +93,36 @@ class SeveralWants(unittest.TestCase):
         self.assertEqual(shape(listing), (HOODIE, [LAMP, CALC]))
 
 
+class MeaningKept(unittest.TestCase):
+    """Phrasings the review found flipped: a lack read as a have, a question read as an offer, a want
+    word that introduces a giveaway, and a floor that swallowed its item."""
+
+    CASES = [
+        ("I don't have a charger, I need one. I can give my hoodie", HOODIE, [("charger", {})]),
+        ("anyone got a calc? i'll give my old BIO 100 book", ("textbook", {"course": "BIO 100"}), [("calculator", {})]),
+        ("can someone give me a calculator? got a rug", ("furniture", {"kind": "rug"}), [("calculator", {})]),
+        ("I want to get rid of my desk chair and i need a lamp", ("furniture", {"kind": "desk chair"}),
+         [("furniture", {"kind": "lamp"})]),
+        ("I'd give my hoodie (size M) for a sweatshirt", ("clothing", {"kind": "hoodie", "size": "M"}),
+         [("clothing", {"kind": "sweatshirt"})]),
+        ("I have a desk lamp worth $50, need a TI-84", LAMP, [CALC]),
+        ("I've got a phone case and I'd like a charger", ("phone_case", {}), [("charger", {})]),
+        ("I have 2 phone cases for iphone 14, need headphones", ("phone_case", {"model": "iPhone 14"}),
+         [("other", {"kind": "headphones"})]),
+    ]
+
+    def test_each_phrasing(self):
+        for text, have, wants in self.CASES:
+            with self.subTest(text=text):
+                self.assertEqual(shape(parse_rules(text)), (have, wants))
+
+    def test_a_floor_keeps_its_item(self):
+        self.assertEqual(parse_rules("I have a desk lamp worth $50, need a TI-84").floor, 50.0)
+
+    def test_nothing_to_trade_is_still_nothing(self):
+        listing = parse_rules("Looking for a hoodie, size M. I don't have anything to trade.")
+        self.assertEqual(shape(listing), (None, [("clothing", {"kind": "hoodie", "size": "M"})]))
+
+
 if __name__ == "__main__":
     unittest.main()

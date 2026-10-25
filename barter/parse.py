@@ -28,13 +28,24 @@ MODEL = "claude-opus-5-5"
 
 _WANT = re.compile(
     r"\b(need|needs|needing|want|wants|wanting|looking for|lf|iso|in search of|would take|"
-    r"would like|in exchange for|trade (?:it |them )?for|swap (?:it |them )?for|in return)\b"
+    r"would like|'d like|would love|'d love|in exchange for|trade (?:it |them )?for|swap (?:it |them )?for|in return|"
+    # asking around: "anyone got a calc?", "can someone give me a calculator?", "who has a lamp?"
+    r"any(?:one|body) (?:got|have|has)|does any(?:one|body) have|some(?:one|body) (?:got|have|has)|"
+    r"who(?:'s got| has| got)|(?:can|could) (?:some|any)(?:one|body) (?:give|lend|spare) me|give me)\b"
+)
+# "I don't have a charger" names something the student lacks: a want, never the item they give.
+_NOT_HAVE = re.compile(r"\b(?:don'?t|do not|doesn'?t|haven'?t|have not|no longer) (?:have|own|got)\b")
+# "I want to get rid of my desk chair": a want word that introduces something to give.
+_GIVE_INTENT = re.compile(
+    r"\b(?:want|wanna|need|would like|'d like|trying|looking|hoping) to "
+    r"(?:get rid of|give away|sell|offload|unload|part with|pass on)\b"
 )
 _HAVE = re.compile(
     r"\b(i can give up|i can give|can give up|can give|i'll give|i will give|i could give|i could part with|"
+    r"i'd give|i would give|i'd trade|i'd swap|i'd part with|"
     r"could part with|can part with|i can trade|can trade|i can swap|can swap|"
     r"i have|i've got|ive got|i got|have|has|got|giving away|giving|give away|selling|offering|"
-    r"trading|free to (?:a )?good home|getting rid of)\b"
+    r"trading|free to (?:a )?good home|getting rid of|get rid of)\b"
 )
 # "cheap", "as cheap as possible", "low cost": the student wants to give up as little as they can.
 # Listing has no field for that (floor is the opposite: the least they'll accept), so the rules
@@ -52,7 +63,7 @@ _CLAUSE = re.compile(
 )
 
 _CALCULATOR = re.compile(r"\bcalc(?:ulator)?s?\b|\bti[\s-]?(?:84|83|89|30|36|nspire)|\bcasio\s?fx")
-_CASE = re.compile(r"\b(?:phone )?case\b")
+_CASE = re.compile(r"\b(?:phone )?cases?\b")
 _PHONE = re.compile(
     r"\b(iphone)\s?(\d{1,2})(\s?(?:pro max|pro|plus|mini))?\b|\b(pixel)\s?(\d{1,2})(\s?(?:pro|a))?\b"
     r"|\b(?:galaxy|samsung)\s?s\s?(\d{2})(\s?(?:ultra|plus|\+))?"
@@ -182,10 +193,22 @@ def _split_clauses(text: str) -> list[tuple[str, str]]:
     out: list[list[str]] = []
     role = None
     for clause in (c.strip() for c in _CLAUSE.split(text)):
-        if not clause or _FLOOR.search(clause):
+        if clause and _FLOOR.search(clause):
+            # "I have a desk lamp worth $50": the floor is read separately, and what comes before it
+            # stays. What follows a floor ("at least $41 for the calculator") is about the same item.
+            clause = clause[: _FLOOR.search(clause).start()].strip()
+            if not (_WANT.search(clause) or _HAVE.search(clause)):
+                continue
+        if not clause:
             continue
         w, h = _WANT.search(clause), _HAVE.search(clause)
-        if w and (not h or w.start() <= h.start()):
+        if g := _GIVE_INTENT.search(clause):
+            role = "have"
+            out.append([role, clause[g.end():]])
+        elif n := _NOT_HAVE.search(clause):
+            role = "want"
+            out.append([role, clause[n.end():]])
+        elif w and (not h or w.start() <= h.start()):
             role = "want"
             out.append([role, clause[w.end():]])
         elif h:
@@ -205,7 +228,7 @@ def _split_clauses(text: str) -> list[tuple[str, str]]:
 
 
 def parse_rules(text: str) -> Listing:
-    low = _CHEAP.sub(" ", _CONTACT.sub(" ", text.lower()))
+    low = _CHEAP.sub(" ", _CONTACT.sub(" ", text.lower().replace("\u2019", "'")))
     floor = None
     if m := _FLOOR.search(low):
         floor = float(m.group(1) or m.group(2))
