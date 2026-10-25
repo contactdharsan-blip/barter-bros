@@ -10,7 +10,7 @@ import { Toaster as Sonner, type ToasterProps } from "sonner"
 const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
-      theme="light"
+      theme="dark"
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-4" />,
@@ -20,25 +20,24 @@ const Toaster = ({ ...props }: ToasterProps) => {
         loading: <Loader2Icon className="size-4 animate-spin" />,
       }}
       toastOptions={{
-        // Fully unstyled so the neobrutalist recipe below owns every surface:
-        // hard offset shadow, 2px border, square corners, press-down buttons.
+        // Fully unstyled so the glass recipe below owns every surface.
         unstyled: true,
         classNames: {
           toast:
-            "group/toast relative flex w-(--width) items-center gap-3 rounded border-2 border-border bg-popover p-4 font-sans text-popover-foreground shadow-md",
+            "glass-strong group/toast relative flex w-(--width) items-center gap-3 rounded-2xl bg-slate-900/70 p-4 font-sans text-slate-50 shadow-[0_8px_32px_rgba(0,0,0,0.45)]",
           content: "flex min-w-0 flex-col gap-0.5",
-          title: "font-head text-sm font-medium",
+          title: "text-sm font-semibold",
           description: "text-sm text-muted-foreground",
           icon: "shrink-0",
           actionButton:
-            "ms-auto h-fit min-w-fit shrink-0 rounded border-2 border-border bg-primary px-2 py-1 text-xs font-medium text-primary-foreground shadow-sm transition-all duration-200 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none",
+            "btn-primary ms-auto h-fit min-w-fit shrink-0 px-2 py-1 text-xs font-semibold",
           cancelButton:
-            "ms-auto h-fit min-w-fit shrink-0 rounded border-2 border-border bg-muted px-2 py-1 text-xs font-medium text-foreground shadow-sm transition-all duration-200 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none",
+            "btn-glass ms-auto h-fit min-w-fit shrink-0 px-2 py-1 text-xs font-medium",
           closeButton:
-            "absolute -top-2 -start-2 rounded-full border-2 border-border bg-background p-0.5 transition-colors hover:bg-muted",
-          success: "[&_[data-icon]]:text-chart-2",
-          warning: "[&_[data-icon]]:text-chart-1",
-          error: "[&_[data-icon]]:text-destructive",
+            "glass-strong absolute -top-2 -start-2 rounded-full p-0.5 transition-colors duration-150 hover:bg-white/20",
+          success: "[&_[data-icon]]:text-emerald-300",
+          warning: "[&_[data-icon]]:text-amber-300",
+          error: "[&_[data-icon]]:text-red-300",
         },
       }}
       {...props}

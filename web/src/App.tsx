@@ -8,7 +8,6 @@ import { ExchangeView } from "@/components/ExchangeView"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Toaster } from "@/components/ui/sonner"
-import { TooltipProvider } from "@/components/ui/tooltip"
 
 type Demo = { session: string; channel: Channel; user_ref: string }
 const KEY = "bb.demo"
@@ -60,16 +59,23 @@ export default function App() {
     })
 
   return (
-    <TooltipProvider>
-      <div className="mx-auto flex min-h-dvh max-w-[1500px] flex-col gap-5 px-4 pt-4 pb-10 lg:px-8">
+    <>
+      <div className="app-bg" aria-hidden>
+        <div className="glow-blob glow-a" />
+        <div className="glow-blob glow-b" />
+        <div className="glow-blob glow-c" />
+      </div>
+      <div className="relative z-10 mx-auto flex min-h-dvh max-w-[1500px] flex-col gap-5 px-4 pt-4 pb-10 lg:px-8">
         <header className="flex items-center justify-between gap-3">
-          <a href="/" className="flex items-center gap-1.5 font-head text-2xl leading-none lg:text-3xl" aria-label="Barter Bros home">
+          <a href="/" className="flex items-center gap-1.5 font-display text-2xl leading-none font-bold text-slate-50 lg:text-3xl" aria-label="Barter Bros home">
             barter
-            <span className="rounded border-2 border-black bg-black px-1.5 py-0.5 text-white shadow-[3px_3px_0_0_var(--you)]">bros</span>
+            <span className="rounded-lg bg-linear-to-br from-emerald-300 via-emerald-400 to-teal-400 px-2 py-0.5 text-[#022c22] shadow-[0_0_18px_rgba(52,211,153,0.35),inset_0_1px_0_rgba(255,255,255,0.4)]">
+              bros
+            </span>
           </a>
           <div className="flex items-center gap-2">
             {demo && (
-              <Button variant="outline" size="sm" className="bg-white" disabled={busy} onClick={start}>
+              <Button variant="outline" size="sm" disabled={busy} onClick={start}>
                 <RotateCcw className="size-4" /> Restart demo
               </Button>
             )}
@@ -84,16 +90,19 @@ export default function App() {
               onPress={(id) => run(async () => void (await api.press(demo.channel, demo.user_ref, id)))}
             />
           ) : (
-            <Card className="pop gap-4 bg-white px-5 py-6">
-              <h1 className="text-[2.1rem] leading-[1.02]">Tell your agent what you have and what you want. It finds the trade.</h1>
-              <p className="text-base">
+            <Card className="pop featured gap-4 px-5 py-6">
+              <h1 className="text-[2.1rem] leading-[1.04] font-bold">
+                Tell your agent what you have and what you want.{" "}
+                <span className="bg-linear-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent">It finds the trade.</span>
+              </h1>
+              <p className="text-base text-slate-300">
                 Students DM their Barter Bros agent in Discord or iMessage. Agents meet in an exchange that finds trade
                 loops of 2 to 4 people. Partners are anonymous handles until everyone says yes.
               </p>
-              <Button size="lg" className="h-14 self-start text-lg" disabled={busy} onClick={start}>
+              <Button size="lg" className="min-h-14 self-start text-lg" disabled={busy} onClick={start}>
                 <Play className="size-5" /> Try the demo (be Jordan)
               </Button>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-slate-400">
                 Jordan has a BIO 181 textbook and needs a USB-C charger. Nobody with a charger wants the book, but there's
                 a loop. Everyone here is invented.
               </p>
@@ -109,6 +118,6 @@ export default function App() {
         </main>
       </div>
       <Toaster position="top-center" />
-    </TooltipProvider>
+    </>
   )
 }

@@ -14,7 +14,8 @@ const CELL_H = 260
 const SPOT_W = 150 // one waiting listing per spot
 const SPOT_H = 84
 
-type Placed = { handle: string; x: number; y: number; fill: string; text: string; label: string; faded: boolean; you: boolean; above: boolean }
+/** `ink` indexes INKS; null is a listing still waiting, drawn as a clear glass dot. */
+type Placed = { handle: string; x: number; y: number; ink: number | null; label: string; faded: boolean; you: boolean; above: boolean }
 type Halo = { id: string; x: number; y: number; r: number; label: string; done: boolean }
 
 function clip(label: string, n: number) {
@@ -43,11 +44,11 @@ function layout(view: XView, me: string | null, cols: number) {
     const meIndex = t.members.findIndex((m) => m.handle === me)
     t.members.forEach((m, i) => {
       const b = (n === 2 ? Math.PI : -Math.PI / 2) + (i * 2 * Math.PI) / n
-      const ink = INKS[(meIndex >= 0 ? (i - meIndex + n) % n : i + 1) % INKS.length]
+      const ink = (meIndex >= 0 ? (i - meIndex + n) % n : i + 1) % INKS.length
       const node = view.nodes.find((x) => x.handle === m.handle)
       const y = cy + r * Math.sin(b)
       placed.set(m.handle, {
-        handle: m.handle, x: cx + r * Math.cos(b), y, fill: ink.fill, text: ink.text,
+        handle: m.handle, x: cx + r * Math.cos(b), y, ink,
         label: clip(node?.have ? bare(node.have.label) : "nothing", 17), faded: done, you: m.handle === me,
         above: y < cy - 10,
       })
@@ -61,8 +62,7 @@ function layout(view: XView, me: string | null, cols: number) {
       handle: n.handle,
       x: (i % per) * SPOT_W + SPOT_W / 2,
       y: top + Math.floor(i / per) * SPOT_H + 30,
-      fill: n.handle === me ? INKS[0].fill : "#fff",
-      text: n.handle === me ? INKS[0].text : "#000",
+      ink: n.handle === me ? 0 : null,
       label: clip(n.have ? bare(n.have.label) : `wants ${n.wants[0]?.replace(/\s*\(.*$/, "") ?? "?"}`, 18),
       faded: n.status === "done",
       you: n.handle === me,
@@ -109,31 +109,36 @@ export function ExchangeView({
   const reveals = wire.filter((m) => m.kind === "identity").length
   const end = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    end.current?.scrollIntoView({ block: "nearest" })
+    // scroll the log, not the page: scrollIntoView also scrolled the window, so a phone opened
+    // the landing page halfway down
+    const log = end.current?.closest("[data-slot=scroll-area-viewport]")
+    if (log) log.scrollTop = log.scrollHeight
   }, [shown.length])
 
   const stats = view?.stats ?? { agents: 0, listings: 0, loops: 0 }
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="font-head text-3xl leading-none">Exchange · live</h2>
-          <p className="mt-1 text-sm">
+          <h2 className="text-3xl leading-none font-bold">
+            Exchange <span className="text-emerald-300">· live</span>
+          </h2>
+          <p className="mt-1.5 text-sm text-slate-400">
             What every agent posted, under random handles, and every message that crossed between agents. Nothing else.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Stat label="agents" value={stats.agents} tone="bg-white" />
-          <Stat label="listings" value={stats.listings} tone="bg-sunny" />
-          <Stat label="loops found" value={stats.loops} tone="bg-lime" />
-          <Button variant="outline" className="bg-white" disabled={busy} onClick={onMarket}>
+          <Stat label="agents" value={stats.agents} />
+          <Stat label="listings" value={stats.listings} />
+          <Stat label="loops found" value={stats.loops} accent />
+          <Button variant="outline" size="sm" disabled={busy} onClick={onMarket}>
             <Plus className="size-4" /> Busy market
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-        <Card className="overflow-hidden bg-white p-2">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] xl:items-start">
+        <Card className="gap-1 p-2">
           <svg
             viewBox={`0 -26 ${W} ${H + 30}`}
             className="h-auto w-full"
@@ -141,19 +146,49 @@ export function ExchangeView({
             aria-label={`${stats.listings} listings on the exchange, ${clusters.length} trades drawn as loops`}
           >
             <defs>
-              <marker id="xhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="userSpaceOnUse">
-                <path d="M0,0 L10,5 L0,10 z" fill="#000" />
-              </marker>
+              {/* one arrowhead per ink: a marker does not take its path's stroke colour */}
+              {INKS.map((ink, i) => (
+                <marker key={i} id={`xhead-${i}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="10" markerHeight="10" orient="auto" markerUnits="userSpaceOnUse">
+                  <path d="M0,0 L10,5 L0,10 z" fill={ink.fill} />
+                </marker>
+              ))}
+              <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" />
+              </filter>
+              <radialGradient id="ring-fill">
+                <stop offset="0%" stopColor="rgb(52,211,153)" stopOpacity="0.10" />
+                <stop offset="70%" stopColor="rgb(45,212,191)" stopOpacity="0.04" />
+                <stop offset="100%" stopColor="rgb(255,255,255)" stopOpacity="0.02" />
+              </radialGradient>
             </defs>
             {waitingTop != null && (
-              <text x={8} y={waitingTop + 2} style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700 }}>
+              <text x={8} y={waitingTop + 2} fill="#94a3b8" style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, letterSpacing: "0.08em" }}>
                 WAITING FOR A MATCH
               </text>
             )}
             {halos.map((h) => (
-              <g key={h.id} className="pop" style={{ transformOrigin: `${h.x}px ${h.y}px` }}>
-                <circle cx={h.x} cy={h.y} r={h.r} fill={h.done ? "#f4f0e6" : "#fff3c4"} stroke="#000" strokeWidth="2" strokeDasharray={h.done ? "5 5" : undefined} />
-                <text x={h.x} y={h.y - h.r - 0} dy="-4" textAnchor="middle" style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 700 }}>
+              <g key={h.id} className="appear" style={{ transformOrigin: `${h.x}px ${h.y}px` }} opacity={h.done ? 0.55 : 1}>
+                {!h.done && (
+                  <circle cx={h.x} cy={h.y} r={h.r} fill="none" stroke="rgb(52,211,153)" strokeOpacity="0.5" strokeWidth="6" filter="url(#soft-glow)" />
+                )}
+                <circle
+                  cx={h.x}
+                  cy={h.y}
+                  r={h.r}
+                  fill="url(#ring-fill)"
+                  stroke={h.done ? "rgba(255,255,255,0.3)" : "rgba(110,231,183,0.7)"}
+                  strokeWidth="1.5"
+                  strokeDasharray={h.done ? "5 5" : undefined}
+                />
+                <circle cx={h.x} cy={h.y} r={h.r - 3} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+                <text
+                  x={h.x}
+                  y={h.y - h.r}
+                  dy="-6"
+                  textAnchor="middle"
+                  fill={h.done ? "#94a3b8" : "#a7f3d0"}
+                  style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 700 }}
+                >
                   {h.label}
                 </text>
               </g>
@@ -167,82 +202,101 @@ export function ExchangeView({
                 const dy = b.y - a.y
                 const len = Math.hypot(dx, dy) || 1
                 const bend = t.members.length === 2 ? 18 : 0
-                const sx = a.x + (dx / len) * (NODE + 3)
-                const sy = a.y + (dy / len) * (NODE + 3)
-                const ex = b.x - (dx / len) * (NODE + 4)
-                const ey = b.y - (dy / len) * (NODE + 4)
+                const sx = a.x + (dx / len) * (NODE + 5)
+                const sy = a.y + (dy / len) * (NODE + 5)
+                const ex = b.x - (dx / len) * (NODE + 6)
+                const ey = b.y - (dy / len) * (NODE + 6)
                 const mx = (sx + ex) / 2 - (dy / len) * bend
                 const my = (sy + ey) / 2 + (dx / len) * bend
                 const d = `M ${sx} ${sy} Q ${mx} ${my} ${ex} ${ey}`
+                const ink = a.ink ?? 0
                 return (
                   <g key={`${t.id}-${m.handle}`} opacity={t.state === "handed_off" ? 0.45 : 1}>
-                    <path d={d} fill="none" stroke="#000" strokeWidth="6" strokeLinecap="round" markerEnd="url(#xhead)" />
-                    <path d={d} fill="none" stroke={a.fill} strokeWidth="3" strokeLinecap="round" className={t.state === "handed_off" ? undefined : "flow"} />
+                    <path d={d} fill="none" stroke={INKS[ink].fill} strokeOpacity="0.45" strokeWidth="7" strokeLinecap="round" filter="url(#soft-glow)" />
+                    <path d={d} fill="none" stroke="rgba(3,7,18,0.85)" strokeWidth="5" strokeLinecap="round" />
+                    <path
+                      d={d}
+                      fill="none"
+                      stroke={INKS[ink].fill}
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      markerEnd={`url(#xhead-${ink})`}
+                      className={t.state === "handed_off" ? undefined : "flow"}
+                    />
                   </g>
                 )
               }),
             )}
-            {[...placed.values()].map((p) => (
-              <g key={p.handle} opacity={p.faded ? 0.5 : 1} className="pop" style={{ transformOrigin: `${p.x}px ${p.y}px` }}>
-                <circle cx={p.x + 2.5} cy={p.y + 2.5} r={NODE} fill="#000" />
-                <circle cx={p.x} cy={p.y} r={NODE} fill={p.fill} stroke="#000" strokeWidth="2.5" />
-                <text x={p.x} y={p.y} dy="0.35em" textAnchor="middle" fill={p.text} style={{ fontFamily: "var(--font-head)", fontSize: p.you ? 10 : 12 }}>
-                  {p.you ? "You" : short(p.handle)}
-                </text>
-                <text
-                  x={p.x}
-                  y={p.above ? p.y - NODE - 8 : p.y + NODE + 16}
-                  textAnchor="middle"
-                  style={{ fontSize: 13, fontWeight: 700, paintOrder: "stroke", stroke: "#fffdf6", strokeWidth: 4, strokeLinejoin: "round" }}
-                >
-                  {p.label}
-                </text>
-              </g>
-            ))}
+            {[...placed.values()].map((p) => {
+              const ink = p.ink == null ? null : INKS[p.ink]
+              return (
+                <g key={p.handle} opacity={p.faded ? 0.5 : 1} className="appear" style={{ transformOrigin: `${p.x}px ${p.y}px` }}>
+                  {ink && <circle cx={p.x} cy={p.y} r={NODE + 2} fill={ink.fill} opacity="0.5" filter="url(#soft-glow)" />}
+                  <circle cx={p.x} cy={p.y} r={NODE + 4} fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="1" />
+                  <circle
+                    cx={p.x}
+                    cy={p.y}
+                    r={NODE}
+                    fill={ink ? ink.fill : "rgba(255,255,255,0.10)"}
+                    stroke={ink ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.38)"}
+                    strokeWidth="1.25"
+                  />
+                  <text
+                    x={p.x}
+                    y={p.y}
+                    dy="0.35em"
+                    textAnchor="middle"
+                    fill={ink ? ink.text : "#f8fafc"}
+                    style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: p.you ? 11 : 12 }}
+                  >
+                    {p.you ? "You" : short(p.handle)}
+                  </text>
+                  <text
+                    x={p.x}
+                    y={p.above ? p.y - NODE - 9 : p.y + NODE + 18}
+                    textAnchor="middle"
+                    fill="#e2e8f0"
+                    style={{ fontSize: 13, fontWeight: 600, paintOrder: "stroke", stroke: "#030712", strokeWidth: 4, strokeLinejoin: "round" }}
+                  >
+                    {p.label}
+                  </text>
+                </g>
+              )
+            })}
             {!view?.nodes.length && (
-              <text x={W / 2} y={H / 2 - 20} textAnchor="middle" style={{ fontFamily: "var(--font-head)", fontSize: 22 }}>
+              <text x={W / 2} y={H / 2 - 20} textAnchor="middle" fill="#94a3b8" style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 600 }}>
                 No listings yet
               </text>
             )}
           </svg>
-          <p className="px-2 pb-1 text-xs text-muted-foreground">
-            Yellow circles are trades; arrows run giver to receiver, in each person's colour. White dots are still waiting.
+          <p className="px-2 pb-1 text-xs text-slate-400">
+            Glowing rings are trades; arrows run giver to receiver, in each person's colour. Clear dots are still waiting.
           </p>
         </Card>
 
-        <Card className="gap-0 overflow-hidden bg-white p-0">
-          <div className="flex items-center justify-between border-b-2 border-black bg-sunny px-3 py-2">
-            <h2 className="font-head text-base">Wire log</h2>
-            <div className="flex items-center gap-1.5" role="group" aria-label="Filter the wire log">
-              <button
-                type="button"
-                aria-pressed={!onlyReveals}
-                onClick={() => setOnlyReveals(false)}
-                className={cn("rounded border-2 border-black px-1.5 text-xs font-bold", !onlyReveals ? "bg-black text-white" : "bg-white")}
-              >
+        <Card className="gap-0 p-0">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-white/[0.03] px-3 py-2">
+            <h2 className="text-base font-semibold">Wire log</h2>
+            <div className="seg" role="group" aria-label="Filter the wire log">
+              <button type="button" aria-pressed={!onlyReveals} onClick={() => setOnlyReveals(false)} className="seg-btn">
                 all {wire.length}
               </button>
-              <button
-                type="button"
-                aria-pressed={onlyReveals}
-                onClick={() => setOnlyReveals(true)}
-                className={cn("rounded border-2 border-black px-1.5 text-xs font-bold", onlyReveals ? "bg-you text-white" : "bg-white")}
-              >
+              <button type="button" aria-pressed={onlyReveals} onClick={() => setOnlyReveals(true)} className="seg-btn">
                 identity reveals {reveals}
               </button>
             </div>
           </div>
           <ScrollArea className="h-[52vh] xl:h-[calc(100vh-16rem)] [&_[data-slot=scroll-area-viewport]>div]:!block">
-            <ol className="flex flex-col gap-1 p-3 font-mono text-[12px] leading-snug" style={{ fontFamily: "var(--font-mono)" }} aria-label="Messages that crossed the exchange">
+            <ol className="flex flex-col gap-1 p-3 font-mono text-[12px] leading-relaxed" aria-label="Messages that crossed the exchange">
               {shown.map((m) => (
                 <WireLine key={m.i} m={m} />
               ))}
-              {onlyReveals && !reveals && <li className="text-muted-foreground">No loop has been accepted by everyone yet.</li>}
+              {onlyReveals && !reveals && <li className="text-slate-400">No loop has been accepted by everyone yet.</li>}
               <div ref={end} />
             </ol>
           </ScrollArea>
-          <div className="flex items-center gap-2 border-t-2 border-black bg-black px-3 py-2 text-xs font-bold text-white">
-            <EyeOff className="size-4 shrink-0" aria-hidden />
+          <div className="flex items-center gap-2 border-t border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-semibold text-slate-300">
+            <EyeOff className="size-4 shrink-0 text-emerald-300" aria-hidden />
             never on the wire: names (until all accept) · phone numbers · value floors · reasons
           </div>
         </Card>
@@ -251,32 +305,39 @@ export function ExchangeView({
   )
 }
 
-function Stat({ label, value, tone }: { label: string; value: number; tone: string }) {
+function Stat({ label, value, accent = false }: { label: string; value: number; accent?: boolean }) {
   return (
-    <span className={cn("inline-flex items-baseline gap-1.5 rounded border-2 border-black px-2.5 py-1 shadow-sm", tone)}>
-      <b key={value} className="pop font-head text-lg">{value}</b>
-      <span className="text-sm font-medium">{label}</span>
+    <span
+      className={cn(
+        "glass-subtle inline-flex min-h-9 items-baseline gap-1.5 rounded-xl px-2.5 py-1",
+        accent && "border-emerald-300/40 bg-emerald-400/10 shadow-[0_0_16px_rgba(52,211,153,0.18)]",
+      )}
+    >
+      <b key={value} className={cn("appear inline-block font-mono text-lg font-semibold tabular", accent ? "text-emerald-300" : "text-slate-50")}>
+        {value}
+      </b>
+      <span className="text-sm font-medium text-slate-400">{label}</span>
     </span>
   )
 }
 
 const KIND: Record<string, string> = {
-  offer: "bg-[#d6e4ff]",
-  "edge?": "bg-[#e6d9ff]",
-  edge: "bg-[#e6d9ff]",
-  proposal: "bg-[#ffd6cf]",
-  vote: "bg-lime",
-  "free?": "bg-accent",
-  free: "bg-accent",
-  "spot?": "bg-accent",
-  spot: "bg-accent",
-  meetup: "bg-sunny",
-  "plan-vote": "bg-lime",
-  receipt: "bg-lime",
-  done: "bg-lime",
-  identity: "bg-you text-white",
-  unwound: "bg-[#ffb3ab]",
-  "no-show": "bg-[#ffb3ab]",
+  offer: "pill-offer",
+  "edge?": "pill-edge",
+  edge: "pill-edge",
+  proposal: "pill-proposal",
+  vote: "pill-ok",
+  "free?": "pill-plan",
+  free: "pill-plan",
+  "spot?": "pill-plan",
+  spot: "pill-plan",
+  meetup: "pill-plan",
+  "plan-vote": "pill-ok",
+  receipt: "pill-ok",
+  done: "pill-ok",
+  identity: "pill-reveal",
+  unwound: "pill-bad",
+  "no-show": "pill-bad",
 }
 
 function clock(t: number) {
@@ -287,11 +348,11 @@ function WireLine({ m }: { m: WireMessage }) {
   if (m.kind === "identity") {
     const profiles = (m.payload.profiles ?? []) as { handle: string; name: string; campus: string }[]
     return (
-      <li className="rise border-b border-dashed border-black/15 pb-1 [overflow-wrap:anywhere]">
-        <span className="text-muted-foreground">{clock(m.t)} </span>
-        <span className="rounded-sm border border-black bg-you px-1 font-bold text-white">identity revealed (all accepted)</span>{" "}
-        exchange → <span className="font-bold">{m.recipient}</span>{" "}
-        <span className="text-[#3d3a35]">
+      <li className="rise row-reveal rounded-md border-b border-white/[0.06] py-1 pr-1.5 pl-2.5 [overflow-wrap:anywhere]">
+        <span className="text-slate-500">{clock(m.t)} </span>
+        <span className="pill pill-reveal">identity revealed (all accepted)</span>{" "}
+        <span className="text-slate-400">exchange →</span> <span className="font-semibold text-slate-100">{m.recipient}</span>{" "}
+        <span className="text-emerald-100/80">
           {String(m.payload.trade)}: {profiles.map((p) => `${p.handle} = ${p.name}, ${p.campus}`).join("; ")}
         </span>
       </li>
@@ -299,11 +360,12 @@ function WireLine({ m }: { m: WireMessage }) {
   }
   const body = JSON.stringify(m.payload)
   return (
-    <li className="rise border-b border-dashed border-black/15 pb-1 [overflow-wrap:anywhere]">
-      <span className="text-muted-foreground">{clock(m.t)} </span>
-      <span className={cn("rounded-sm border border-black px-1 font-bold", KIND[m.kind] ?? "bg-muted")}>{m.kind}</span>{" "}
-      <span className="font-bold">{m.sender}</span> → <span className="font-bold">{m.recipient}</span>{" "}
-      <span className="text-[#3d3a35]">{body.length > 220 ? `${body.slice(0, 219)}…` : body}</span>
+    <li className="rise border-b border-white/[0.06] pb-1 [overflow-wrap:anywhere]">
+      <span className="text-slate-500">{clock(m.t)} </span>
+      <span className={cn("pill", KIND[m.kind])}>{m.kind}</span>{" "}
+      <span className="font-semibold text-slate-100">{m.sender}</span> <span className="text-slate-500">→</span>{" "}
+      <span className="font-semibold text-slate-100">{m.recipient}</span>{" "}
+      <span className="text-slate-400">{body.length > 220 ? `${body.slice(0, 219)}…` : body}</span>
     </li>
   )
 }

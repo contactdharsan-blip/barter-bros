@@ -13,8 +13,8 @@ function reducedMotion() {
   return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
 }
 
-/** A read-only playback of the student's DM thread with their agent, styled like Discord.
- *  Driven by the same session events; students type and tap in Discord itself. */
+/** A read-only playback of the student's DM thread with their agent, in Discord's dark theme
+ *  inside a glass frame. Driven by the same session events; students type and tap in Discord itself. */
 export function DiscordReplay({
   view,
   onPress,
@@ -49,68 +49,65 @@ export function DiscordReplay({
   const open = caughtUp ? [...view.chat].reverse().flatMap((l) => l.actions).filter((a) => a.open) : []
 
   return (
-    <section aria-label="Replay of the Discord DM thread" className="flex flex-col gap-3">
+    <section aria-label="Replay of the Discord DM thread" className="flex min-w-0 flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="font-head text-3xl leading-none">In Discord</h2>
-          <p className="mt-1 text-sm">
+          <h2 className="text-3xl leading-none font-bold">In Discord</h2>
+          <p className="mt-1.5 text-sm text-slate-400">
             A replay of {me.name.split(" ")[0]}'s DMs with their agent. Students talk to it in Discord or iMessage,
             never on this site. This is a playback, not an input box.
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="bg-white" onClick={() => setShown(Math.min(1, total))}>
+          <Button variant="outline" size="sm" onClick={() => setShown(Math.min(1, total))}>
             <RotateCcw className="size-4" /> Replay
           </Button>
-          <Button variant="outline" size="sm" className="bg-white" disabled={shown >= total} onClick={() => setShown(total)}>
+          <Button variant="outline" size="sm" disabled={shown >= total} onClick={() => setShown(total)}>
             <FastForward className="size-4" /> Skip
           </Button>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded border-[3px] border-black bg-white shadow-lg">
-        <div className="flex items-center gap-2 border-b-2 border-black bg-[#f2f3f5] px-3 py-2">
-          <span className="font-bold text-[#5865f2]">@</span>
-          <span className="font-bold">Barter Bros</span>
-          <span className="rounded bg-[#5865f2] px-1 text-[10px] font-bold text-white">APP</span>
-          <span className="ml-auto text-xs text-[#5c5e66]">Direct message · replay</span>
-        </div>
-        <ScrollArea className="h-[58vh] lg:h-[calc(100vh-19rem)]">
-          <ol className="flex flex-col gap-1 py-3" aria-live="polite">
-            {lines.map((line, i) => (
-              <Message key={line.id} line={line} me={me} head={i === 0 || lines[i - 1].from !== line.from} later={view.chat.slice(i + 1)} />
-            ))}
-            {typing && (
-              <li className="px-4 py-1 text-xs font-medium text-[#5c5e66]" aria-hidden>
-                <span className="inline-flex gap-0.5 align-middle">
-                  <Dot d={0} /> <Dot d={120} /> <Dot d={240} />
-                </span>{" "}
-                <b>Barter Bros</b> is typing…
-              </li>
-            )}
-            <div ref={end} />
-          </ol>
-        </ScrollArea>
-        <div className="border-t-2 border-black bg-[#f2f3f5] px-3 py-2.5">
-          <div className="rounded bg-[#e3e5e8] px-3 py-2 text-sm text-[#5c5e66]" aria-hidden>
-            Message @Barter Bros (in Discord)
+      {/* glass frame around a Discord-dark window */}
+      <div className="glass p-1.5">
+        <div className="overflow-hidden rounded-[1.1rem] bg-(--dc-chat) text-(--dc-text)">
+          <div className="flex items-center gap-2 border-b border-black/30 bg-(--dc-bar) px-3 py-2.5 shadow-[0_1px_0_rgba(0,0,0,0.2)]">
+            <span className="text-lg leading-none font-semibold text-(--dc-muted)">@</span>
+            <span className="font-semibold text-white">Barter Bros</span>
+            <span className="rounded bg-(--dc-blurple) px-1 text-[10px] font-semibold text-white">APP</span>
+            <span className="ml-auto text-xs text-(--dc-muted)">Direct message · replay</span>
+          </div>
+          <ScrollArea className="h-[58vh] lg:h-[calc(100vh-19rem)]">
+            <ol className="flex flex-col gap-1 py-3" aria-live="polite">
+              {lines.map((line, i) => (
+                <Message key={line.id} line={line} me={me} head={i === 0 || lines[i - 1].from !== line.from} later={view.chat.slice(i + 1)} />
+              ))}
+              {typing && (
+                <li className="px-4 py-1 text-xs font-medium text-(--dc-muted)" aria-hidden>
+                  <span className="inline-flex gap-0.5 align-middle">
+                    <Dot d={0} /> <Dot d={120} /> <Dot d={240} />
+                  </span>{" "}
+                  <b className="text-(--dc-text)">Barter Bros</b> is typing…
+                </li>
+              )}
+              <div ref={end} />
+            </ol>
+          </ScrollArea>
+          <div className="bg-(--dc-chat) px-3 pt-1 pb-3">
+            <div className="rounded-lg bg-(--dc-composer) px-3 py-2.5 text-sm text-(--dc-muted)" aria-hidden>
+              Message @Barter Bros (in Discord)
+            </div>
           </div>
         </div>
       </div>
       {open.length > 0 && (
-        <div className="pop flex flex-col gap-2 rounded border-2 border-black bg-sunny px-3 py-2.5 shadow-md">
-          <span className="text-sm font-bold">
+        <div className="pop glass flex flex-col gap-2 border-emerald-300/30 px-3.5 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_24px_rgba(52,211,153,0.12)]">
+          <span className="text-sm font-semibold text-slate-100">
             Demo driver: tap a button for {me.name.split(" ")[0]}, the way their Discord app would
           </span>
           <div className="flex flex-wrap gap-2">
             {open.map((a) => (
-              <Button
-                key={a.id}
-                variant={a.style === "secondary" ? "outline" : "default"}
-                className={a.style === "secondary" ? "bg-white" : "bg-black text-white hover:bg-black"}
-                disabled={busy}
-                onClick={() => onPress(a.id)}
-              >
+              <Button key={a.id} variant={a.style === "secondary" ? "outline" : "default"} disabled={busy} onClick={() => onPress(a.id)}>
                 {a.label}
               </Button>
             ))}
@@ -122,7 +119,7 @@ export function DiscordReplay({
 }
 
 function Dot({ d }: { d: number }) {
-  return <span className="size-1.5 animate-bounce rounded-full bg-[#5c5e66]" style={{ animationDelay: `${d}ms` }} />
+  return <span className="size-1.5 animate-bounce rounded-full bg-(--dc-muted)" style={{ animationDelay: `${d}ms` }} />
 }
 
 function clock(t: number) {
@@ -134,26 +131,29 @@ function Message({ line, me, head, later }: { line: ChatLine; me: SessionView["p
   // which button was pressed: the student's next message repeats its label
   const answer = later.find((l) => l.from === "you")?.text
   return (
-    <li className={cn("rise flex gap-3 px-4 hover:bg-[#f7f7f8]", head ? "mt-2 pt-0.5" : "")}>
+    <li className={cn("rise flex gap-3 px-4 transition-colors duration-150 hover:bg-(--dc-hover)", head ? "mt-2 pt-0.5" : "")}>
       <div className="w-10 shrink-0">
         {head &&
           (bot ? (
-            <span className="grid size-10 place-items-center rounded-full border-2 border-black bg-sunny font-head text-sm" aria-hidden>
+            <span
+              className="grid size-10 place-items-center rounded-full bg-linear-to-br from-emerald-300 to-teal-400 font-display text-sm font-bold text-[#022c22] shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]"
+              aria-hidden
+            >
               BB
             </span>
           ) : (
-            <ProfileAvatar profile={me} size={40} className="border-2 shadow-none" />
+            <ProfileAvatar profile={me} size={40} />
           ))}
       </div>
       <div className="min-w-0 flex-1">
         {head && (
-          <div className="flex items-baseline gap-1.5">
-            <span className={cn("font-bold", bot ? "text-[#5865f2]" : "text-black")}>{bot ? "Barter Bros" : me.name}</span>
-            {bot && <span className="rounded bg-[#5865f2] px-1 text-[10px] font-bold text-white">APP</span>}
-            <span className="text-xs text-[#5c5e66]">Today at {clock(line.t)}</span>
+          <div className="flex flex-wrap items-baseline gap-x-1.5">
+            <span className={cn("font-semibold", bot ? "text-emerald-300" : "text-white")}>{bot ? "Barter Bros" : me.name}</span>
+            {bot && <span className="rounded bg-(--dc-blurple) px-1 text-[10px] font-semibold text-white">APP</span>}
+            <span className="text-xs text-(--dc-muted)">Today at {clock(line.t)}</span>
           </div>
         )}
-        <p className="text-[15px] leading-snug break-words text-[#2e3338]">{line.text}</p>
+        <p className="text-[15px] leading-snug break-words text-(--dc-text)">{line.text}</p>
         {line.actions.length > 0 && (
           <div className="mt-1.5 flex flex-wrap gap-2">
             {line.actions.map((a) => {
@@ -165,10 +165,10 @@ function Message({ line, me, head, later }: { line: ChatLine; me: SessionView["p
                   aria-label={`Discord button: ${a.label}${chosen ? " (pressed)" : a.open ? " (waiting)" : ""}`}
                   className={cn(
                     "inline-flex items-center gap-1 rounded-[3px] px-4 py-1.5 text-sm font-medium text-white select-none",
-                    a.style === "primary" ? "bg-[#5865f2]" : a.style === "success" ? "bg-[#248046]" : "bg-[#6d6f78]",
+                    a.style === "primary" ? "bg-(--dc-blurple)" : a.style === "success" ? "bg-(--dc-green)" : "bg-(--dc-grey)",
                     !a.open && !chosen && "opacity-40",
-                    chosen && "ring-2 ring-black ring-offset-1",
-                    a.open && "pop",
+                    chosen && "ring-2 ring-white/70 ring-offset-1 ring-offset-(--dc-chat)",
+                    a.open && "appear",
                   )}
                 >
                   {chosen && <Check className="size-4" />}
