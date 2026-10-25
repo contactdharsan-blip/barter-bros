@@ -1,8 +1,8 @@
 """The live exchange: agent sessions that stay up, unlike `sim.py`'s scripted run.
 
-Students talk to their agent in a messaging app (Discord, iMessage). The web app is a companion:
-profiles, trades, meetups and the judges' Exchange view. A chat adapter stays thin, because the
-whole conversation lives here:
+Students talk to their agent in a messaging app (Discord, iMessage), never on the website. The web
+page is for judges: the live Exchange view and a read-only replay of one student's DM thread. A
+chat adapter stays thin, because the whole conversation lives here:
 
     handle_message(channel, user_ref, text, name=None) -> [reply]   a DM to your agent
     press(channel, user_ref, action_id) -> [reply]                   a button: accept/decline the
@@ -12,13 +12,21 @@ whole conversation lives here:
                                                                      the others answer), pushed as
                                                                      listener(channel, user_ref, reply)
 
-A reply is {"id", "text", "actions": [{"id", "label", "style"}]}. Discord renders `actions` as
-buttons and sends the pressed id back to `press`; iMessage can list the labels and map a typed
-"accept" to the id. Both create the session on first contact, keyed by (channel, user_ref).
+A reply is {"id", "text", "actions": [{"id", "label", "style"}]}, plus "profiles" (a list of
+`profiles.PUBLIC_KEYS` dicts) on the one reply that reveals who the partners are. Discord renders
+`actions` as buttons (style: primary, secondary, success) and `profiles` as embeds, and sends a
+pressed id back to `press`; iMessage can list the labels and map a typed "accept" to the id.
+Action ids look like "T1:loop:yes", "T1:meetup:no", "T1:receipt:yes". A press that is no longer
+open replies "That one's already settled." Both create the session on first contact, keyed by
+(channel, user_ref); `name` on first contact becomes the profile's display name.
 
-A session is one student: an id (a secret token, used only by their own web companion), a channel
-badge, an agent, and a profile. The web companion calls `vote`, `answer_meetup` and `receipt`
-directly, by session id.
+Demo seeding the bot can reuse: `seed_scenario(name, human=None, channel="discord")` resets and
+loads a scenario with that person as the student (user_ref "demo-<first name>"), and
+`seed_market()` adds twelve bots.
+
+A session is one student: an id (a secret token; the web page uses it to read `session_view`), a
+channel badge, an agent, and a profile. `vote`, `answer_meetup` and `receipt` take a session id
+and are what `press` calls; `update_profile(session_id, name, campus, bio)` edits the profile.
 
 What crosses between agents (the wire, `self.exchange.log`, written only through
 `Exchange.transmit`): offers, edge questions and yes/no, proposals, votes, an `identity` message
@@ -183,13 +191,16 @@ class ExchangeService:
                         raise ServiceError("a profile needs a name")
                     setattr(p, key, value)
 
-    def _say(self, s: Session, text: str, sender: str = "agent", actions: list[dict] | None = None) -> None:
+    def _say(self, s: Session, text: str, sender: str = "agent", actions: list[dict] | None = None,
+             profiles: list[dict] | None = None) -> None:
         if s.bot:
             return
         entry = {"id": len(s.chat) + 1, "from": sender, "text": text, "t": int(self.clock()), "actions": actions or []}
+        if profiles:
+            entry["profiles"] = profiles
         s.chat.append(entry)
         if sender == "agent":
-            reply = {"id": entry["id"], "text": text, "actions": entry["actions"]}
+            reply = self._reply(entry)
             for listener in list(self.listeners):
                 listener(s.channel, s.user_ref, reply)
 
@@ -214,8 +225,15 @@ class ExchangeService:
                              "words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.")
             return s
 
+    @staticmethod
+    def _reply(entry: dict) -> dict:
+        reply = {"id": entry["id"], "text": entry["text"], "actions": entry["actions"]}
+        if "profiles" in entry:
+            reply["profiles"] = entry["profiles"]
+        return reply
+
     def _replies(self, s: Session, since: int) -> list[dict]:
-        return [{"id": e["id"], "text": e["text"], "actions": e["actions"]} for e in s.chat[since:] if e["from"] == "agent"]
+        return [self._reply(e) for e in s.chat[since:] if e["from"] == "agent"]
 
     def handle_message(self, channel: str, user_ref: str, text: str, name: str | None = None) -> list[dict]:
         """A DM to your agent from a chat app. Returns the agent's replies to it."""
@@ -433,9 +451,10 @@ class ExchangeService:
             self._wire("exchange", s.handle, "identity", {"trade": trade.id, "profiles": others})
         self.revealed.add(trade.id)
         for s in members:
-            names = ", ".join(f"{o.profile.name} ({o.handle})" for o in members if o is not s)
-            self._say(s, f"Everyone said yes, so now you can see who you're trading with: {names}. Their profiles are "
-                         "in the Barter Bros app. Contact details still aren't shared; I relay messages.")
+            others = [o for o in members if o is not s]
+            names = ", ".join(f"{o.profile.name} ({o.handle})" for o in others)
+            self._say(s, f"Everyone said yes, so now you can see who you're trading with: {names}. Contact details "
+                         "still aren't shared; I relay messages.", profiles=[o.profile.public(o.handle) for o in others])
 
     def _meetup(self, trade: Trade) -> None:
         def free(h: str, slot) -> bool:

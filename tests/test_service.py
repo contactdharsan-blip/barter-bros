@@ -126,7 +126,7 @@ class ChannelApi(unittest.TestCase):
         self.assertEqual((s.channel, s.profile.name), ("discord", "Rae Ng"))
         self.assertIn("futon", texts(replies))
         self.assertIn(s.handle, texts(replies))
-        self.assertTrue(all(set(r) == {"id", "text", "actions"} for r in replies))
+        self.assertTrue(all(set(r) == {"id", "text", "actions"} for r in replies))  # profiles only on a reveal
         self.assertIs(self.service.user_session("discord", "u-1"), s)  # same user, same session
 
     def test_the_whole_flow_by_buttons(self):
@@ -135,6 +135,9 @@ class ChannelApi(unittest.TestCase):
         self.assertIn("2-way trade loop", texts(replies))
         replies = self.fake.press("u-2", action(replies, "Accept"))
         self.assertIn("now you can see who you're trading with: Leo Marsh", texts(replies))
+        [reveal] = [r for r in replies if "profiles" in r]
+        self.assertEqual([p["name"] for p in reveal["profiles"]], ["Leo Marsh"])
+        self.assertEqual(list(reveal["profiles"][0]), list(PUBLIC_KEYS))
         self.assertIn("Meetup plan", texts(replies))
         replies = self.fake.press("u-2", action(replies, "Works for me"))
         self.assertIn("Meetup agreed by all 2", texts(replies))
