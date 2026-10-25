@@ -21,7 +21,7 @@ service, so the Exchange page shows the live Discord traffic. `--market` seeds t
 
 Everything above `build_bot()` is plain Python over duck-typed Discord objects, tested with fakes;
 discord.py is imported only in `build_bot()` and `main()`. The token is read from the macOS
-Keychain into memory (service `discord-bot-token`, account `hercules`) and never printed, logged,
+Keychain into memory (service `discord-bot-token`, account `barter-bros`) and never printed, logged,
 or passed on a command line or in the environment.
 """
 
@@ -37,7 +37,7 @@ from ..profiles import PUBLIC_KEYS
 from ..service import HELP, ExchangeService, ServiceError
 
 CHANNEL = "discord"
-ACCOUNT, SERVICE = "hercules", "discord-bot-token"
+ACCOUNT, SERVICE = "barter-bros", "discord-bot-token"
 ADD_TOKEN = f"security add-generic-password -a {ACCOUNT} -s {SERVICE} -w"
 ACTION_TEMPLATE = r"(?:T\d+:(?:loop|receipt)|T\d+:meetup:\d+|L\d+:giveaway|F\d+:times):(?:yes|no)"  # every id the service puts on a button
 GUILD_HINT = "DM me what you have and what you want"

@@ -168,18 +168,21 @@ Exchange view shows the Discord traffic live.
 
 ```sh
 uv venv && uv pip install --python .venv/bin/python -e '.[web,discord]'
-security add-generic-password -a hercules -s discord-bot-token -w   # prompts for the token
+security add-generic-password -a barter-bros -s discord-bot-token -w   # prompts for the token
 .venv/bin/python -m barter.platforms.discord_bot --guild <server id> --web-port 8787 --market
 .venv/bin/python -m barter.platforms.discord_bot --dry-run           # prints the config, connects to nothing
 ```
 
 `--market` seeds the twelve demo bots, `--claude` parses DMs with Claude when a key is configured,
 and without `--guild` the commands register globally (Discord can take up to an hour to show them).
-The bot shares the Keychain item with the Group Chat Wrapped bot, so only one of them runs at a time.
+Barter Bros is its own Discord app with its own token (Keychain account `barter-bros`), separate from the
+Group Chat Wrapped bot (account `hercules`): two processes on one token would both receive every DM, and
+each one's command sync would wipe the other's slash commands. The Anthropic key is shared (account `hercules`).
 
 Developer Portal setup (https://discord.com/developers/applications):
 
-1. **Bot** tab: copy the token into the Keychain with the command above. No privileged intents are
+1. **New Application** named "Barter Bros". On its **Bot** tab, turn Public Bot off, save, reset the
+   token and copy it into the Keychain with the command above. No privileged intents are
    needed: DMs and messages that @mention the bot carry their text without the Message Content
    intent.
 2. **OAuth2 > URL Generator**: scopes `bot` and `applications.commands`; bot permissions

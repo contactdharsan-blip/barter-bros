@@ -350,7 +350,7 @@ class Token(unittest.TestCase):
         with self.assertRaises(SystemExit) as e:
             keychain_token(run=missing)
         self.assertIn(ADD_TOKEN, str(e.exception.code))
-        self.assertEqual(ADD_TOKEN, "security add-generic-password -a hercules -s discord-bot-token -w")
+        self.assertEqual(ADD_TOKEN, "security add-generic-password -a barter-bros -s discord-bot-token -w")
 
     def test_the_token_is_read_into_memory(self):
         found = lambda cmd, **kw: subprocess.CompletedProcess(cmd, 0, stdout="tok.en\n", stderr="")

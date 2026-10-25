@@ -69,7 +69,7 @@ barter-bros/
 
 ## Platforms
 
-- **Discord:** one bot (the "hercules" app), DM commands and buttons. Token from the Keychain.
+- **Discord:** its own bot app ("Barter Bros", separate from Wrapped's "hercules" app), DM commands and buttons. Token from the Keychain (account `barter-bros`).
 - **iMessage (planned, not built):** the Mac bridge would watch chosen conversations in `~/Library/Messages/chat.db` (read-only) and
   reply through the Messages app. It would send only to people who texted it first, and only replies; no
   cold messages.
