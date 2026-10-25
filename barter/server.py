@@ -30,10 +30,23 @@ POLL = 0.2  # seconds between SSE checks
 class NewSession(BaseModel):
     name: str = "Guest"
     channel: str = "web"
+    campus: str | None = None
+    bio: str | None = None
 
 
-class Text(BaseModel):
+class ProfileEdit(BaseModel):
+    name: str | None = None
+    campus: str | None = None
+    bio: str | None = None
+
+
+class ChatIn(BaseModel):
     text: str
+    name: str | None = None
+
+
+class Press(BaseModel):
+    action: str
 
 
 class YesNo(BaseModel):
@@ -75,19 +88,43 @@ def create_app(service: ExchangeService, dist: Path = DIST) -> FastAPI:
     def health():
         return {"ok": True, "parser": "claude" if service.client is not None else "rules"}
 
+    # A chat app's adapter (Discord bot, iMessage bridge) can run in its own process and call these.
+    # Students type to their agent there, never into the website. Bound to 127.0.0.1 by default.
+    @app.post("/api/channels/{channel}/{user_ref}/messages")
+    def channel_message(channel: str, user_ref: str, body: ChatIn):
+        return {"replies": call(service.handle_message, channel, user_ref, body.text, body.name)}
+
+    @app.post("/api/channels/{channel}/{user_ref}/press")
+    def channel_press(channel: str, user_ref: str, body: Press):
+        return {"replies": call(service.press, channel, user_ref, body.action)}
+
+    # The web companion, by session id.
     @app.post("/api/sessions")
     def new_session(body: NewSession):
-        s = call(lambda: service.create_session(body.name, body.channel))
+        def make():
+            s = service.create_session(body.name.strip() or "Guest", body.channel)
+            service.update_profile(s.id, campus=body.campus, bio=body.bio)
+            return s
+
+        s = call(make)
         return {"session": s.id, "handle": s.handle}
 
     @app.get("/api/sessions/{sid}")
     def get_session(sid: str):
         return call(service.session_view, sid)
 
-    @app.post("/api/sessions/{sid}/messages")
-    def message(sid: str, body: Text):
-        call(service.post_message, sid, body.text)
-        return call(service.session_view, sid)
+    @app.get("/api/sessions/{sid}/profile")
+    def my_profile(sid: str):
+        return call(service.profile_view, sid)
+
+    @app.patch("/api/sessions/{sid}/profile")
+    def edit_profile(sid: str, body: ProfileEdit):
+        call(service.update_profile, sid, body.name, body.campus, body.bio)
+        return call(service.profile_view, sid)
+
+    @app.get("/api/sessions/{sid}/profiles/{handle}")
+    def partner_profile(sid: str, handle: str):
+        return call(service.profile_view, sid, handle)
 
     @app.post("/api/sessions/{sid}/trades/{tid}/vote")
     def vote(sid: str, tid: str, body: YesNo):
@@ -130,7 +167,7 @@ def create_app(service: ExchangeService, dist: Path = DIST) -> FastAPI:
         return StreamingResponse(stream(service, session, max(since, 0), request), media_type="text/event-stream",
                                  headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
-    @app.api_route("/api/{rest:path}", methods=["GET", "POST"])
+    @app.api_route("/api/{rest:path}", methods=["GET", "POST", "PATCH"])
     def no_such_api(rest: str):
         raise HTTPException(404, "no such endpoint")
 

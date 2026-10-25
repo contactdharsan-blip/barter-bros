@@ -38,26 +38,43 @@ class Api(unittest.TestCase):
     def test_demo_end_to_end(self):
         seeded = self.post("/api/demo/seed?scenario=book-charger-case-3way")
         sid = seeded["session"]
-        view = self.post(f"/api/sessions/{sid}/messages", {"text": seeded["suggested"]})
+        view = self.client.get(f"/api/sessions/{sid}").json()
         trade = view["trades"][0]
-        self.assertEqual((trade["state"], len(trade["members"])), ("proposed", 3))
+        self.assertEqual((trade["state"], len(trade["members"]), trade["revealed"]), ("proposed", 3, False))
         self.assertEqual(trade["mine"]["worth"], {"value": 35, "floor": 30.0})
+        partner = next(m["handle"] for m in trade["members"] if not m["you"])
+        self.assertEqual(self.client.get(f"/api/sessions/{sid}/profiles/{partner}").status_code, 403)
         tid = trade["id"]
         view = self.post(f"/api/sessions/{sid}/trades/{tid}/vote", {"yes": True})
+        self.assertTrue(view["trades"][0]["revealed"])
         self.assertEqual(view["trades"][0]["plan"], {"slot": "Sat 11:00 AM-11:30 AM", "spot": "Noble Library"})
+        profile = self.client.get(f"/api/sessions/{sid}/profiles/{partner}").json()
+        self.assertIn(profile["name"], ("Sam Okoye", "Priya Shah"))
         view = self.post(f"/api/sessions/{sid}/trades/{tid}/meetup", {"yes": True})
         self.assertEqual(view["trades"][0]["state"], "meetup_agreed")
         view = self.post(f"/api/sessions/{sid}/trades/{tid}/receipt", {"got_it": True})
         self.assertEqual(view["trades"][0]["state"], "handed_off")
-        self.assertEqual(self.client.get(f"/api/sessions/{sid}").json()["trades"][0]["state"], "handed_off")
+        mine = self.client.get(f"/api/sessions/{sid}/profile").json()
+        self.assertEqual((mine["name"], mine["completed"], len(mine["history"])), ("Jordan Rivera", 3, 1))
         kinds = [m["kind"] for m in self.client.get("/api/wire").json()]
         self.assertEqual(kinds[-1], "done")
+        self.assertIn("identity", kinds)
         self.assertEqual(self.client.get("/api/exchange").json()["stats"], {"agents": 4, "listings": 1, "loops": 1})
+
+    def test_chat_adapter_endpoints(self):
+        self.post("/api/demo/seed")
+        replies = self.post("/api/channels/imessage/+15550001/messages",
+                            {"text": "I have a 30W USB-C charger. I need a desk lamp.", "name": "Rae Ng"})["replies"]
+        accept = next(a["id"] for r in replies for a in r["actions"] if a["label"] == "Accept")
+        replies = self.post("/api/channels/imessage/+15550001/press", {"action": accept})["replies"]
+        self.assertTrue(any("Leo Marsh" in r["text"] for r in replies))
+        self.post("/api/channels/fax/x/messages", {"text": "hi"}, status=400)
+        self.post("/api/channels/imessage/nobody/press", {"action": accept}, status=404)
 
     def test_market_and_reset(self):
         self.post("/api/demo/seed?scenario=book-charger-case-3way")
         self.assertEqual(self.post("/api/demo/seed?scenario=market"), {"bots": 12})
-        self.assertEqual(self.client.get("/api/exchange").json()["stats"]["loops"], 3)
+        self.assertEqual(self.client.get("/api/exchange").json()["stats"]["loops"], 4)  # Jordan's and the market's 3
         wire = self.client.get("/api/wire?after=5").json()
         self.assertEqual(wire[0]["i"], 5)
         self.post("/api/demo/reset")
@@ -67,18 +84,21 @@ class Api(unittest.TestCase):
         made = self.post("/api/sessions", {"channel": "imessage"})
         view = self.client.get(f"/api/sessions/{made['session']}").json()
         self.assertEqual((view["handle"], view["channel"]), (made["handle"], "imessage"))
-        self.assertNotIn("Guest", json.dumps(view))
+        self.assertEqual(view["profile"]["name"], "Guest")  # your own profile, to you only
         self.post("/api/sessions", {"channel": "fax"}, status=400)
+        made = self.post("/api/sessions", {"name": "Ana Ruiz", "campus": "ASU West", "bio": "hi"})
+        self.assertEqual(self.client.get(f"/api/sessions/{made['session']}/profile").json()["campus"], "ASU West")
+        edited = self.client.patch(f"/api/sessions/{made['session']}/profile", json={"bio": "Hello there"}).json()
+        self.assertEqual(edited["bio"], "Hello there")
 
     def test_errors(self):
         self.assertEqual(self.client.get("/api/sessions/nope").status_code, 404)
         self.assertEqual(self.client.get("/api/nothing-here").status_code, 404)
         self.assertEqual(self.client.get("/api/events?session=nope").status_code, 404)
         self.post("/api/demo/seed?scenario=nope", status=404)
-        seeded = self.post("/api/demo/seed")
-        sid = seeded["session"]
-        self.post(f"/api/sessions/{sid}/messages", {"text": "  "}, status=400)
-        tid = self.post(f"/api/sessions/{sid}/messages", {"text": seeded["suggested"]})["trades"][0]["id"]
+        sid = self.post("/api/demo/seed")["session"]
+        self.post(f"/api/sessions/{sid}/messages", {"text": "typing into the website"}, status=404)  # chat is in Discord
+        tid = self.client.get(f"/api/sessions/{sid}").json()["trades"][0]["id"]
         self.post(f"/api/sessions/{sid}/trades/{tid}/receipt", {"got_it": True}, status=409)
         self.post(f"/api/sessions/{sid}/trades/T9/vote", {"yes": True}, status=404)
 
@@ -126,7 +146,6 @@ class Events(unittest.TestCase):
     def test_session_stream_carries_your_private_view(self):
         service = ExchangeService()
         seeded = service.seed_scenario("book-charger-case-3way")
-        service.post_message(seeded["session"], seeded["suggested"])
         chunks = self.take(stream(service, seeded["session"], 0, poll=0), 2)
         event, view = self.parse(chunks[1])
         self.assertEqual(event, "session")
