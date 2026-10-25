@@ -333,7 +333,7 @@ class ExchangeService:
                 return
             times = parse_availability(text)
             if times is not None:
-                self._set_times(s, times, live)
+                self._set_times(s, times, live, shared=revealed and times.other)
             if live is not None:
                 if revealed and (times is None or times.other):  # a question or news for the others
                     self._relay(s, live, text)
@@ -411,7 +411,7 @@ class ExchangeService:
         self._say(s, "Done: your listing is down, and I won't propose any trades for you. Tell me what you have and "
                      "what you want to list again.")
 
-    def _set_times(self, s: Session, times: Times, live: Trade | None) -> None:
+    def _set_times(self, s: Session, times: Times, live: Trade | None, shared: bool = False) -> None:
         """Free times from what the student said. Private: the exchange only ever hears yes or no
         about one slot. A pending meetup plan that no longer fits gets a "no", so the agents move it.
         "Not free saturday" alone takes Saturday out of what the agent had."""
@@ -419,7 +419,8 @@ class ExchangeService:
         s.agent.availability, s.times, s.times_said = blocks, "told", times.said
         s.agent.refused.clear()  # what they say now replaces what they turned down before
         inside = any(b.covers(slot) for slot in self.window.slots() for b in blocks)
-        where = ("That stays with me: the exchange only hears yes or no about one meetup slot at a time." if inside
+        where = ("I'm passing your whole message on to the others too, so they'll see those times." if shared and inside
+                 else "That stays with me: the exchange only hears yes or no about one meetup slot at a time." if inside
                  else f"That leaves nothing in the meetup window ({self.window.label()}), so I can't offer a "
                       "meetup then.")
         self._say(s, f"Got it: {times.said}. {where}")

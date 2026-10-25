@@ -149,6 +149,14 @@ class FreeTimes(Pair):
         t = parse_availability("Bob, I'm not free saturday, are you free sunday?")
         self.assertEqual((t.free, t.busy, t.other), ([], ("SA",), True))  # the question is about Bob
 
+    def test_a_no_that_isnt_about_being_free_is_not_busy(self):
+        for text, day in (("free saturday no problem", "SA"), ("I'm free sunday so no worries", "SU"),
+                          ("no I'm free sunday", "SU"), ("I have no class saturday so I'm free", "SA")):
+            t = parse_availability(text)
+            self.assertEqual((t.free, t.busy), ([Block(day, 0, 24 * 60)], ()), text)
+        for text in ("saturday doesn't work", "can't make saturday"):
+            self.assertEqual(parse_availability(text).busy, ("SA",), text)
+
     def test_a_question_to_the_others_is_relayed_and_my_own_times_still_count(self):
         t = self.accepted()
         self.pushed.clear()
@@ -205,6 +213,12 @@ class Relay(Pair):
             self.pushed.clear()
             self.dm("1", text)
             self.assertNotRegex(self.to("2"), r"alice99|ana\.r|ana_r|anar", text)
+
+    def test_times_inside_a_relayed_message_are_not_called_private(self):
+        self.accepted()
+        replies = self.dm("1", "I'm only free sunday afternoon, see you then")
+        self.assertIn("passing your whole message on", texts(replies))
+        self.assertNotIn("stays with me", texts(replies))
 
     def test_never_before_everyone_accepts(self):
         self.dm("1", A_SAYS, "Ana Reyes")
