@@ -73,7 +73,7 @@ barter-bros/
 - **iMessage (planned, not built):** the Mac bridge would watch chosen conversations in `~/Library/Messages/chat.db` (read-only) and
   reply through the Messages app. It would send only to people who texted it first, and only replies; no
   cold messages.
-- Both feed the same agent and exchange. A trade loop can mix a Discord user and an iMessage user.
+- Both would feed the same agent and exchange, so a trade loop could mix a Discord user and an iMessage user.
 
 ## Phases
 
