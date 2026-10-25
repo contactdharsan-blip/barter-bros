@@ -7,3 +7,4 @@ out/
 .venv/
 web/node_modules/
 web/dist/
+*.egg-info/
