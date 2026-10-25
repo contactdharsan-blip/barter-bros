@@ -205,6 +205,13 @@ class Withdraw(Pair):
         self.assertIn("said no", self.to("2"))
         self.assertNotIn(self.service.by_user[("discord", "1")].handle, self.service.exchange.book)
 
+    def test_cancel_then_relist_does_not_revive_a_declined_loop(self):
+        self.dm("1", A_SAYS)
+        self.dm("2", B_SAYS)
+        self.dm("1", "cancel")  # declines T1 for both: B is told it won't be proposed again
+        self.dm("1", A_SAYS)  # relisted under a new place in the queue
+        self.assertEqual(len(self.service.exchange.trades), 1)
+
     def test_cancel_after_everyone_accepted_is_refused_not_relayed(self):
         t = self.accepted()
         self.pushed.clear()

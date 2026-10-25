@@ -53,6 +53,15 @@ class Loop:
             return self.members[(i + 1) % len(self.members)]
         return self.members[i + 1] if i + 1 < len(self.members) else None
 
+    @property
+    def key(self) -> tuple[str, tuple[str, ...]]:
+        """The same loop whatever order its members were listed in: a cycle rotated to start at its
+        smallest handle. A chain's order is who gives to whom, so it stays as it is."""
+        if self.kind != "cycle":
+            return self.kind, self.members
+        i = self.members.index(min(self.members))
+        return self.kind, self.members[i:] + self.members[:i]
+
     def receivers(self) -> list[str]:
         return [h for h in self.members if self.giver_to(h) is not None]
 
@@ -164,5 +173,8 @@ def find(offers: list[Offer], seq: dict[str, int], ask: EdgeAsk,
     """(chosen loops, every candidate loop) over the open offers. `answers` caches edge answers."""
     order = sorted((o.handle for o in offers), key=seq.__getitem__)
     edges = EdgeBook(offers, ask, answers)
-    candidates = [l for l in find_cycles(order, edges) + find_chains(order, edges) if l not in declined]
+    # By key, not by tuple: a member who withdrew and relisted comes back later in the queue, which
+    # rotates the cycle's members, and a declined loop must still be recognised.
+    gone = {l.key for l in declined}
+    candidates = [l for l in find_cycles(order, edges) + find_chains(order, edges) if l.key not in gone]
     return select(candidates, seq), candidates
