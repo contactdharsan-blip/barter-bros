@@ -1,0 +1,8380 @@
+{
+ "about": "A recording of the Barter Bros web demo: the real service, run in-process by scripts/record_demo.py. Bots are scripted and everyone is invented.",
+ "scenario": "book-charger-case-3way",
+ "channel": "discord",
+ "user_ref": "demo-jordan",
+ "handle": "h-9bb894",
+ "steps": [
+  {
+   "action": {
+    "kind": "seed",
+    "label": "Try the demo (be Jordan)"
+   },
+   "session": {
+    "id": "053be3b292bbf51addb0bf0e",
+    "handle": "h-9bb894",
+    "channel": "discord",
+    "profile": {
+     "handle": "h-9bb894",
+     "name": "Jordan Rivera",
+     "initials": "JR",
+     "color": "yellow",
+     "campus": "ASU Tempe",
+     "bio": "Biology major, coffee first. Happy to meet at the library.",
+     "member_since": "Aug 2026",
+     "completed": 2,
+     "showed_up": 2,
+     "no_shows": 0
+    },
+    "chat": [
+     {
+      "id": 1,
+      "from": "agent",
+      "text": "Hi, I'm your Barter Bros agent. Tell me what you have and what you want, in your own words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 2,
+      "from": "you",
+      "text": "I have a BIO 181 textbook I'll never open again. I need a USB-C charger, fast charging if possible. I'd give the textbook for anything worth at least $30 to me.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 3,
+      "from": "agent",
+      "text": "I read that with the rules parser as: you have BIO 181 textbook (good); you want charger (connector usb-c).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 4,
+      "from": "agent",
+      "text": "Rough value of yours: $60 (a hint from a table, not a price).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 5,
+      "from": "agent",
+      "text": "Your floor for it is $30. That stays with me: the exchange only ever hears yes or no.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 6,
+      "from": "agent",
+      "text": "Posting your listing under the random handle h-9bb894: the items, their condition and what you'd take. Not your name, contact, floor or reasons.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 7,
+      "from": "agent",
+      "text": "The exchange asked if you'd take h-b50855's USB-C 20 W charger (good) for your BIO 181 textbook (good). I said yes: it's worth $35 to you, at or above your $30 floor. It only hears the yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 8,
+      "from": "agent",
+      "text": "Found a 3-way trade loop: you give your BIO 181 textbook (good) to h-16b355, and you get h-b50855's USB-C 20 W charger (good). The others are only handles until everyone says yes. One no unwinds it for everyone. Do you want this trade?",
+      "t": 1792861200,
+      "actions": [
+       {
+        "id": "T1:loop:yes",
+        "label": "Accept",
+        "style": "primary",
+        "open": true
+       },
+       {
+        "id": "T1:loop:no",
+        "label": "Decline",
+        "style": "secondary",
+        "open": true
+       }
+      ]
+     }
+    ],
+    "listing": {
+     "have": {
+      "category": "textbook",
+      "attributes": {
+       "course": "BIO 181"
+      },
+      "condition": "good",
+      "label": "BIO 181 textbook (good)"
+     },
+     "est_value": 60,
+     "wants": [
+      {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c"
+       },
+       "min_condition": null,
+       "label": "charger (connector usb-c)"
+      }
+     ],
+     "floor": 30.0,
+     "parser": "rules",
+     "posted": true,
+     "open": false
+    },
+    "trades": [
+     {
+      "id": "T1",
+      "state": "proposed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": true,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": null,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": null,
+      "mine": {
+       "gives": {
+        "category": "textbook",
+        "attributes": {
+         "course": "BIO 181"
+        },
+        "condition": "good",
+        "label": "BIO 181 textbook (good)"
+       },
+       "gets": {
+        "category": "charger",
+        "attributes": {
+         "connector": "usb-c",
+         "watts": 20
+        },
+        "condition": "good",
+        "label": "USB-C 20 W charger (good)"
+       },
+       "to": "h-16b355",
+       "from": "h-b50855",
+       "worth": {
+        "value": 35,
+        "floor": 30.0
+       }
+      }
+     }
+    ],
+    "history": [],
+    "generation": 2
+   },
+   "exchange": {
+    "generation": 2,
+    "nodes": [
+     {
+      "handle": "h-9bb894",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "BIO 181"
+       },
+       "condition": "good",
+       "label": "BIO 181 textbook (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-16b355",
+      "channel": "discord",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "iPhone 15"
+       },
+       "condition": "new",
+       "label": "iPhone 15 case (new)"
+      },
+      "wants": [
+       "textbook (course BIO 181)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-482931",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk lamp"
+       },
+       "condition": "good",
+       "label": "desk lamp (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-b50855",
+      "channel": "discord",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good",
+       "label": "USB-C 20 W charger (good)"
+      },
+      "wants": [
+       "phone case (model iPhone 15)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     }
+    ],
+    "trades": [
+     {
+      "id": "T1",
+      "state": "proposed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": null,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": null
+     }
+    ],
+    "stats": {
+     "agents": 4,
+     "listings": 4,
+     "loops": 1
+    }
+   },
+   "wire": [
+    {
+     "i": 0,
+     "t": 1792861200,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-16b355",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "iPhone 15"
+       },
+       "condition": "new"
+      },
+      "wants": [
+       {
+        "category": "textbook",
+        "attributes": {
+         "course": "BIO 181"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 1,
+     "t": 1792861200,
+     "sender": "h-482931",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-482931",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk lamp"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "charger",
+        "attributes": {
+         "connector": "usb-c"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 2,
+     "t": 1792861200,
+     "sender": "h-b50855",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-b50855",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "phone_case",
+        "attributes": {
+         "model": "iPhone 15"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 3,
+     "t": 1792861200,
+     "sender": "exchange",
+     "recipient": "h-b50855",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-16b355",
+      "item": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "iPhone 15"
+       },
+       "condition": "new"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 4,
+     "t": 1792861200,
+     "sender": "h-b50855",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-16b355",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 5,
+     "t": 1792861200,
+     "sender": "exchange",
+     "recipient": "h-482931",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-b50855",
+      "item": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 6,
+     "t": 1792861200,
+     "sender": "h-482931",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-b50855",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 7,
+     "t": 1792861200,
+     "sender": "h-9bb894",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-9bb894",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "BIO 181"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "charger",
+        "attributes": {
+         "connector": "usb-c"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 8,
+     "t": 1792861200,
+     "sender": "exchange",
+     "recipient": "h-9bb894",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-b50855",
+      "item": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 9,
+     "t": 1792861200,
+     "sender": "h-9bb894",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-b50855",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 10,
+     "t": 1792861200,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-9bb894",
+      "item": {
+       "category": "textbook",
+       "attributes": {
+        "course": "BIO 181"
+       },
+       "condition": "good"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 11,
+     "t": 1792861200,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-9bb894",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 12,
+     "t": 1792861200,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T1",
+      "shape": "cycle",
+      "loop": [
+       {
+        "handle": "h-16b355",
+        "have": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new"
+        },
+        "wants": [
+         {
+          "category": "textbook",
+          "attributes": {
+           "course": "BIO 181"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-b50855",
+        "have": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "phone_case",
+          "attributes": {
+           "model": "iPhone 15"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-9bb894",
+        "have": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "charger",
+          "attributes": {
+           "connector": "usb-c"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 13,
+     "t": 1792861200,
+     "sender": "exchange",
+     "recipient": "h-b50855",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T1",
+      "shape": "cycle",
+      "loop": [
+       {
+        "handle": "h-16b355",
+        "have": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new"
+        },
+        "wants": [
+         {
+          "category": "textbook",
+          "attributes": {
+           "course": "BIO 181"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-b50855",
+        "have": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "phone_case",
+          "attributes": {
+           "model": "iPhone 15"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-9bb894",
+        "have": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "charger",
+          "attributes": {
+           "connector": "usb-c"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 14,
+     "t": 1792861200,
+     "sender": "exchange",
+     "recipient": "h-9bb894",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T1",
+      "shape": "cycle",
+      "loop": [
+       {
+        "handle": "h-16b355",
+        "have": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new"
+        },
+        "wants": [
+         {
+          "category": "textbook",
+          "attributes": {
+           "course": "BIO 181"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-b50855",
+        "have": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "phone_case",
+          "attributes": {
+           "model": "iPhone 15"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-9bb894",
+        "have": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "charger",
+          "attributes": {
+           "connector": "usb-c"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 15,
+     "t": 1792861200,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T1",
+      "handle": "h-16b355",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 16,
+     "t": 1792861200,
+     "sender": "h-b50855",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T1",
+      "handle": "h-b50855",
+      "answer": "yes"
+     }
+    }
+   ]
+  },
+  {
+   "action": {
+    "kind": "market",
+    "label": "Busy market"
+   },
+   "session": {
+    "id": "053be3b292bbf51addb0bf0e",
+    "handle": "h-9bb894",
+    "channel": "discord",
+    "profile": {
+     "handle": "h-9bb894",
+     "name": "Jordan Rivera",
+     "initials": "JR",
+     "color": "yellow",
+     "campus": "ASU Tempe",
+     "bio": "Biology major, coffee first. Happy to meet at the library.",
+     "member_since": "Aug 2026",
+     "completed": 2,
+     "showed_up": 2,
+     "no_shows": 0
+    },
+    "chat": [
+     {
+      "id": 1,
+      "from": "agent",
+      "text": "Hi, I'm your Barter Bros agent. Tell me what you have and what you want, in your own words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 2,
+      "from": "you",
+      "text": "I have a BIO 181 textbook I'll never open again. I need a USB-C charger, fast charging if possible. I'd give the textbook for anything worth at least $30 to me.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 3,
+      "from": "agent",
+      "text": "I read that with the rules parser as: you have BIO 181 textbook (good); you want charger (connector usb-c).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 4,
+      "from": "agent",
+      "text": "Rough value of yours: $60 (a hint from a table, not a price).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 5,
+      "from": "agent",
+      "text": "Your floor for it is $30. That stays with me: the exchange only ever hears yes or no.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 6,
+      "from": "agent",
+      "text": "Posting your listing under the random handle h-9bb894: the items, their condition and what you'd take. Not your name, contact, floor or reasons.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 7,
+      "from": "agent",
+      "text": "The exchange asked if you'd take h-b50855's USB-C 20 W charger (good) for your BIO 181 textbook (good). I said yes: it's worth $35 to you, at or above your $30 floor. It only hears the yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 8,
+      "from": "agent",
+      "text": "Found a 3-way trade loop: you give your BIO 181 textbook (good) to h-16b355, and you get h-b50855's USB-C 20 W charger (good). The others are only handles until everyone says yes. One no unwinds it for everyone. Do you want this trade?",
+      "t": 1792861200,
+      "actions": [
+       {
+        "id": "T1:loop:yes",
+        "label": "Accept",
+        "style": "primary",
+        "open": true
+       },
+       {
+        "id": "T1:loop:no",
+        "label": "Decline",
+        "style": "secondary",
+        "open": true
+       }
+      ]
+     }
+    ],
+    "listing": {
+     "have": {
+      "category": "textbook",
+      "attributes": {
+       "course": "BIO 181"
+      },
+      "condition": "good",
+      "label": "BIO 181 textbook (good)"
+     },
+     "est_value": 60,
+     "wants": [
+      {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c"
+       },
+       "min_condition": null,
+       "label": "charger (connector usb-c)"
+      }
+     ],
+     "floor": 30.0,
+     "parser": "rules",
+     "posted": true,
+     "open": false
+    },
+    "trades": [
+     {
+      "id": "T1",
+      "state": "proposed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": true,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": null,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": null,
+      "mine": {
+       "gives": {
+        "category": "textbook",
+        "attributes": {
+         "course": "BIO 181"
+        },
+        "condition": "good",
+        "label": "BIO 181 textbook (good)"
+       },
+       "gets": {
+        "category": "charger",
+        "attributes": {
+         "connector": "usb-c",
+         "watts": 20
+        },
+        "condition": "good",
+        "label": "USB-C 20 W charger (good)"
+       },
+       "to": "h-16b355",
+       "from": "h-b50855",
+       "worth": {
+        "value": 35,
+        "floor": 30.0
+       }
+      }
+     }
+    ],
+    "history": [],
+    "generation": 2
+   },
+   "exchange": {
+    "generation": 2,
+    "nodes": [
+     {
+      "handle": "h-9bb894",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "BIO 181"
+       },
+       "condition": "good",
+       "label": "BIO 181 textbook (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-16b355",
+      "channel": "discord",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "iPhone 15"
+       },
+       "condition": "new",
+       "label": "iPhone 15 case (new)"
+      },
+      "wants": [
+       "textbook (course BIO 181)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-482931",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk lamp"
+       },
+       "condition": "good",
+       "label": "desk lamp (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-b50855",
+      "channel": "discord",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good",
+       "label": "USB-C 20 W charger (good)"
+      },
+      "wants": [
+       "phone case (model iPhone 15)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-d86ebf",
+      "channel": "imessage",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "TI-84"
+       },
+       "condition": "good",
+       "label": "TI-84 (good)"
+      },
+      "wants": [
+       "furniture (kind mini fridge)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-6ddb39",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "mini fridge"
+       },
+       "condition": "good",
+       "label": "mini fridge (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-f429f3",
+      "channel": "web",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "hoodie",
+        "size": "M"
+       },
+       "condition": "good",
+       "label": "hoodie, size M (good)"
+      },
+      "wants": [
+       "furniture (kind desk chair)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-04405d",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk chair"
+       },
+       "condition": "good",
+       "label": "desk chair (good)"
+      },
+      "wants": [
+       "textbook (course CHM 113)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-15afeb",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "CHM 113",
+        "edition": "2"
+       },
+       "condition": "good",
+       "label": "CHM 113 (2 ed.) textbook (good)"
+      },
+      "wants": [
+       "clothing (kind hoodie, size M)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-c7bb64",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "bookshelf"
+       },
+       "condition": "good",
+       "label": "bookshelf (good)"
+      },
+      "wants": [],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-ffa946",
+      "channel": "discord",
+      "have": null,
+      "wants": [
+       "charger (connector lightning)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-480009",
+      "channel": "web",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "lightning"
+       },
+       "condition": "good",
+       "label": "Lightning charger (good)"
+      },
+      "wants": [
+       "furniture (kind bookshelf)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-46c6bd",
+      "channel": "imessage",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "Pixel 8"
+       },
+       "condition": "good",
+       "label": "Pixel 8 case (good)"
+      },
+      "wants": [
+       "calculator (model TI-Nspire)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-3d9f60",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "futon"
+       },
+       "condition": "good",
+       "label": "futon (good)"
+      },
+      "wants": [
+       "furniture (kind rug)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-85ee6f",
+      "channel": "imessage",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "jacket",
+        "size": "L"
+       },
+       "condition": "good",
+       "label": "jacket, size L (good)"
+      },
+      "wants": [
+       "other (kind backpack)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-623f36",
+      "channel": "discord",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "Casio FX-991"
+       },
+       "condition": "good",
+       "label": "Casio FX-991 (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "listed",
+      "trade": null
+     }
+    ],
+    "trades": [
+     {
+      "id": "T1",
+      "state": "proposed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": null,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": null
+     },
+     {
+      "id": "T2",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-d86ebf",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "calculator",
+         "attributes": {
+          "model": "TI-84"
+         },
+         "condition": "good",
+         "label": "TI-84 (good)"
+        },
+        "to": "h-6ddb39",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-6ddb39",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "mini fridge"
+         },
+         "condition": "good",
+         "label": "mini fridge (good)"
+        },
+        "to": "h-d86ebf",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T3",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-f429f3",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "clothing",
+         "attributes": {
+          "kind": "hoodie",
+          "size": "M"
+         },
+         "condition": "good",
+         "label": "hoodie, size M (good)"
+        },
+        "to": "h-15afeb",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-15afeb",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "CHM 113",
+          "edition": "2"
+         },
+         "condition": "good",
+         "label": "CHM 113 (2 ed.) textbook (good)"
+        },
+        "to": "h-04405d",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-04405d",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "desk chair"
+         },
+         "condition": "good",
+         "label": "desk chair (good)"
+        },
+        "to": "h-f429f3",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T4",
+      "state": "meetup_agreed",
+      "shape": "chain",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-c7bb64",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "bookshelf"
+         },
+         "condition": "good",
+         "label": "bookshelf (good)"
+        },
+        "to": "h-480009",
+        "receiver": false,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-480009",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "lightning"
+         },
+         "condition": "good",
+         "label": "Lightning charger (good)"
+        },
+        "to": "h-ffa946",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-ffa946",
+        "channel": "discord",
+        "you": false,
+        "gives": null,
+        "to": null,
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     }
+    ],
+    "stats": {
+     "agents": 16,
+     "listings": 16,
+     "loops": 4
+    }
+   },
+   "wire": [
+    {
+     "i": 17,
+     "t": 1792861225,
+     "sender": "h-d86ebf",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-d86ebf",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "TI-84"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "furniture",
+        "attributes": {
+         "kind": "mini fridge"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 18,
+     "t": 1792861225,
+     "sender": "h-6ddb39",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-6ddb39",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "mini fridge"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "calculator",
+        "attributes": {
+         "model": "TI-84"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 19,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-6ddb39",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-d86ebf",
+      "item": {
+       "category": "calculator",
+       "attributes": {
+        "model": "TI-84"
+       },
+       "condition": "good"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 20,
+     "t": 1792861225,
+     "sender": "h-6ddb39",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-d86ebf",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 21,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-d86ebf",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-6ddb39",
+      "item": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "mini fridge"
+       },
+       "condition": "good"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 22,
+     "t": 1792861225,
+     "sender": "h-d86ebf",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-6ddb39",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 23,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-d86ebf",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T2",
+      "shape": "cycle",
+      "loop": [
+       {
+        "handle": "h-d86ebf",
+        "have": {
+         "category": "calculator",
+         "attributes": {
+          "model": "TI-84"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "furniture",
+          "attributes": {
+           "kind": "mini fridge"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-6ddb39",
+        "have": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "mini fridge"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "calculator",
+          "attributes": {
+           "model": "TI-84"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 24,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-6ddb39",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T2",
+      "shape": "cycle",
+      "loop": [
+       {
+        "handle": "h-d86ebf",
+        "have": {
+         "category": "calculator",
+         "attributes": {
+          "model": "TI-84"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "furniture",
+          "attributes": {
+           "kind": "mini fridge"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-6ddb39",
+        "have": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "mini fridge"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "calculator",
+          "attributes": {
+           "model": "TI-84"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 25,
+     "t": 1792861225,
+     "sender": "h-d86ebf",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T2",
+      "handle": "h-d86ebf",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 26,
+     "t": 1792861225,
+     "sender": "h-6ddb39",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T2",
+      "handle": "h-6ddb39",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 27,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-d86ebf",
+     "kind": "identity",
+     "payload": {
+      "trade": "T2",
+      "profiles": [
+       {
+        "handle": "h-6ddb39",
+        "name": "Bo Patel",
+        "initials": "BP",
+        "color": "purple",
+        "campus": "ASU Polytechnic",
+        "bio": "Mechanical engineering. Weekends work best.",
+        "member_since": "Oct 2026",
+        "completed": 1,
+        "showed_up": 1,
+        "no_shows": 0
+       }
+      ]
+     }
+    },
+    {
+     "i": 28,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-6ddb39",
+     "kind": "identity",
+     "payload": {
+      "trade": "T2",
+      "profiles": [
+       {
+        "handle": "h-d86ebf",
+        "name": "Avery Lin",
+        "initials": "AL",
+        "color": "lime",
+        "campus": "ASU Tempe",
+        "bio": "Econ junior. Meets between classes.",
+        "member_since": "Oct 2026",
+        "completed": 3,
+        "showed_up": 3,
+        "no_shows": 0
+       }
+      ]
+     }
+    },
+    {
+     "i": 29,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-d86ebf",
+     "kind": "free?",
+     "payload": {
+      "trade": "T2",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 30,
+     "t": 1792861225,
+     "sender": "h-d86ebf",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T2",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 31,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-6ddb39",
+     "kind": "free?",
+     "payload": {
+      "trade": "T2",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 32,
+     "t": 1792861225,
+     "sender": "h-6ddb39",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T2",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 33,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-d86ebf",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T2",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 34,
+     "t": 1792861225,
+     "sender": "h-d86ebf",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T2",
+      "spot": "Memorial Union",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 35,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-6ddb39",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T2",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 36,
+     "t": 1792861225,
+     "sender": "h-6ddb39",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T2",
+      "spot": "Memorial Union",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 37,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-d86ebf",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T2",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 38,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-6ddb39",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T2",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 39,
+     "t": 1792861225,
+     "sender": "h-d86ebf",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T2",
+      "handle": "h-d86ebf",
+      "answer": "yes",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 40,
+     "t": 1792861225,
+     "sender": "h-6ddb39",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T2",
+      "handle": "h-6ddb39",
+      "answer": "yes",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 41,
+     "t": 1792861225,
+     "sender": "h-f429f3",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-f429f3",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "hoodie",
+        "size": "M"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "furniture",
+        "attributes": {
+         "kind": "desk chair"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 42,
+     "t": 1792861225,
+     "sender": "h-04405d",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-04405d",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk chair"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "textbook",
+        "attributes": {
+         "course": "CHM 113"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 43,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-f429f3",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-04405d",
+      "item": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk chair"
+       },
+       "condition": "good"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 44,
+     "t": 1792861225,
+     "sender": "h-f429f3",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-04405d",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 45,
+     "t": 1792861225,
+     "sender": "h-15afeb",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-15afeb",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "CHM 113",
+        "edition": "2"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "clothing",
+        "attributes": {
+         "kind": "hoodie",
+         "size": "M"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 46,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-15afeb",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-f429f3",
+      "item": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "hoodie",
+        "size": "M"
+       },
+       "condition": "good"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 47,
+     "t": 1792861225,
+     "sender": "h-15afeb",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-f429f3",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 48,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-04405d",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-15afeb",
+      "item": {
+       "category": "textbook",
+       "attributes": {
+        "course": "CHM 113",
+        "edition": "2"
+       },
+       "condition": "good"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 49,
+     "t": 1792861225,
+     "sender": "h-04405d",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-15afeb",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 50,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-f429f3",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T3",
+      "shape": "cycle",
+      "loop": [
+       {
+        "handle": "h-f429f3",
+        "have": {
+         "category": "clothing",
+         "attributes": {
+          "kind": "hoodie",
+          "size": "M"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "furniture",
+          "attributes": {
+           "kind": "desk chair"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-15afeb",
+        "have": {
+         "category": "textbook",
+         "attributes": {
+          "course": "CHM 113",
+          "edition": "2"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "clothing",
+          "attributes": {
+           "kind": "hoodie",
+           "size": "M"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-04405d",
+        "have": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "desk chair"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "textbook",
+          "attributes": {
+           "course": "CHM 113"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 51,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-15afeb",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T3",
+      "shape": "cycle",
+      "loop": [
+       {
+        "handle": "h-f429f3",
+        "have": {
+         "category": "clothing",
+         "attributes": {
+          "kind": "hoodie",
+          "size": "M"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "furniture",
+          "attributes": {
+           "kind": "desk chair"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-15afeb",
+        "have": {
+         "category": "textbook",
+         "attributes": {
+          "course": "CHM 113",
+          "edition": "2"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "clothing",
+          "attributes": {
+           "kind": "hoodie",
+           "size": "M"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-04405d",
+        "have": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "desk chair"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "textbook",
+          "attributes": {
+           "course": "CHM 113"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 52,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-04405d",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T3",
+      "shape": "cycle",
+      "loop": [
+       {
+        "handle": "h-f429f3",
+        "have": {
+         "category": "clothing",
+         "attributes": {
+          "kind": "hoodie",
+          "size": "M"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "furniture",
+          "attributes": {
+           "kind": "desk chair"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-15afeb",
+        "have": {
+         "category": "textbook",
+         "attributes": {
+          "course": "CHM 113",
+          "edition": "2"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "clothing",
+          "attributes": {
+           "kind": "hoodie",
+           "size": "M"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-04405d",
+        "have": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "desk chair"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "textbook",
+          "attributes": {
+           "course": "CHM 113"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 53,
+     "t": 1792861225,
+     "sender": "h-f429f3",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T3",
+      "handle": "h-f429f3",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 54,
+     "t": 1792861225,
+     "sender": "h-15afeb",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T3",
+      "handle": "h-15afeb",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 55,
+     "t": 1792861225,
+     "sender": "h-04405d",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T3",
+      "handle": "h-04405d",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 56,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-f429f3",
+     "kind": "identity",
+     "payload": {
+      "trade": "T3",
+      "profiles": [
+       {
+        "handle": "h-15afeb",
+        "name": "Eli Novak",
+        "initials": "EN",
+        "color": "purple",
+        "campus": "ASU Downtown Phoenix",
+        "bio": "Nursing student. Commutes in on Saturdays.",
+        "member_since": "Oct 2026",
+        "completed": 2,
+        "showed_up": 2,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-04405d",
+        "name": "Dana Webb",
+        "initials": "DW",
+        "color": "purple",
+        "campus": "ASU Tempe",
+        "bio": "Pre-med. Usually at Noble Library.",
+        "member_since": "Oct 2026",
+        "completed": 5,
+        "showed_up": 4,
+        "no_shows": 1
+       }
+      ]
+     }
+    },
+    {
+     "i": 57,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-15afeb",
+     "kind": "identity",
+     "payload": {
+      "trade": "T3",
+      "profiles": [
+       {
+        "handle": "h-f429f3",
+        "name": "Cam Ortiz",
+        "initials": "CO",
+        "color": "purple",
+        "campus": "ASU Tempe",
+        "bio": "Film major. Will trade for anything sittable.",
+        "member_since": "Oct 2026",
+        "completed": 2,
+        "showed_up": 2,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-04405d",
+        "name": "Dana Webb",
+        "initials": "DW",
+        "color": "purple",
+        "campus": "ASU Tempe",
+        "bio": "Pre-med. Usually at Noble Library.",
+        "member_since": "Oct 2026",
+        "completed": 5,
+        "showed_up": 4,
+        "no_shows": 1
+       }
+      ]
+     }
+    },
+    {
+     "i": 58,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-04405d",
+     "kind": "identity",
+     "payload": {
+      "trade": "T3",
+      "profiles": [
+       {
+        "handle": "h-f429f3",
+        "name": "Cam Ortiz",
+        "initials": "CO",
+        "color": "purple",
+        "campus": "ASU Tempe",
+        "bio": "Film major. Will trade for anything sittable.",
+        "member_since": "Oct 2026",
+        "completed": 2,
+        "showed_up": 2,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-15afeb",
+        "name": "Eli Novak",
+        "initials": "EN",
+        "color": "purple",
+        "campus": "ASU Downtown Phoenix",
+        "bio": "Nursing student. Commutes in on Saturdays.",
+        "member_since": "Oct 2026",
+        "completed": 2,
+        "showed_up": 2,
+        "no_shows": 0
+       }
+      ]
+     }
+    },
+    {
+     "i": 59,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-f429f3",
+     "kind": "free?",
+     "payload": {
+      "trade": "T3",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 60,
+     "t": 1792861225,
+     "sender": "h-f429f3",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T3",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 61,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-15afeb",
+     "kind": "free?",
+     "payload": {
+      "trade": "T3",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 62,
+     "t": 1792861225,
+     "sender": "h-15afeb",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T3",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 63,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-04405d",
+     "kind": "free?",
+     "payload": {
+      "trade": "T3",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 64,
+     "t": 1792861225,
+     "sender": "h-04405d",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T3",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 65,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-f429f3",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T3",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 66,
+     "t": 1792861225,
+     "sender": "h-f429f3",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T3",
+      "spot": "Memorial Union",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 67,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-15afeb",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T3",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 68,
+     "t": 1792861225,
+     "sender": "h-15afeb",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T3",
+      "spot": "Memorial Union",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 69,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-04405d",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T3",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 70,
+     "t": 1792861225,
+     "sender": "h-04405d",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T3",
+      "spot": "Memorial Union",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 71,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-f429f3",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T3",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 72,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-15afeb",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T3",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 73,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-04405d",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T3",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 74,
+     "t": 1792861225,
+     "sender": "h-f429f3",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T3",
+      "handle": "h-f429f3",
+      "answer": "yes",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 75,
+     "t": 1792861225,
+     "sender": "h-15afeb",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T3",
+      "handle": "h-15afeb",
+      "answer": "yes",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 76,
+     "t": 1792861225,
+     "sender": "h-04405d",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T3",
+      "handle": "h-04405d",
+      "answer": "yes",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 77,
+     "t": 1792861225,
+     "sender": "h-c7bb64",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-c7bb64",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "bookshelf"
+       },
+       "condition": "good"
+      },
+      "wants": []
+     }
+    },
+    {
+     "i": 78,
+     "t": 1792861225,
+     "sender": "h-ffa946",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-ffa946",
+      "have": null,
+      "wants": [
+       {
+        "category": "charger",
+        "attributes": {
+         "connector": "lightning"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 79,
+     "t": 1792861225,
+     "sender": "h-480009",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-480009",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "lightning"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "furniture",
+        "attributes": {
+         "kind": "bookshelf"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 80,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-480009",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-c7bb64",
+      "item": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "bookshelf"
+       },
+       "condition": "good"
+      },
+      "you_give": false
+     }
+    },
+    {
+     "i": 81,
+     "t": 1792861225,
+     "sender": "h-480009",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-c7bb64",
+      "you_give": false,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 82,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-480009",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-c7bb64",
+      "item": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "bookshelf"
+       },
+       "condition": "good"
+      },
+      "you_give": true
+     }
+    },
+    {
+     "i": 83,
+     "t": 1792861225,
+     "sender": "h-480009",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-c7bb64",
+      "you_give": true,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 84,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-ffa946",
+     "kind": "edge?",
+     "payload": {
+      "from": "h-480009",
+      "item": {
+       "category": "charger",
+       "attributes": {
+        "connector": "lightning"
+       },
+       "condition": "good"
+      },
+      "you_give": false
+     }
+    },
+    {
+     "i": 85,
+     "t": 1792861225,
+     "sender": "h-ffa946",
+     "recipient": "exchange",
+     "kind": "edge",
+     "payload": {
+      "from": "h-480009",
+      "you_give": false,
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 86,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-c7bb64",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T4",
+      "shape": "chain",
+      "loop": [
+       {
+        "handle": "h-c7bb64",
+        "have": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "bookshelf"
+         },
+         "condition": "good"
+        },
+        "wants": []
+       },
+       {
+        "handle": "h-480009",
+        "have": {
+         "category": "charger",
+         "attributes": {
+          "connector": "lightning"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "furniture",
+          "attributes": {
+           "kind": "bookshelf"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-ffa946",
+        "have": null,
+        "wants": [
+         {
+          "category": "charger",
+          "attributes": {
+           "connector": "lightning"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 87,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-480009",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T4",
+      "shape": "chain",
+      "loop": [
+       {
+        "handle": "h-c7bb64",
+        "have": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "bookshelf"
+         },
+         "condition": "good"
+        },
+        "wants": []
+       },
+       {
+        "handle": "h-480009",
+        "have": {
+         "category": "charger",
+         "attributes": {
+          "connector": "lightning"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "furniture",
+          "attributes": {
+           "kind": "bookshelf"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-ffa946",
+        "have": null,
+        "wants": [
+         {
+          "category": "charger",
+          "attributes": {
+           "connector": "lightning"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 88,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-ffa946",
+     "kind": "proposal",
+     "payload": {
+      "trade": "T4",
+      "shape": "chain",
+      "loop": [
+       {
+        "handle": "h-c7bb64",
+        "have": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "bookshelf"
+         },
+         "condition": "good"
+        },
+        "wants": []
+       },
+       {
+        "handle": "h-480009",
+        "have": {
+         "category": "charger",
+         "attributes": {
+          "connector": "lightning"
+         },
+         "condition": "good"
+        },
+        "wants": [
+         {
+          "category": "furniture",
+          "attributes": {
+           "kind": "bookshelf"
+          },
+          "min_condition": null
+         }
+        ]
+       },
+       {
+        "handle": "h-ffa946",
+        "have": null,
+        "wants": [
+         {
+          "category": "charger",
+          "attributes": {
+           "connector": "lightning"
+          },
+          "min_condition": null
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "i": 89,
+     "t": 1792861225,
+     "sender": "h-c7bb64",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T4",
+      "handle": "h-c7bb64",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 90,
+     "t": 1792861225,
+     "sender": "h-480009",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T4",
+      "handle": "h-480009",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 91,
+     "t": 1792861225,
+     "sender": "h-ffa946",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T4",
+      "handle": "h-ffa946",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 92,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-c7bb64",
+     "kind": "identity",
+     "payload": {
+      "trade": "T4",
+      "profiles": [
+       {
+        "handle": "h-480009",
+        "name": "Gus Adler",
+        "initials": "GA",
+        "color": "blue",
+        "campus": "ASU Tempe",
+        "bio": "Has a drawer full of cables.",
+        "member_since": "Oct 2026",
+        "completed": 1,
+        "showed_up": 1,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-ffa946",
+        "name": "Hana Sato",
+        "initials": "HS",
+        "color": "yellow",
+        "campus": "ASU Tempe",
+        "bio": "Exchange student from Osaka.",
+        "member_since": "Sep 2026",
+        "completed": 0,
+        "showed_up": 0,
+        "no_shows": 0
+       }
+      ]
+     }
+    },
+    {
+     "i": 93,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-480009",
+     "kind": "identity",
+     "payload": {
+      "trade": "T4",
+      "profiles": [
+       {
+        "handle": "h-c7bb64",
+        "name": "Fern Ruiz",
+        "initials": "FR",
+        "color": "purple",
+        "campus": "ASU Tempe",
+        "bio": "Senior in sociology. Loves a good giveaway.",
+        "member_since": "Oct 2026",
+        "completed": 7,
+        "showed_up": 7,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-ffa946",
+        "name": "Hana Sato",
+        "initials": "HS",
+        "color": "yellow",
+        "campus": "ASU Tempe",
+        "bio": "Exchange student from Osaka.",
+        "member_since": "Sep 2026",
+        "completed": 0,
+        "showed_up": 0,
+        "no_shows": 0
+       }
+      ]
+     }
+    },
+    {
+     "i": 94,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-ffa946",
+     "kind": "identity",
+     "payload": {
+      "trade": "T4",
+      "profiles": [
+       {
+        "handle": "h-c7bb64",
+        "name": "Fern Ruiz",
+        "initials": "FR",
+        "color": "purple",
+        "campus": "ASU Tempe",
+        "bio": "Senior in sociology. Loves a good giveaway.",
+        "member_since": "Oct 2026",
+        "completed": 7,
+        "showed_up": 7,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-480009",
+        "name": "Gus Adler",
+        "initials": "GA",
+        "color": "blue",
+        "campus": "ASU Tempe",
+        "bio": "Has a drawer full of cables.",
+        "member_since": "Oct 2026",
+        "completed": 1,
+        "showed_up": 1,
+        "no_shows": 0
+       }
+      ]
+     }
+    },
+    {
+     "i": 95,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-c7bb64",
+     "kind": "free?",
+     "payload": {
+      "trade": "T4",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 96,
+     "t": 1792861225,
+     "sender": "h-c7bb64",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T4",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 97,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-480009",
+     "kind": "free?",
+     "payload": {
+      "trade": "T4",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 98,
+     "t": 1792861225,
+     "sender": "h-480009",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T4",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 99,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-ffa946",
+     "kind": "free?",
+     "payload": {
+      "trade": "T4",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 100,
+     "t": 1792861225,
+     "sender": "h-ffa946",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T4",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 101,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-c7bb64",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T4",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 102,
+     "t": 1792861225,
+     "sender": "h-c7bb64",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T4",
+      "spot": "Memorial Union",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 103,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-480009",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T4",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 104,
+     "t": 1792861225,
+     "sender": "h-480009",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T4",
+      "spot": "Memorial Union",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 105,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-ffa946",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T4",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 106,
+     "t": 1792861225,
+     "sender": "h-ffa946",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T4",
+      "spot": "Memorial Union",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 107,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-c7bb64",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T4",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 108,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-480009",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T4",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 109,
+     "t": 1792861225,
+     "sender": "exchange",
+     "recipient": "h-ffa946",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T4",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 110,
+     "t": 1792861225,
+     "sender": "h-c7bb64",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T4",
+      "handle": "h-c7bb64",
+      "answer": "yes",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 111,
+     "t": 1792861225,
+     "sender": "h-480009",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T4",
+      "handle": "h-480009",
+      "answer": "yes",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 112,
+     "t": 1792861225,
+     "sender": "h-ffa946",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T4",
+      "handle": "h-ffa946",
+      "answer": "yes",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 113,
+     "t": 1792861225,
+     "sender": "h-46c6bd",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-46c6bd",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "Pixel 8"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "calculator",
+        "attributes": {
+         "model": "TI-Nspire"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 114,
+     "t": 1792861225,
+     "sender": "h-3d9f60",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-3d9f60",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "futon"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "furniture",
+        "attributes": {
+         "kind": "rug"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 115,
+     "t": 1792861225,
+     "sender": "h-85ee6f",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-85ee6f",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "jacket",
+        "size": "L"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "other",
+        "attributes": {
+         "kind": "backpack"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    },
+    {
+     "i": 116,
+     "t": 1792861225,
+     "sender": "h-623f36",
+     "recipient": "exchange",
+     "kind": "offer",
+     "payload": {
+      "handle": "h-623f36",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "Casio FX-991"
+       },
+       "condition": "good"
+      },
+      "wants": [
+       {
+        "category": "calculator",
+        "attributes": {
+         "model": "TI-84"
+        },
+        "min_condition": null
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "action": {
+    "kind": "message",
+    "label": "Jordan DMs: “I'm free saturday morning”",
+    "text": "I'm free saturday morning"
+   },
+   "session": {
+    "id": "053be3b292bbf51addb0bf0e",
+    "handle": "h-9bb894",
+    "channel": "discord",
+    "profile": {
+     "handle": "h-9bb894",
+     "name": "Jordan Rivera",
+     "initials": "JR",
+     "color": "yellow",
+     "campus": "ASU Tempe",
+     "bio": "Biology major, coffee first. Happy to meet at the library.",
+     "member_since": "Aug 2026",
+     "completed": 2,
+     "showed_up": 2,
+     "no_shows": 0
+    },
+    "chat": [
+     {
+      "id": 1,
+      "from": "agent",
+      "text": "Hi, I'm your Barter Bros agent. Tell me what you have and what you want, in your own words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 2,
+      "from": "you",
+      "text": "I have a BIO 181 textbook I'll never open again. I need a USB-C charger, fast charging if possible. I'd give the textbook for anything worth at least $30 to me.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 3,
+      "from": "agent",
+      "text": "I read that with the rules parser as: you have BIO 181 textbook (good); you want charger (connector usb-c).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 4,
+      "from": "agent",
+      "text": "Rough value of yours: $60 (a hint from a table, not a price).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 5,
+      "from": "agent",
+      "text": "Your floor for it is $30. That stays with me: the exchange only ever hears yes or no.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 6,
+      "from": "agent",
+      "text": "Posting your listing under the random handle h-9bb894: the items, their condition and what you'd take. Not your name, contact, floor or reasons.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 7,
+      "from": "agent",
+      "text": "The exchange asked if you'd take h-b50855's USB-C 20 W charger (good) for your BIO 181 textbook (good). I said yes: it's worth $35 to you, at or above your $30 floor. It only hears the yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 8,
+      "from": "agent",
+      "text": "Found a 3-way trade loop: you give your BIO 181 textbook (good) to h-16b355, and you get h-b50855's USB-C 20 W charger (good). The others are only handles until everyone says yes. One no unwinds it for everyone. Do you want this trade?",
+      "t": 1792861200,
+      "actions": [
+       {
+        "id": "T1:loop:yes",
+        "label": "Accept",
+        "style": "primary",
+        "open": true
+       },
+       {
+        "id": "T1:loop:no",
+        "label": "Decline",
+        "style": "secondary",
+        "open": true
+       }
+      ]
+     },
+     {
+      "id": 9,
+      "from": "you",
+      "text": "I'm free saturday morning",
+      "t": 1792861250,
+      "actions": []
+     },
+     {
+      "id": 10,
+      "from": "agent",
+      "text": "I read that as: you're free Sat morning (8:00 AM-12:00 PM). Right?",
+      "t": 1792861250,
+      "actions": [
+       {
+        "id": "F10:times:yes",
+        "label": "That's right",
+        "style": "primary",
+        "open": true
+       },
+       {
+        "id": "F10:times:no",
+        "label": "Not quite",
+        "style": "secondary",
+        "open": true
+       }
+      ]
+     }
+    ],
+    "listing": {
+     "have": {
+      "category": "textbook",
+      "attributes": {
+       "course": "BIO 181"
+      },
+      "condition": "good",
+      "label": "BIO 181 textbook (good)"
+     },
+     "est_value": 60,
+     "wants": [
+      {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c"
+       },
+       "min_condition": null,
+       "label": "charger (connector usb-c)"
+      }
+     ],
+     "floor": 30.0,
+     "parser": "rules",
+     "posted": true,
+     "open": false
+    },
+    "trades": [
+     {
+      "id": "T1",
+      "state": "proposed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": true,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": null,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": null,
+      "mine": {
+       "gives": {
+        "category": "textbook",
+        "attributes": {
+         "course": "BIO 181"
+        },
+        "condition": "good",
+        "label": "BIO 181 textbook (good)"
+       },
+       "gets": {
+        "category": "charger",
+        "attributes": {
+         "connector": "usb-c",
+         "watts": 20
+        },
+        "condition": "good",
+        "label": "USB-C 20 W charger (good)"
+       },
+       "to": "h-16b355",
+       "from": "h-b50855",
+       "worth": {
+        "value": 35,
+        "floor": 30.0
+       }
+      }
+     }
+    ],
+    "history": [],
+    "generation": 2
+   },
+   "exchange": {
+    "generation": 2,
+    "nodes": [
+     {
+      "handle": "h-9bb894",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "BIO 181"
+       },
+       "condition": "good",
+       "label": "BIO 181 textbook (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-16b355",
+      "channel": "discord",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "iPhone 15"
+       },
+       "condition": "new",
+       "label": "iPhone 15 case (new)"
+      },
+      "wants": [
+       "textbook (course BIO 181)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-482931",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk lamp"
+       },
+       "condition": "good",
+       "label": "desk lamp (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-b50855",
+      "channel": "discord",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good",
+       "label": "USB-C 20 W charger (good)"
+      },
+      "wants": [
+       "phone case (model iPhone 15)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-d86ebf",
+      "channel": "imessage",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "TI-84"
+       },
+       "condition": "good",
+       "label": "TI-84 (good)"
+      },
+      "wants": [
+       "furniture (kind mini fridge)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-6ddb39",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "mini fridge"
+       },
+       "condition": "good",
+       "label": "mini fridge (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-f429f3",
+      "channel": "web",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "hoodie",
+        "size": "M"
+       },
+       "condition": "good",
+       "label": "hoodie, size M (good)"
+      },
+      "wants": [
+       "furniture (kind desk chair)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-04405d",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk chair"
+       },
+       "condition": "good",
+       "label": "desk chair (good)"
+      },
+      "wants": [
+       "textbook (course CHM 113)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-15afeb",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "CHM 113",
+        "edition": "2"
+       },
+       "condition": "good",
+       "label": "CHM 113 (2 ed.) textbook (good)"
+      },
+      "wants": [
+       "clothing (kind hoodie, size M)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-c7bb64",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "bookshelf"
+       },
+       "condition": "good",
+       "label": "bookshelf (good)"
+      },
+      "wants": [],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-ffa946",
+      "channel": "discord",
+      "have": null,
+      "wants": [
+       "charger (connector lightning)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-480009",
+      "channel": "web",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "lightning"
+       },
+       "condition": "good",
+       "label": "Lightning charger (good)"
+      },
+      "wants": [
+       "furniture (kind bookshelf)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-46c6bd",
+      "channel": "imessage",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "Pixel 8"
+       },
+       "condition": "good",
+       "label": "Pixel 8 case (good)"
+      },
+      "wants": [
+       "calculator (model TI-Nspire)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-3d9f60",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "futon"
+       },
+       "condition": "good",
+       "label": "futon (good)"
+      },
+      "wants": [
+       "furniture (kind rug)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-85ee6f",
+      "channel": "imessage",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "jacket",
+        "size": "L"
+       },
+       "condition": "good",
+       "label": "jacket, size L (good)"
+      },
+      "wants": [
+       "other (kind backpack)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-623f36",
+      "channel": "discord",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "Casio FX-991"
+       },
+       "condition": "good",
+       "label": "Casio FX-991 (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "listed",
+      "trade": null
+     }
+    ],
+    "trades": [
+     {
+      "id": "T1",
+      "state": "proposed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": null,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": null
+     },
+     {
+      "id": "T2",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-d86ebf",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "calculator",
+         "attributes": {
+          "model": "TI-84"
+         },
+         "condition": "good",
+         "label": "TI-84 (good)"
+        },
+        "to": "h-6ddb39",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-6ddb39",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "mini fridge"
+         },
+         "condition": "good",
+         "label": "mini fridge (good)"
+        },
+        "to": "h-d86ebf",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T3",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-f429f3",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "clothing",
+         "attributes": {
+          "kind": "hoodie",
+          "size": "M"
+         },
+         "condition": "good",
+         "label": "hoodie, size M (good)"
+        },
+        "to": "h-15afeb",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-15afeb",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "CHM 113",
+          "edition": "2"
+         },
+         "condition": "good",
+         "label": "CHM 113 (2 ed.) textbook (good)"
+        },
+        "to": "h-04405d",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-04405d",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "desk chair"
+         },
+         "condition": "good",
+         "label": "desk chair (good)"
+        },
+        "to": "h-f429f3",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T4",
+      "state": "meetup_agreed",
+      "shape": "chain",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-c7bb64",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "bookshelf"
+         },
+         "condition": "good",
+         "label": "bookshelf (good)"
+        },
+        "to": "h-480009",
+        "receiver": false,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-480009",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "lightning"
+         },
+         "condition": "good",
+         "label": "Lightning charger (good)"
+        },
+        "to": "h-ffa946",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-ffa946",
+        "channel": "discord",
+        "you": false,
+        "gives": null,
+        "to": null,
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     }
+    ],
+    "stats": {
+     "agents": 16,
+     "listings": 16,
+     "loops": 4
+    }
+   },
+   "wire": []
+  },
+  {
+   "action": {
+    "kind": "press",
+    "id": "F10:times:yes",
+    "label": "That's right"
+   },
+   "session": {
+    "id": "053be3b292bbf51addb0bf0e",
+    "handle": "h-9bb894",
+    "channel": "discord",
+    "profile": {
+     "handle": "h-9bb894",
+     "name": "Jordan Rivera",
+     "initials": "JR",
+     "color": "yellow",
+     "campus": "ASU Tempe",
+     "bio": "Biology major, coffee first. Happy to meet at the library.",
+     "member_since": "Aug 2026",
+     "completed": 2,
+     "showed_up": 2,
+     "no_shows": 0
+    },
+    "chat": [
+     {
+      "id": 1,
+      "from": "agent",
+      "text": "Hi, I'm your Barter Bros agent. Tell me what you have and what you want, in your own words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 2,
+      "from": "you",
+      "text": "I have a BIO 181 textbook I'll never open again. I need a USB-C charger, fast charging if possible. I'd give the textbook for anything worth at least $30 to me.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 3,
+      "from": "agent",
+      "text": "I read that with the rules parser as: you have BIO 181 textbook (good); you want charger (connector usb-c).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 4,
+      "from": "agent",
+      "text": "Rough value of yours: $60 (a hint from a table, not a price).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 5,
+      "from": "agent",
+      "text": "Your floor for it is $30. That stays with me: the exchange only ever hears yes or no.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 6,
+      "from": "agent",
+      "text": "Posting your listing under the random handle h-9bb894: the items, their condition and what you'd take. Not your name, contact, floor or reasons.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 7,
+      "from": "agent",
+      "text": "The exchange asked if you'd take h-b50855's USB-C 20 W charger (good) for your BIO 181 textbook (good). I said yes: it's worth $35 to you, at or above your $30 floor. It only hears the yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 8,
+      "from": "agent",
+      "text": "Found a 3-way trade loop: you give your BIO 181 textbook (good) to h-16b355, and you get h-b50855's USB-C 20 W charger (good). The others are only handles until everyone says yes. One no unwinds it for everyone. Do you want this trade?",
+      "t": 1792861200,
+      "actions": [
+       {
+        "id": "T1:loop:yes",
+        "label": "Accept",
+        "style": "primary",
+        "open": true
+       },
+       {
+        "id": "T1:loop:no",
+        "label": "Decline",
+        "style": "secondary",
+        "open": true
+       }
+      ]
+     },
+     {
+      "id": 9,
+      "from": "you",
+      "text": "I'm free saturday morning",
+      "t": 1792861250,
+      "actions": []
+     },
+     {
+      "id": 10,
+      "from": "agent",
+      "text": "I read that as: you're free Sat morning (8:00 AM-12:00 PM). Right?",
+      "t": 1792861250,
+      "actions": [
+       {
+        "id": "F10:times:yes",
+        "label": "That's right",
+        "style": "primary",
+        "open": false
+       },
+       {
+        "id": "F10:times:no",
+        "label": "Not quite",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 11,
+      "from": "you",
+      "text": "That's right",
+      "t": 1792861275,
+      "actions": []
+     },
+     {
+      "id": 12,
+      "from": "agent",
+      "text": "Got it: you're free Sat morning (8:00 AM-12:00 PM). That stays with me: the exchange only hears yes or no about one meetup slot at a time.",
+      "t": 1792861275,
+      "actions": []
+     }
+    ],
+    "listing": {
+     "have": {
+      "category": "textbook",
+      "attributes": {
+       "course": "BIO 181"
+      },
+      "condition": "good",
+      "label": "BIO 181 textbook (good)"
+     },
+     "est_value": 60,
+     "wants": [
+      {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c"
+       },
+       "min_condition": null,
+       "label": "charger (connector usb-c)"
+      }
+     ],
+     "floor": 30.0,
+     "parser": "rules",
+     "posted": true,
+     "open": false
+    },
+    "trades": [
+     {
+      "id": "T1",
+      "state": "proposed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": true,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": null,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": null,
+      "mine": {
+       "gives": {
+        "category": "textbook",
+        "attributes": {
+         "course": "BIO 181"
+        },
+        "condition": "good",
+        "label": "BIO 181 textbook (good)"
+       },
+       "gets": {
+        "category": "charger",
+        "attributes": {
+         "connector": "usb-c",
+         "watts": 20
+        },
+        "condition": "good",
+        "label": "USB-C 20 W charger (good)"
+       },
+       "to": "h-16b355",
+       "from": "h-b50855",
+       "worth": {
+        "value": 35,
+        "floor": 30.0
+       }
+      }
+     }
+    ],
+    "history": [],
+    "generation": 2
+   },
+   "exchange": {
+    "generation": 2,
+    "nodes": [
+     {
+      "handle": "h-9bb894",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "BIO 181"
+       },
+       "condition": "good",
+       "label": "BIO 181 textbook (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-16b355",
+      "channel": "discord",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "iPhone 15"
+       },
+       "condition": "new",
+       "label": "iPhone 15 case (new)"
+      },
+      "wants": [
+       "textbook (course BIO 181)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-482931",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk lamp"
+       },
+       "condition": "good",
+       "label": "desk lamp (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-b50855",
+      "channel": "discord",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good",
+       "label": "USB-C 20 W charger (good)"
+      },
+      "wants": [
+       "phone case (model iPhone 15)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-d86ebf",
+      "channel": "imessage",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "TI-84"
+       },
+       "condition": "good",
+       "label": "TI-84 (good)"
+      },
+      "wants": [
+       "furniture (kind mini fridge)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-6ddb39",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "mini fridge"
+       },
+       "condition": "good",
+       "label": "mini fridge (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-f429f3",
+      "channel": "web",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "hoodie",
+        "size": "M"
+       },
+       "condition": "good",
+       "label": "hoodie, size M (good)"
+      },
+      "wants": [
+       "furniture (kind desk chair)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-04405d",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk chair"
+       },
+       "condition": "good",
+       "label": "desk chair (good)"
+      },
+      "wants": [
+       "textbook (course CHM 113)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-15afeb",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "CHM 113",
+        "edition": "2"
+       },
+       "condition": "good",
+       "label": "CHM 113 (2 ed.) textbook (good)"
+      },
+      "wants": [
+       "clothing (kind hoodie, size M)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-c7bb64",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "bookshelf"
+       },
+       "condition": "good",
+       "label": "bookshelf (good)"
+      },
+      "wants": [],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-ffa946",
+      "channel": "discord",
+      "have": null,
+      "wants": [
+       "charger (connector lightning)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-480009",
+      "channel": "web",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "lightning"
+       },
+       "condition": "good",
+       "label": "Lightning charger (good)"
+      },
+      "wants": [
+       "furniture (kind bookshelf)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-46c6bd",
+      "channel": "imessage",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "Pixel 8"
+       },
+       "condition": "good",
+       "label": "Pixel 8 case (good)"
+      },
+      "wants": [
+       "calculator (model TI-Nspire)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-3d9f60",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "futon"
+       },
+       "condition": "good",
+       "label": "futon (good)"
+      },
+      "wants": [
+       "furniture (kind rug)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-85ee6f",
+      "channel": "imessage",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "jacket",
+        "size": "L"
+       },
+       "condition": "good",
+       "label": "jacket, size L (good)"
+      },
+      "wants": [
+       "other (kind backpack)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-623f36",
+      "channel": "discord",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "Casio FX-991"
+       },
+       "condition": "good",
+       "label": "Casio FX-991 (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "listed",
+      "trade": null
+     }
+    ],
+    "trades": [
+     {
+      "id": "T1",
+      "state": "proposed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": null,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": null
+     },
+     {
+      "id": "T2",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-d86ebf",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "calculator",
+         "attributes": {
+          "model": "TI-84"
+         },
+         "condition": "good",
+         "label": "TI-84 (good)"
+        },
+        "to": "h-6ddb39",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-6ddb39",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "mini fridge"
+         },
+         "condition": "good",
+         "label": "mini fridge (good)"
+        },
+        "to": "h-d86ebf",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T3",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-f429f3",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "clothing",
+         "attributes": {
+          "kind": "hoodie",
+          "size": "M"
+         },
+         "condition": "good",
+         "label": "hoodie, size M (good)"
+        },
+        "to": "h-15afeb",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-15afeb",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "CHM 113",
+          "edition": "2"
+         },
+         "condition": "good",
+         "label": "CHM 113 (2 ed.) textbook (good)"
+        },
+        "to": "h-04405d",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-04405d",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "desk chair"
+         },
+         "condition": "good",
+         "label": "desk chair (good)"
+        },
+        "to": "h-f429f3",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T4",
+      "state": "meetup_agreed",
+      "shape": "chain",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-c7bb64",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "bookshelf"
+         },
+         "condition": "good",
+         "label": "bookshelf (good)"
+        },
+        "to": "h-480009",
+        "receiver": false,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-480009",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "lightning"
+         },
+         "condition": "good",
+         "label": "Lightning charger (good)"
+        },
+        "to": "h-ffa946",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-ffa946",
+        "channel": "discord",
+        "you": false,
+        "gives": null,
+        "to": null,
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     }
+    ],
+    "stats": {
+     "agents": 16,
+     "listings": 16,
+     "loops": 4
+    }
+   },
+   "wire": []
+  },
+  {
+   "action": {
+    "kind": "press",
+    "id": "T1:loop:yes",
+    "label": "Accept"
+   },
+   "session": {
+    "id": "053be3b292bbf51addb0bf0e",
+    "handle": "h-9bb894",
+    "channel": "discord",
+    "profile": {
+     "handle": "h-9bb894",
+     "name": "Jordan Rivera",
+     "initials": "JR",
+     "color": "yellow",
+     "campus": "ASU Tempe",
+     "bio": "Biology major, coffee first. Happy to meet at the library.",
+     "member_since": "Aug 2026",
+     "completed": 2,
+     "showed_up": 2,
+     "no_shows": 0
+    },
+    "chat": [
+     {
+      "id": 1,
+      "from": "agent",
+      "text": "Hi, I'm your Barter Bros agent. Tell me what you have and what you want, in your own words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 2,
+      "from": "you",
+      "text": "I have a BIO 181 textbook I'll never open again. I need a USB-C charger, fast charging if possible. I'd give the textbook for anything worth at least $30 to me.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 3,
+      "from": "agent",
+      "text": "I read that with the rules parser as: you have BIO 181 textbook (good); you want charger (connector usb-c).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 4,
+      "from": "agent",
+      "text": "Rough value of yours: $60 (a hint from a table, not a price).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 5,
+      "from": "agent",
+      "text": "Your floor for it is $30. That stays with me: the exchange only ever hears yes or no.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 6,
+      "from": "agent",
+      "text": "Posting your listing under the random handle h-9bb894: the items, their condition and what you'd take. Not your name, contact, floor or reasons.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 7,
+      "from": "agent",
+      "text": "The exchange asked if you'd take h-b50855's USB-C 20 W charger (good) for your BIO 181 textbook (good). I said yes: it's worth $35 to you, at or above your $30 floor. It only hears the yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 8,
+      "from": "agent",
+      "text": "Found a 3-way trade loop: you give your BIO 181 textbook (good) to h-16b355, and you get h-b50855's USB-C 20 W charger (good). The others are only handles until everyone says yes. One no unwinds it for everyone. Do you want this trade?",
+      "t": 1792861200,
+      "actions": [
+       {
+        "id": "T1:loop:yes",
+        "label": "Accept",
+        "style": "primary",
+        "open": false
+       },
+       {
+        "id": "T1:loop:no",
+        "label": "Decline",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 9,
+      "from": "you",
+      "text": "I'm free saturday morning",
+      "t": 1792861250,
+      "actions": []
+     },
+     {
+      "id": 10,
+      "from": "agent",
+      "text": "I read that as: you're free Sat morning (8:00 AM-12:00 PM). Right?",
+      "t": 1792861250,
+      "actions": [
+       {
+        "id": "F10:times:yes",
+        "label": "That's right",
+        "style": "primary",
+        "open": false
+       },
+       {
+        "id": "F10:times:no",
+        "label": "Not quite",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 11,
+      "from": "you",
+      "text": "That's right",
+      "t": 1792861275,
+      "actions": []
+     },
+     {
+      "id": 12,
+      "from": "agent",
+      "text": "Got it: you're free Sat morning (8:00 AM-12:00 PM). That stays with me: the exchange only hears yes or no about one meetup slot at a time.",
+      "t": 1792861275,
+      "actions": []
+     },
+     {
+      "id": 13,
+      "from": "you",
+      "text": "Accept",
+      "t": 1792861300,
+      "actions": []
+     },
+     {
+      "id": 14,
+      "from": "agent",
+      "text": "Everyone said yes, so now you can see who you're trading with: Sam Okoye (h-16b355), Priya Shah (h-b50855). Contact details still aren't shared; I relay messages.",
+      "t": 1792861300,
+      "actions": [],
+      "profiles": [
+       {
+        "handle": "h-16b355",
+        "name": "Sam Okoye",
+        "initials": "SO",
+        "color": "coral",
+        "campus": "ASU Tempe",
+        "bio": "Plays intramural soccer. Fast replies, careful with books.",
+        "member_since": "Sep 2026",
+        "completed": 4,
+        "showed_up": 4,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-b50855",
+        "name": "Priya Shah",
+        "initials": "PS",
+        "color": "yellow",
+        "campus": "ASU Tempe · Barrett",
+        "bio": "CS sophomore. Always on time, usually early.",
+        "member_since": "Aug 2026",
+        "completed": 6,
+        "showed_up": 6,
+        "no_shows": 0
+       }
+      ]
+     },
+     {
+      "id": 15,
+      "from": "agent",
+      "text": "Meetup plan: Sat 11:00 AM-11:30 AM at Noble Library, a public spot. I checked it against the times you gave me (you're free Sat morning (8:00 AM-12:00 PM)) and only said yes or no. I relay messages, so nobody swaps phone numbers. Does this work?",
+      "t": 1792861300,
+      "actions": [
+       {
+        "id": "T1:meetup:1:yes",
+        "label": "Works for me",
+        "style": "primary",
+        "open": true
+       },
+       {
+        "id": "T1:meetup:1:no",
+        "label": "Can't make it",
+        "style": "secondary",
+        "open": true
+       }
+      ]
+     }
+    ],
+    "listing": {
+     "have": {
+      "category": "textbook",
+      "attributes": {
+       "course": "BIO 181"
+      },
+      "condition": "good",
+      "label": "BIO 181 textbook (good)"
+     },
+     "est_value": 60,
+     "wants": [
+      {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c"
+       },
+       "min_condition": null,
+       "label": "charger (connector usb-c)"
+      }
+     ],
+     "floor": 30.0,
+     "parser": "rules",
+     "posted": true,
+     "open": false
+    },
+    "trades": [
+     {
+      "id": "T1",
+      "state": "accepted_by_all",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": true,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": {
+         "handle": "h-16b355",
+         "name": "Sam Okoye",
+         "initials": "SO",
+         "color": "coral",
+         "campus": "ASU Tempe",
+         "bio": "Plays intramural soccer. Fast replies, careful with books.",
+         "member_since": "Sep 2026",
+         "completed": 4,
+         "showed_up": 4,
+         "no_shows": 0
+        }
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": {
+         "handle": "h-b50855",
+         "name": "Priya Shah",
+         "initials": "PS",
+         "color": "yellow",
+         "campus": "ASU Tempe · Barrett",
+         "bio": "CS sophomore. Always on time, usually early.",
+         "member_since": "Aug 2026",
+         "completed": 6,
+         "showed_up": 6,
+         "no_shows": 0
+        }
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": true,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 11:00 AM-11:30 AM",
+       "spot": "Noble Library"
+      },
+      "mine": {
+       "gives": {
+        "category": "textbook",
+        "attributes": {
+         "course": "BIO 181"
+        },
+        "condition": "good",
+        "label": "BIO 181 textbook (good)"
+       },
+       "gets": {
+        "category": "charger",
+        "attributes": {
+         "connector": "usb-c",
+         "watts": 20
+        },
+        "condition": "good",
+        "label": "USB-C 20 W charger (good)"
+       },
+       "to": "h-16b355",
+       "from": "h-b50855",
+       "worth": {
+        "value": 35,
+        "floor": 30.0
+       }
+      }
+     }
+    ],
+    "history": [],
+    "generation": 2
+   },
+   "exchange": {
+    "generation": 2,
+    "nodes": [
+     {
+      "handle": "h-9bb894",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "BIO 181"
+       },
+       "condition": "good",
+       "label": "BIO 181 textbook (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-16b355",
+      "channel": "discord",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "iPhone 15"
+       },
+       "condition": "new",
+       "label": "iPhone 15 case (new)"
+      },
+      "wants": [
+       "textbook (course BIO 181)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-482931",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk lamp"
+       },
+       "condition": "good",
+       "label": "desk lamp (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-b50855",
+      "channel": "discord",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good",
+       "label": "USB-C 20 W charger (good)"
+      },
+      "wants": [
+       "phone case (model iPhone 15)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-d86ebf",
+      "channel": "imessage",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "TI-84"
+       },
+       "condition": "good",
+       "label": "TI-84 (good)"
+      },
+      "wants": [
+       "furniture (kind mini fridge)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-6ddb39",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "mini fridge"
+       },
+       "condition": "good",
+       "label": "mini fridge (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-f429f3",
+      "channel": "web",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "hoodie",
+        "size": "M"
+       },
+       "condition": "good",
+       "label": "hoodie, size M (good)"
+      },
+      "wants": [
+       "furniture (kind desk chair)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-04405d",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk chair"
+       },
+       "condition": "good",
+       "label": "desk chair (good)"
+      },
+      "wants": [
+       "textbook (course CHM 113)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-15afeb",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "CHM 113",
+        "edition": "2"
+       },
+       "condition": "good",
+       "label": "CHM 113 (2 ed.) textbook (good)"
+      },
+      "wants": [
+       "clothing (kind hoodie, size M)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-c7bb64",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "bookshelf"
+       },
+       "condition": "good",
+       "label": "bookshelf (good)"
+      },
+      "wants": [],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-ffa946",
+      "channel": "discord",
+      "have": null,
+      "wants": [
+       "charger (connector lightning)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-480009",
+      "channel": "web",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "lightning"
+       },
+       "condition": "good",
+       "label": "Lightning charger (good)"
+      },
+      "wants": [
+       "furniture (kind bookshelf)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-46c6bd",
+      "channel": "imessage",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "Pixel 8"
+       },
+       "condition": "good",
+       "label": "Pixel 8 case (good)"
+      },
+      "wants": [
+       "calculator (model TI-Nspire)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-3d9f60",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "futon"
+       },
+       "condition": "good",
+       "label": "futon (good)"
+      },
+      "wants": [
+       "furniture (kind rug)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-85ee6f",
+      "channel": "imessage",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "jacket",
+        "size": "L"
+       },
+       "condition": "good",
+       "label": "jacket, size L (good)"
+      },
+      "wants": [
+       "other (kind backpack)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-623f36",
+      "channel": "discord",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "Casio FX-991"
+       },
+       "condition": "good",
+       "label": "Casio FX-991 (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "listed",
+      "trade": null
+     }
+    ],
+    "trades": [
+     {
+      "id": "T1",
+      "state": "accepted_by_all",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": null,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 11:00 AM-11:30 AM",
+       "spot": "Noble Library"
+      }
+     },
+     {
+      "id": "T2",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-d86ebf",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "calculator",
+         "attributes": {
+          "model": "TI-84"
+         },
+         "condition": "good",
+         "label": "TI-84 (good)"
+        },
+        "to": "h-6ddb39",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-6ddb39",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "mini fridge"
+         },
+         "condition": "good",
+         "label": "mini fridge (good)"
+        },
+        "to": "h-d86ebf",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T3",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-f429f3",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "clothing",
+         "attributes": {
+          "kind": "hoodie",
+          "size": "M"
+         },
+         "condition": "good",
+         "label": "hoodie, size M (good)"
+        },
+        "to": "h-15afeb",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-15afeb",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "CHM 113",
+          "edition": "2"
+         },
+         "condition": "good",
+         "label": "CHM 113 (2 ed.) textbook (good)"
+        },
+        "to": "h-04405d",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-04405d",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "desk chair"
+         },
+         "condition": "good",
+         "label": "desk chair (good)"
+        },
+        "to": "h-f429f3",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T4",
+      "state": "meetup_agreed",
+      "shape": "chain",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-c7bb64",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "bookshelf"
+         },
+         "condition": "good",
+         "label": "bookshelf (good)"
+        },
+        "to": "h-480009",
+        "receiver": false,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-480009",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "lightning"
+         },
+         "condition": "good",
+         "label": "Lightning charger (good)"
+        },
+        "to": "h-ffa946",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-ffa946",
+        "channel": "discord",
+        "you": false,
+        "gives": null,
+        "to": null,
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     }
+    ],
+    "stats": {
+     "agents": 16,
+     "listings": 16,
+     "loops": 4
+    }
+   },
+   "wire": [
+    {
+     "i": 117,
+     "t": 1792861300,
+     "sender": "h-9bb894",
+     "recipient": "exchange",
+     "kind": "vote",
+     "payload": {
+      "trade": "T1",
+      "handle": "h-9bb894",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 118,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "identity",
+     "payload": {
+      "trade": "T1",
+      "profiles": [
+       {
+        "handle": "h-b50855",
+        "name": "Priya Shah",
+        "initials": "PS",
+        "color": "yellow",
+        "campus": "ASU Tempe · Barrett",
+        "bio": "CS sophomore. Always on time, usually early.",
+        "member_since": "Aug 2026",
+        "completed": 6,
+        "showed_up": 6,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-9bb894",
+        "name": "Jordan Rivera",
+        "initials": "JR",
+        "color": "yellow",
+        "campus": "ASU Tempe",
+        "bio": "Biology major, coffee first. Happy to meet at the library.",
+        "member_since": "Aug 2026",
+        "completed": 2,
+        "showed_up": 2,
+        "no_shows": 0
+       }
+      ]
+     }
+    },
+    {
+     "i": 119,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-b50855",
+     "kind": "identity",
+     "payload": {
+      "trade": "T1",
+      "profiles": [
+       {
+        "handle": "h-16b355",
+        "name": "Sam Okoye",
+        "initials": "SO",
+        "color": "coral",
+        "campus": "ASU Tempe",
+        "bio": "Plays intramural soccer. Fast replies, careful with books.",
+        "member_since": "Sep 2026",
+        "completed": 4,
+        "showed_up": 4,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-9bb894",
+        "name": "Jordan Rivera",
+        "initials": "JR",
+        "color": "yellow",
+        "campus": "ASU Tempe",
+        "bio": "Biology major, coffee first. Happy to meet at the library.",
+        "member_since": "Aug 2026",
+        "completed": 2,
+        "showed_up": 2,
+        "no_shows": 0
+       }
+      ]
+     }
+    },
+    {
+     "i": 120,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-9bb894",
+     "kind": "identity",
+     "payload": {
+      "trade": "T1",
+      "profiles": [
+       {
+        "handle": "h-16b355",
+        "name": "Sam Okoye",
+        "initials": "SO",
+        "color": "coral",
+        "campus": "ASU Tempe",
+        "bio": "Plays intramural soccer. Fast replies, careful with books.",
+        "member_since": "Sep 2026",
+        "completed": 4,
+        "showed_up": 4,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-b50855",
+        "name": "Priya Shah",
+        "initials": "PS",
+        "color": "yellow",
+        "campus": "ASU Tempe · Barrett",
+        "bio": "CS sophomore. Always on time, usually early.",
+        "member_since": "Aug 2026",
+        "completed": 6,
+        "showed_up": 6,
+        "no_shows": 0
+       }
+      ]
+     }
+    },
+    {
+     "i": 121,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "free?",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 10:00 AM-10:30 AM"
+     }
+    },
+    {
+     "i": 122,
+     "t": 1792861300,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 10:00 AM-10:30 AM",
+      "answer": "no"
+     }
+    },
+    {
+     "i": 123,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "free?",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 10:30 AM-11:00 AM"
+     }
+    },
+    {
+     "i": 124,
+     "t": 1792861300,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 10:30 AM-11:00 AM",
+      "answer": "no"
+     }
+    },
+    {
+     "i": 125,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "free?",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 11:00 AM-11:30 AM"
+     }
+    },
+    {
+     "i": 126,
+     "t": 1792861300,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 11:00 AM-11:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 127,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-b50855",
+     "kind": "free?",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 11:00 AM-11:30 AM"
+     }
+    },
+    {
+     "i": 128,
+     "t": 1792861300,
+     "sender": "h-b50855",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 11:00 AM-11:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 129,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-9bb894",
+     "kind": "free?",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 11:00 AM-11:30 AM"
+     }
+    },
+    {
+     "i": 130,
+     "t": 1792861300,
+     "sender": "h-9bb894",
+     "recipient": "exchange",
+     "kind": "free",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 11:00 AM-11:30 AM",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 131,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T1",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 132,
+     "t": 1792861300,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T1",
+      "spot": "Memorial Union",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 133,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-b50855",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T1",
+      "spot": "Memorial Union"
+     }
+    },
+    {
+     "i": 134,
+     "t": 1792861300,
+     "sender": "h-b50855",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T1",
+      "spot": "Memorial Union",
+      "answer": "no"
+     }
+    },
+    {
+     "i": 135,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T1",
+      "spot": "Hayden Library"
+     }
+    },
+    {
+     "i": 136,
+     "t": 1792861300,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T1",
+      "spot": "Hayden Library",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 137,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-b50855",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T1",
+      "spot": "Hayden Library"
+     }
+    },
+    {
+     "i": 138,
+     "t": 1792861300,
+     "sender": "h-b50855",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T1",
+      "spot": "Hayden Library",
+      "answer": "no"
+     }
+    },
+    {
+     "i": 139,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T1",
+      "spot": "Noble Library"
+     }
+    },
+    {
+     "i": 140,
+     "t": 1792861300,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T1",
+      "spot": "Noble Library",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 141,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-b50855",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T1",
+      "spot": "Noble Library"
+     }
+    },
+    {
+     "i": 142,
+     "t": 1792861300,
+     "sender": "h-b50855",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T1",
+      "spot": "Noble Library",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 143,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-9bb894",
+     "kind": "spot?",
+     "payload": {
+      "trade": "T1",
+      "spot": "Noble Library"
+     }
+    },
+    {
+     "i": 144,
+     "t": 1792861300,
+     "sender": "h-9bb894",
+     "recipient": "exchange",
+     "kind": "spot",
+     "payload": {
+      "trade": "T1",
+      "spot": "Noble Library",
+      "answer": "yes"
+     }
+    },
+    {
+     "i": 145,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 11:00 AM-11:30 AM",
+      "spot": "Noble Library"
+     }
+    },
+    {
+     "i": 146,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-b50855",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 11:00 AM-11:30 AM",
+      "spot": "Noble Library"
+     }
+    },
+    {
+     "i": 147,
+     "t": 1792861300,
+     "sender": "exchange",
+     "recipient": "h-9bb894",
+     "kind": "meetup",
+     "payload": {
+      "trade": "T1",
+      "slot": "Sat 11:00 AM-11:30 AM",
+      "spot": "Noble Library"
+     }
+    },
+    {
+     "i": 148,
+     "t": 1792861300,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T1",
+      "handle": "h-16b355",
+      "answer": "yes",
+      "slot": "Sat 11:00 AM-11:30 AM"
+     }
+    },
+    {
+     "i": 149,
+     "t": 1792861300,
+     "sender": "h-b50855",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T1",
+      "handle": "h-b50855",
+      "answer": "yes",
+      "slot": "Sat 11:00 AM-11:30 AM"
+     }
+    }
+   ]
+  },
+  {
+   "action": {
+    "kind": "press",
+    "id": "T1:meetup:1:yes",
+    "label": "Works for me"
+   },
+   "session": {
+    "id": "053be3b292bbf51addb0bf0e",
+    "handle": "h-9bb894",
+    "channel": "discord",
+    "profile": {
+     "handle": "h-9bb894",
+     "name": "Jordan Rivera",
+     "initials": "JR",
+     "color": "yellow",
+     "campus": "ASU Tempe",
+     "bio": "Biology major, coffee first. Happy to meet at the library.",
+     "member_since": "Aug 2026",
+     "completed": 2,
+     "showed_up": 2,
+     "no_shows": 0
+    },
+    "chat": [
+     {
+      "id": 1,
+      "from": "agent",
+      "text": "Hi, I'm your Barter Bros agent. Tell me what you have and what you want, in your own words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 2,
+      "from": "you",
+      "text": "I have a BIO 181 textbook I'll never open again. I need a USB-C charger, fast charging if possible. I'd give the textbook for anything worth at least $30 to me.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 3,
+      "from": "agent",
+      "text": "I read that with the rules parser as: you have BIO 181 textbook (good); you want charger (connector usb-c).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 4,
+      "from": "agent",
+      "text": "Rough value of yours: $60 (a hint from a table, not a price).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 5,
+      "from": "agent",
+      "text": "Your floor for it is $30. That stays with me: the exchange only ever hears yes or no.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 6,
+      "from": "agent",
+      "text": "Posting your listing under the random handle h-9bb894: the items, their condition and what you'd take. Not your name, contact, floor or reasons.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 7,
+      "from": "agent",
+      "text": "The exchange asked if you'd take h-b50855's USB-C 20 W charger (good) for your BIO 181 textbook (good). I said yes: it's worth $35 to you, at or above your $30 floor. It only hears the yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 8,
+      "from": "agent",
+      "text": "Found a 3-way trade loop: you give your BIO 181 textbook (good) to h-16b355, and you get h-b50855's USB-C 20 W charger (good). The others are only handles until everyone says yes. One no unwinds it for everyone. Do you want this trade?",
+      "t": 1792861200,
+      "actions": [
+       {
+        "id": "T1:loop:yes",
+        "label": "Accept",
+        "style": "primary",
+        "open": false
+       },
+       {
+        "id": "T1:loop:no",
+        "label": "Decline",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 9,
+      "from": "you",
+      "text": "I'm free saturday morning",
+      "t": 1792861250,
+      "actions": []
+     },
+     {
+      "id": 10,
+      "from": "agent",
+      "text": "I read that as: you're free Sat morning (8:00 AM-12:00 PM). Right?",
+      "t": 1792861250,
+      "actions": [
+       {
+        "id": "F10:times:yes",
+        "label": "That's right",
+        "style": "primary",
+        "open": false
+       },
+       {
+        "id": "F10:times:no",
+        "label": "Not quite",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 11,
+      "from": "you",
+      "text": "That's right",
+      "t": 1792861275,
+      "actions": []
+     },
+     {
+      "id": 12,
+      "from": "agent",
+      "text": "Got it: you're free Sat morning (8:00 AM-12:00 PM). That stays with me: the exchange only hears yes or no about one meetup slot at a time.",
+      "t": 1792861275,
+      "actions": []
+     },
+     {
+      "id": 13,
+      "from": "you",
+      "text": "Accept",
+      "t": 1792861300,
+      "actions": []
+     },
+     {
+      "id": 14,
+      "from": "agent",
+      "text": "Everyone said yes, so now you can see who you're trading with: Sam Okoye (h-16b355), Priya Shah (h-b50855). Contact details still aren't shared; I relay messages.",
+      "t": 1792861300,
+      "actions": [],
+      "profiles": [
+       {
+        "handle": "h-16b355",
+        "name": "Sam Okoye",
+        "initials": "SO",
+        "color": "coral",
+        "campus": "ASU Tempe",
+        "bio": "Plays intramural soccer. Fast replies, careful with books.",
+        "member_since": "Sep 2026",
+        "completed": 4,
+        "showed_up": 4,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-b50855",
+        "name": "Priya Shah",
+        "initials": "PS",
+        "color": "yellow",
+        "campus": "ASU Tempe · Barrett",
+        "bio": "CS sophomore. Always on time, usually early.",
+        "member_since": "Aug 2026",
+        "completed": 6,
+        "showed_up": 6,
+        "no_shows": 0
+       }
+      ]
+     },
+     {
+      "id": 15,
+      "from": "agent",
+      "text": "Meetup plan: Sat 11:00 AM-11:30 AM at Noble Library, a public spot. I checked it against the times you gave me (you're free Sat morning (8:00 AM-12:00 PM)) and only said yes or no. I relay messages, so nobody swaps phone numbers. Does this work?",
+      "t": 1792861300,
+      "actions": [
+       {
+        "id": "T1:meetup:1:yes",
+        "label": "Works for me",
+        "style": "primary",
+        "open": false
+       },
+       {
+        "id": "T1:meetup:1:no",
+        "label": "Can't make it",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 16,
+      "from": "you",
+      "text": "Works for me",
+      "t": 1792861325,
+      "actions": []
+     },
+     {
+      "id": 17,
+      "from": "agent",
+      "text": "Meetup agreed by all 3: Sat 11:00 AM-11:30 AM at Noble Library. Bring your item. Tap \"Got it\" when you have h-b50855's USB-C 20 W charger (good).",
+      "t": 1792861325,
+      "actions": [
+       {
+        "id": "T1:receipt:yes",
+        "label": "Got it ✓",
+        "style": "success",
+        "open": true
+       },
+       {
+        "id": "T1:receipt:no",
+        "label": "Didn't get it",
+        "style": "secondary",
+        "open": true
+       }
+      ]
+     }
+    ],
+    "listing": {
+     "have": {
+      "category": "textbook",
+      "attributes": {
+       "course": "BIO 181"
+      },
+      "condition": "good",
+      "label": "BIO 181 textbook (good)"
+     },
+     "est_value": 60,
+     "wants": [
+      {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c"
+       },
+       "min_condition": null,
+       "label": "charger (connector usb-c)"
+      }
+     ],
+     "floor": 30.0,
+     "parser": "rules",
+     "posted": true,
+     "open": false
+    },
+    "trades": [
+     {
+      "id": "T1",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": true,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": {
+         "handle": "h-16b355",
+         "name": "Sam Okoye",
+         "initials": "SO",
+         "color": "coral",
+         "campus": "ASU Tempe",
+         "bio": "Plays intramural soccer. Fast replies, careful with books.",
+         "member_since": "Sep 2026",
+         "completed": 4,
+         "showed_up": 4,
+         "no_shows": 0
+        }
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": {
+         "handle": "h-b50855",
+         "name": "Priya Shah",
+         "initials": "PS",
+         "color": "yellow",
+         "campus": "ASU Tempe · Barrett",
+         "bio": "CS sophomore. Always on time, usually early.",
+         "member_since": "Aug 2026",
+         "completed": 6,
+         "showed_up": 6,
+         "no_shows": 0
+        }
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": true,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 11:00 AM-11:30 AM",
+       "spot": "Noble Library"
+      },
+      "mine": {
+       "gives": {
+        "category": "textbook",
+        "attributes": {
+         "course": "BIO 181"
+        },
+        "condition": "good",
+        "label": "BIO 181 textbook (good)"
+       },
+       "gets": {
+        "category": "charger",
+        "attributes": {
+         "connector": "usb-c",
+         "watts": 20
+        },
+        "condition": "good",
+        "label": "USB-C 20 W charger (good)"
+       },
+       "to": "h-16b355",
+       "from": "h-b50855",
+       "worth": {
+        "value": 35,
+        "floor": 30.0
+       }
+      }
+     }
+    ],
+    "history": [],
+    "generation": 2
+   },
+   "exchange": {
+    "generation": 2,
+    "nodes": [
+     {
+      "handle": "h-9bb894",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "BIO 181"
+       },
+       "condition": "good",
+       "label": "BIO 181 textbook (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-16b355",
+      "channel": "discord",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "iPhone 15"
+       },
+       "condition": "new",
+       "label": "iPhone 15 case (new)"
+      },
+      "wants": [
+       "textbook (course BIO 181)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-482931",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk lamp"
+       },
+       "condition": "good",
+       "label": "desk lamp (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-b50855",
+      "channel": "discord",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good",
+       "label": "USB-C 20 W charger (good)"
+      },
+      "wants": [
+       "phone case (model iPhone 15)"
+      ],
+      "status": "in_trade",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-d86ebf",
+      "channel": "imessage",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "TI-84"
+       },
+       "condition": "good",
+       "label": "TI-84 (good)"
+      },
+      "wants": [
+       "furniture (kind mini fridge)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-6ddb39",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "mini fridge"
+       },
+       "condition": "good",
+       "label": "mini fridge (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-f429f3",
+      "channel": "web",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "hoodie",
+        "size": "M"
+       },
+       "condition": "good",
+       "label": "hoodie, size M (good)"
+      },
+      "wants": [
+       "furniture (kind desk chair)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-04405d",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk chair"
+       },
+       "condition": "good",
+       "label": "desk chair (good)"
+      },
+      "wants": [
+       "textbook (course CHM 113)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-15afeb",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "CHM 113",
+        "edition": "2"
+       },
+       "condition": "good",
+       "label": "CHM 113 (2 ed.) textbook (good)"
+      },
+      "wants": [
+       "clothing (kind hoodie, size M)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-c7bb64",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "bookshelf"
+       },
+       "condition": "good",
+       "label": "bookshelf (good)"
+      },
+      "wants": [],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-ffa946",
+      "channel": "discord",
+      "have": null,
+      "wants": [
+       "charger (connector lightning)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-480009",
+      "channel": "web",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "lightning"
+       },
+       "condition": "good",
+       "label": "Lightning charger (good)"
+      },
+      "wants": [
+       "furniture (kind bookshelf)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-46c6bd",
+      "channel": "imessage",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "Pixel 8"
+       },
+       "condition": "good",
+       "label": "Pixel 8 case (good)"
+      },
+      "wants": [
+       "calculator (model TI-Nspire)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-3d9f60",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "futon"
+       },
+       "condition": "good",
+       "label": "futon (good)"
+      },
+      "wants": [
+       "furniture (kind rug)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-85ee6f",
+      "channel": "imessage",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "jacket",
+        "size": "L"
+       },
+       "condition": "good",
+       "label": "jacket, size L (good)"
+      },
+      "wants": [
+       "other (kind backpack)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-623f36",
+      "channel": "discord",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "Casio FX-991"
+       },
+       "condition": "good",
+       "label": "Casio FX-991 (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "listed",
+      "trade": null
+     }
+    ],
+    "trades": [
+     {
+      "id": "T1",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 11:00 AM-11:30 AM",
+       "spot": "Noble Library"
+      }
+     },
+     {
+      "id": "T2",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-d86ebf",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "calculator",
+         "attributes": {
+          "model": "TI-84"
+         },
+         "condition": "good",
+         "label": "TI-84 (good)"
+        },
+        "to": "h-6ddb39",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-6ddb39",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "mini fridge"
+         },
+         "condition": "good",
+         "label": "mini fridge (good)"
+        },
+        "to": "h-d86ebf",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T3",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-f429f3",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "clothing",
+         "attributes": {
+          "kind": "hoodie",
+          "size": "M"
+         },
+         "condition": "good",
+         "label": "hoodie, size M (good)"
+        },
+        "to": "h-15afeb",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-15afeb",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "CHM 113",
+          "edition": "2"
+         },
+         "condition": "good",
+         "label": "CHM 113 (2 ed.) textbook (good)"
+        },
+        "to": "h-04405d",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-04405d",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "desk chair"
+         },
+         "condition": "good",
+         "label": "desk chair (good)"
+        },
+        "to": "h-f429f3",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T4",
+      "state": "meetup_agreed",
+      "shape": "chain",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-c7bb64",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "bookshelf"
+         },
+         "condition": "good",
+         "label": "bookshelf (good)"
+        },
+        "to": "h-480009",
+        "receiver": false,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-480009",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "lightning"
+         },
+         "condition": "good",
+         "label": "Lightning charger (good)"
+        },
+        "to": "h-ffa946",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-ffa946",
+        "channel": "discord",
+        "you": false,
+        "gives": null,
+        "to": null,
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     }
+    ],
+    "stats": {
+     "agents": 16,
+     "listings": 16,
+     "loops": 4
+    }
+   },
+   "wire": [
+    {
+     "i": 150,
+     "t": 1792861325,
+     "sender": "h-9bb894",
+     "recipient": "exchange",
+     "kind": "plan-vote",
+     "payload": {
+      "trade": "T1",
+      "handle": "h-9bb894",
+      "answer": "yes",
+      "slot": "Sat 11:00 AM-11:30 AM"
+     }
+    },
+    {
+     "i": 151,
+     "t": 1792861325,
+     "sender": "h-16b355",
+     "recipient": "exchange",
+     "kind": "receipt",
+     "payload": {
+      "trade": "T1",
+      "handle": "h-16b355",
+      "answer": "got it"
+     }
+    },
+    {
+     "i": 152,
+     "t": 1792861325,
+     "sender": "h-b50855",
+     "recipient": "exchange",
+     "kind": "receipt",
+     "payload": {
+      "trade": "T1",
+      "handle": "h-b50855",
+      "answer": "got it"
+     }
+    }
+   ]
+  },
+  {
+   "action": {
+    "kind": "press",
+    "id": "T1:receipt:yes",
+    "label": "Got it ✓"
+   },
+   "session": {
+    "id": "053be3b292bbf51addb0bf0e",
+    "handle": "h-9bb894",
+    "channel": "discord",
+    "profile": {
+     "handle": "h-9bb894",
+     "name": "Jordan Rivera",
+     "initials": "JR",
+     "color": "yellow",
+     "campus": "ASU Tempe",
+     "bio": "Biology major, coffee first. Happy to meet at the library.",
+     "member_since": "Aug 2026",
+     "completed": 3,
+     "showed_up": 3,
+     "no_shows": 0
+    },
+    "chat": [
+     {
+      "id": 1,
+      "from": "agent",
+      "text": "Hi, I'm your Barter Bros agent. Tell me what you have and what you want, in your own words, and I'll find the trade. Nobody sees your name until everyone in a trade says yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 2,
+      "from": "you",
+      "text": "I have a BIO 181 textbook I'll never open again. I need a USB-C charger, fast charging if possible. I'd give the textbook for anything worth at least $30 to me.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 3,
+      "from": "agent",
+      "text": "I read that with the rules parser as: you have BIO 181 textbook (good); you want charger (connector usb-c).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 4,
+      "from": "agent",
+      "text": "Rough value of yours: $60 (a hint from a table, not a price).",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 5,
+      "from": "agent",
+      "text": "Your floor for it is $30. That stays with me: the exchange only ever hears yes or no.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 6,
+      "from": "agent",
+      "text": "Posting your listing under the random handle h-9bb894: the items, their condition and what you'd take. Not your name, contact, floor or reasons.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 7,
+      "from": "agent",
+      "text": "The exchange asked if you'd take h-b50855's USB-C 20 W charger (good) for your BIO 181 textbook (good). I said yes: it's worth $35 to you, at or above your $30 floor. It only hears the yes.",
+      "t": 1792861200,
+      "actions": []
+     },
+     {
+      "id": 8,
+      "from": "agent",
+      "text": "Found a 3-way trade loop: you give your BIO 181 textbook (good) to h-16b355, and you get h-b50855's USB-C 20 W charger (good). The others are only handles until everyone says yes. One no unwinds it for everyone. Do you want this trade?",
+      "t": 1792861200,
+      "actions": [
+       {
+        "id": "T1:loop:yes",
+        "label": "Accept",
+        "style": "primary",
+        "open": false
+       },
+       {
+        "id": "T1:loop:no",
+        "label": "Decline",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 9,
+      "from": "you",
+      "text": "I'm free saturday morning",
+      "t": 1792861250,
+      "actions": []
+     },
+     {
+      "id": 10,
+      "from": "agent",
+      "text": "I read that as: you're free Sat morning (8:00 AM-12:00 PM). Right?",
+      "t": 1792861250,
+      "actions": [
+       {
+        "id": "F10:times:yes",
+        "label": "That's right",
+        "style": "primary",
+        "open": false
+       },
+       {
+        "id": "F10:times:no",
+        "label": "Not quite",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 11,
+      "from": "you",
+      "text": "That's right",
+      "t": 1792861275,
+      "actions": []
+     },
+     {
+      "id": 12,
+      "from": "agent",
+      "text": "Got it: you're free Sat morning (8:00 AM-12:00 PM). That stays with me: the exchange only hears yes or no about one meetup slot at a time.",
+      "t": 1792861275,
+      "actions": []
+     },
+     {
+      "id": 13,
+      "from": "you",
+      "text": "Accept",
+      "t": 1792861300,
+      "actions": []
+     },
+     {
+      "id": 14,
+      "from": "agent",
+      "text": "Everyone said yes, so now you can see who you're trading with: Sam Okoye (h-16b355), Priya Shah (h-b50855). Contact details still aren't shared; I relay messages.",
+      "t": 1792861300,
+      "actions": [],
+      "profiles": [
+       {
+        "handle": "h-16b355",
+        "name": "Sam Okoye",
+        "initials": "SO",
+        "color": "coral",
+        "campus": "ASU Tempe",
+        "bio": "Plays intramural soccer. Fast replies, careful with books.",
+        "member_since": "Sep 2026",
+        "completed": 4,
+        "showed_up": 4,
+        "no_shows": 0
+       },
+       {
+        "handle": "h-b50855",
+        "name": "Priya Shah",
+        "initials": "PS",
+        "color": "yellow",
+        "campus": "ASU Tempe · Barrett",
+        "bio": "CS sophomore. Always on time, usually early.",
+        "member_since": "Aug 2026",
+        "completed": 6,
+        "showed_up": 6,
+        "no_shows": 0
+       }
+      ]
+     },
+     {
+      "id": 15,
+      "from": "agent",
+      "text": "Meetup plan: Sat 11:00 AM-11:30 AM at Noble Library, a public spot. I checked it against the times you gave me (you're free Sat morning (8:00 AM-12:00 PM)) and only said yes or no. I relay messages, so nobody swaps phone numbers. Does this work?",
+      "t": 1792861300,
+      "actions": [
+       {
+        "id": "T1:meetup:1:yes",
+        "label": "Works for me",
+        "style": "primary",
+        "open": false
+       },
+       {
+        "id": "T1:meetup:1:no",
+        "label": "Can't make it",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 16,
+      "from": "you",
+      "text": "Works for me",
+      "t": 1792861325,
+      "actions": []
+     },
+     {
+      "id": 17,
+      "from": "agent",
+      "text": "Meetup agreed by all 3: Sat 11:00 AM-11:30 AM at Noble Library. Bring your item. Tap \"Got it\" when you have h-b50855's USB-C 20 W charger (good).",
+      "t": 1792861325,
+      "actions": [
+       {
+        "id": "T1:receipt:yes",
+        "label": "Got it ✓",
+        "style": "success",
+        "open": false
+       },
+       {
+        "id": "T1:receipt:no",
+        "label": "Didn't get it",
+        "style": "secondary",
+        "open": false
+       }
+      ]
+     },
+     {
+      "id": 18,
+      "from": "you",
+      "text": "Got it ✓",
+      "t": 1792861350,
+      "actions": []
+     },
+     {
+      "id": 19,
+      "from": "agent",
+      "text": "Done: you have the USB-C 20 W charger (good). Your listing is closed; tell me if you want to list something else.",
+      "t": 1792861350,
+      "actions": []
+     }
+    ],
+    "listing": {
+     "have": {
+      "category": "textbook",
+      "attributes": {
+       "course": "BIO 181"
+      },
+      "condition": "good",
+      "label": "BIO 181 textbook (good)"
+     },
+     "est_value": 60,
+     "wants": [
+      {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c"
+       },
+       "min_condition": null,
+       "label": "charger (connector usb-c)"
+      }
+     ],
+     "floor": 30.0,
+     "parser": "rules",
+     "posted": true,
+     "open": false
+    },
+    "trades": [
+     {
+      "id": "T1",
+      "state": "handed_off",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": true,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": {
+         "handle": "h-16b355",
+         "name": "Sam Okoye",
+         "initials": "SO",
+         "color": "coral",
+         "campus": "ASU Tempe",
+         "bio": "Plays intramural soccer. Fast replies, careful with books.",
+         "member_since": "Sep 2026",
+         "completed": 5,
+         "showed_up": 5,
+         "no_shows": 0
+        }
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": {
+         "handle": "h-b50855",
+         "name": "Priya Shah",
+         "initials": "PS",
+         "color": "yellow",
+         "campus": "ASU Tempe · Barrett",
+         "bio": "CS sophomore. Always on time, usually early.",
+         "member_since": "Aug 2026",
+         "completed": 7,
+         "showed_up": 7,
+         "no_shows": 0
+        }
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": true,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 11:00 AM-11:30 AM",
+       "spot": "Noble Library"
+      },
+      "mine": {
+       "gives": {
+        "category": "textbook",
+        "attributes": {
+         "course": "BIO 181"
+        },
+        "condition": "good",
+        "label": "BIO 181 textbook (good)"
+       },
+       "gets": {
+        "category": "charger",
+        "attributes": {
+         "connector": "usb-c",
+         "watts": 20
+        },
+        "condition": "good",
+        "label": "USB-C 20 W charger (good)"
+       },
+       "to": "h-16b355",
+       "from": "h-b50855",
+       "worth": {
+        "value": 35,
+        "floor": 30.0
+       }
+      }
+     }
+    ],
+    "history": [
+     {
+      "trade": "T1",
+      "state": "handed_off",
+      "t": 1792861350,
+      "gave": "BIO 181 textbook (good)",
+      "got": "USB-C 20 W charger (good)",
+      "people": 3,
+      "reason": ""
+     }
+    ],
+    "generation": 2
+   },
+   "exchange": {
+    "generation": 2,
+    "nodes": [
+     {
+      "handle": "h-9bb894",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "BIO 181"
+       },
+       "condition": "good",
+       "label": "BIO 181 textbook (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "done",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-16b355",
+      "channel": "discord",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "iPhone 15"
+       },
+       "condition": "new",
+       "label": "iPhone 15 case (new)"
+      },
+      "wants": [
+       "textbook (course BIO 181)"
+      ],
+      "status": "done",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-482931",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk lamp"
+       },
+       "condition": "good",
+       "label": "desk lamp (good)"
+      },
+      "wants": [
+       "charger (connector usb-c)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-b50855",
+      "channel": "discord",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "usb-c",
+        "watts": 20
+       },
+       "condition": "good",
+       "label": "USB-C 20 W charger (good)"
+      },
+      "wants": [
+       "phone case (model iPhone 15)"
+      ],
+      "status": "done",
+      "trade": "T1"
+     },
+     {
+      "handle": "h-d86ebf",
+      "channel": "imessage",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "TI-84"
+       },
+       "condition": "good",
+       "label": "TI-84 (good)"
+      },
+      "wants": [
+       "furniture (kind mini fridge)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-6ddb39",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "mini fridge"
+       },
+       "condition": "good",
+       "label": "mini fridge (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "in_trade",
+      "trade": "T2"
+     },
+     {
+      "handle": "h-f429f3",
+      "channel": "web",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "hoodie",
+        "size": "M"
+       },
+       "condition": "good",
+       "label": "hoodie, size M (good)"
+      },
+      "wants": [
+       "furniture (kind desk chair)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-04405d",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "desk chair"
+       },
+       "condition": "good",
+       "label": "desk chair (good)"
+      },
+      "wants": [
+       "textbook (course CHM 113)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-15afeb",
+      "channel": "discord",
+      "have": {
+       "category": "textbook",
+       "attributes": {
+        "course": "CHM 113",
+        "edition": "2"
+       },
+       "condition": "good",
+       "label": "CHM 113 (2 ed.) textbook (good)"
+      },
+      "wants": [
+       "clothing (kind hoodie, size M)"
+      ],
+      "status": "in_trade",
+      "trade": "T3"
+     },
+     {
+      "handle": "h-c7bb64",
+      "channel": "imessage",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "bookshelf"
+       },
+       "condition": "good",
+       "label": "bookshelf (good)"
+      },
+      "wants": [],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-ffa946",
+      "channel": "discord",
+      "have": null,
+      "wants": [
+       "charger (connector lightning)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-480009",
+      "channel": "web",
+      "have": {
+       "category": "charger",
+       "attributes": {
+        "connector": "lightning"
+       },
+       "condition": "good",
+       "label": "Lightning charger (good)"
+      },
+      "wants": [
+       "furniture (kind bookshelf)"
+      ],
+      "status": "in_trade",
+      "trade": "T4"
+     },
+     {
+      "handle": "h-46c6bd",
+      "channel": "imessage",
+      "have": {
+       "category": "phone_case",
+       "attributes": {
+        "model": "Pixel 8"
+       },
+       "condition": "good",
+       "label": "Pixel 8 case (good)"
+      },
+      "wants": [
+       "calculator (model TI-Nspire)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-3d9f60",
+      "channel": "discord",
+      "have": {
+       "category": "furniture",
+       "attributes": {
+        "kind": "futon"
+       },
+       "condition": "good",
+       "label": "futon (good)"
+      },
+      "wants": [
+       "furniture (kind rug)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-85ee6f",
+      "channel": "imessage",
+      "have": {
+       "category": "clothing",
+       "attributes": {
+        "kind": "jacket",
+        "size": "L"
+       },
+       "condition": "good",
+       "label": "jacket, size L (good)"
+      },
+      "wants": [
+       "other (kind backpack)"
+      ],
+      "status": "listed",
+      "trade": null
+     },
+     {
+      "handle": "h-623f36",
+      "channel": "discord",
+      "have": {
+       "category": "calculator",
+       "attributes": {
+        "model": "Casio FX-991"
+       },
+       "condition": "good",
+       "label": "Casio FX-991 (good)"
+      },
+      "wants": [
+       "calculator (model TI-84)"
+      ],
+      "status": "listed",
+      "trade": null
+     }
+    ],
+    "trades": [
+     {
+      "id": "T1",
+      "state": "handed_off",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-16b355",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "phone_case",
+         "attributes": {
+          "model": "iPhone 15"
+         },
+         "condition": "new",
+         "label": "iPhone 15 case (new)"
+        },
+        "to": "h-b50855",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": null
+       },
+       {
+        "handle": "h-b50855",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "usb-c",
+          "watts": 20
+         },
+         "condition": "good",
+         "label": "USB-C 20 W charger (good)"
+        },
+        "to": "h-9bb894",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": null
+       },
+       {
+        "handle": "h-9bb894",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "BIO 181"
+         },
+         "condition": "good",
+         "label": "BIO 181 textbook (good)"
+        },
+        "to": "h-16b355",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": true,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 11:00 AM-11:30 AM",
+       "spot": "Noble Library"
+      }
+     },
+     {
+      "id": "T2",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-d86ebf",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "calculator",
+         "attributes": {
+          "model": "TI-84"
+         },
+         "condition": "good",
+         "label": "TI-84 (good)"
+        },
+        "to": "h-6ddb39",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-6ddb39",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "mini fridge"
+         },
+         "condition": "good",
+         "label": "mini fridge (good)"
+        },
+        "to": "h-d86ebf",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T3",
+      "state": "meetup_agreed",
+      "shape": "cycle",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-f429f3",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "clothing",
+         "attributes": {
+          "kind": "hoodie",
+          "size": "M"
+         },
+         "condition": "good",
+         "label": "hoodie, size M (good)"
+        },
+        "to": "h-15afeb",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-15afeb",
+        "channel": "discord",
+        "you": false,
+        "gives": {
+         "category": "textbook",
+         "attributes": {
+          "course": "CHM 113",
+          "edition": "2"
+         },
+         "condition": "good",
+         "label": "CHM 113 (2 ed.) textbook (good)"
+        },
+        "to": "h-04405d",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-04405d",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "desk chair"
+         },
+         "condition": "good",
+         "label": "desk chair (good)"
+        },
+        "to": "h-f429f3",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     },
+     {
+      "id": "T4",
+      "state": "meetup_agreed",
+      "shape": "chain",
+      "reason": "",
+      "revealed": false,
+      "members": [
+       {
+        "handle": "h-c7bb64",
+        "channel": "imessage",
+        "you": false,
+        "gives": {
+         "category": "furniture",
+         "attributes": {
+          "kind": "bookshelf"
+         },
+         "condition": "good",
+         "label": "bookshelf (good)"
+        },
+        "to": "h-480009",
+        "receiver": false,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-480009",
+        "channel": "web",
+        "you": false,
+        "gives": {
+         "category": "charger",
+         "attributes": {
+          "connector": "lightning"
+         },
+         "condition": "good",
+         "label": "Lightning charger (good)"
+        },
+        "to": "h-ffa946",
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       },
+       {
+        "handle": "h-ffa946",
+        "channel": "discord",
+        "you": false,
+        "gives": null,
+        "to": null,
+        "receiver": true,
+        "vote": true,
+        "plan_vote": true,
+        "receipt": null,
+        "profile": null
+       }
+      ],
+      "plan": {
+       "slot": "Sat 10:00 AM-10:30 AM",
+       "spot": "Memorial Union"
+      }
+     }
+    ],
+    "stats": {
+     "agents": 16,
+     "listings": 13,
+     "loops": 4
+    }
+   },
+   "wire": [
+    {
+     "i": 153,
+     "t": 1792861350,
+     "sender": "h-9bb894",
+     "recipient": "exchange",
+     "kind": "receipt",
+     "payload": {
+      "trade": "T1",
+      "handle": "h-9bb894",
+      "answer": "got it"
+     }
+    },
+    {
+     "i": 154,
+     "t": 1792861350,
+     "sender": "exchange",
+     "recipient": "h-16b355",
+     "kind": "done",
+     "payload": {
+      "trade": "T1"
+     }
+    },
+    {
+     "i": 155,
+     "t": 1792861350,
+     "sender": "exchange",
+     "recipient": "h-b50855",
+     "kind": "done",
+     "payload": {
+      "trade": "T1"
+     }
+    },
+    {
+     "i": 156,
+     "t": 1792861350,
+     "sender": "exchange",
+     "recipient": "h-9bb894",
+     "kind": "done",
+     "payload": {
+      "trade": "T1"
+     }
+    }
+   ]
+  }
+ ]
+}
