@@ -41,6 +41,32 @@ VALUE_TABLE: dict[str, dict[str, int]] = {
 _AT_LEAST = {"watts"}
 
 
+# Words for the same kind of thing. Only the `kind` attribute (furniture, clothing, other) is read
+# this loosely; connector, model, course and the rest stay exact.
+_SAME_WORD = {"sweatshirt": "hoodie", "hoody": "hoodie", "tee": "t-shirt", "sofa": "couch"}
+
+
+def _kind_words(kind: str) -> list[str]:
+    """'2 Desk Lamps' -> ['desk', 'lamp']: lower case, no leading count, no plural s, synonyms merged."""
+    words = [w for w in str(kind).lower().replace("-", " ").split() if not w.isdigit()]
+    out = []
+    for w in words:
+        if len(w) > 3 and w.endswith("s") and not w.endswith("ss"):
+            w = w[:-1]
+        out.append(_SAME_WORD.get(w, w))
+    return out
+
+
+def same_kind(have: str, wanted: str) -> bool:
+    """A 'lamp' is a 'desk lamp' you didn't describe, and the other way round; a 'floor lamp' is not
+    a 'desk lamp', and a 'desk' is not a 'desk chair'. Same last word, and one side's other words are
+    all on the other side."""
+    a, b = _kind_words(have), _kind_words(wanted)
+    if not a or not b or a[-1] != b[-1]:
+        return False
+    return set(a[:-1]) <= set(b[:-1]) or set(b[:-1]) <= set(a[:-1])
+
+
 def est_value(category: str, condition: str) -> int:
     return VALUE_TABLE.get(category, VALUE_TABLE["other"])[condition]
 
@@ -123,6 +149,9 @@ class Want:
             elif isinstance(wanted, (list, tuple)):
                 if have not in wanted:
                     return f"{key} {have or 'unknown'} is not one of {', '.join(map(str, wanted))}"
+            elif key == "kind" and have is not None:
+                if not same_kind(have, wanted):
+                    return f"{key} is {have}, wanted {wanted}"
             elif have is None or str(have).lower() != str(wanted).lower():
                 return f"{key} is {have or 'unknown'}, wanted {wanted}"
         if self.min_condition is not None and _RANK[item.condition] > _RANK[self.min_condition]:

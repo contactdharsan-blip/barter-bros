@@ -37,6 +37,17 @@ class Compatibility(unittest.TestCase):
         self.assertFalse(Want("furniture", min_condition="new").matches(DESK))
         self.assertFalse(Want("charger").matches(BOOK))
 
+    def test_kinds_match_loosely_and_everything_else_stays_exact(self):
+        lamp, desk_lamp = Item("furniture", {"kind": "lamp"}), Item("furniture", {"kind": "desk lamp"})
+        self.assertTrue(Want("furniture", {"kind": "desk lamp"}).matches(lamp))
+        self.assertTrue(Want("furniture", {"kind": "lamp"}).matches(desk_lamp))
+        self.assertFalse(Want("furniture", {"kind": "floor lamp"}).matches(desk_lamp))
+        self.assertFalse(Want("furniture", {"kind": "desk chair"}).matches(DESK))
+        self.assertTrue(Want("clothing", {"kind": "sweatshirt"}).matches(Item("clothing", {"kind": "hoodie", "size": "M"})))
+        self.assertFalse(Want("clothing", {"kind": "hoodie", "size": "S"}).matches(Item("clothing", {"kind": "hoodie", "size": "M"})))
+        self.assertTrue(Want("other", {"kind": "bike"}).matches(Item("other", {"kind": "2 bikes"})))
+        self.assertFalse(Want("phone_case", {"model": "iPhone 15 Pro"}).matches(CASE))  # models stay exact
+
     def test_compatible_needs_an_item_and_a_matching_want(self):
         a = offer("a", BOOK, Want("charger", {"connector": "usb-c"}))
         self.assertTrue(compatible(a, offer("b", USBC, Want("textbook"))))
