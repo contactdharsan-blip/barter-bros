@@ -26,9 +26,10 @@ profile's display name.
 
 A DM is read in this order: "help"; "cancel" / "stop" / "remove me" / "never mind" (takes your
 listing down; once everyone in your trade has accepted, only the bare word does); your own times
-("only free sunday afternoon", "busy saturday, free sunday after 2", kept private by your agent and
-used for meetups); then, in a trade everyone has accepted, anything else (a question, news) is
-relayed to the others under your name; otherwise a listing.
+("only free sunday afternoon", "busy saturday, free sunday after 2"), read back as "I read that as:
+... Right?" and used for meetups only after [That's right] (action id "F7:times:yes"); then, in a
+trade everyone has accepted, anything else (a question, news) is relayed to the others under your
+name, at once; otherwise a listing.
 
 "Can't make it" on a meetup rules that slot out for you, and the agents propose the next slot
 everyone is free; the trade unwinds only when no slot in the window is left, and then waits (not
@@ -97,7 +98,8 @@ HELP = (
     "2. I post it under a random handle and ask the other agents. When a trade fits, I DM you an offer: "
     "**Accept** or **Decline**.\n"
     "3. Once everyone accepts, you see who you're trading with, then a meetup time at a public spot. Tell me "
-    "when you're free (\"only free Sunday afternoon\") and I'll only say yes to those times. **Can't make it** "
+    "when you're free (\"only free Sunday afternoon\"); I'll read it back, and once you tap **That's right** "
+    "I'll only say yes to those times. **Can't make it** "
     "moves the meetup to the next time that works for everyone.\n"
     "4. Once everyone has accepted, anything else you DM me goes to the others in your trade. At the handoff, "
     "tap **Got it ✓**.\n"

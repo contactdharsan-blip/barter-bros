@@ -60,8 +60,8 @@ charger and needs a phone case. Three people, one trade loop, and none of them w
 4. **The agents agree a meetup** (`barter/meetup.py`): the earliest 30-minute slot everyone says
    yes to, and the first public ASU Tempe spot everyone says yes to (Memorial Union, Hayden
    Library, Noble Library, Student Pavilion). Each agent answers from what it knows: a scenario's
-   calendar, or the times the student told it ("only free sunday afternoon", "free sat 1-3pm"),
-   or, with neither, the whole window (this weekend, 10 AM-4 PM), and it tells the student which.
+   calendar, or the times the student told it ("only free sunday afternoon", "free sat 1-3pm")
+   and then confirmed, or, with neither, the whole window (this weekend, 10 AM-4 PM), and it tells the student which.
    "Can't make it" rules that slot out for that one student and the agents propose the next slot
    that works for everyone.
 5. **Everyone confirms** (`barter/protocol.py`): `proposed -> accepted_by_all -> meetup_agreed ->
@@ -92,8 +92,12 @@ the wire carries only a `relay` record that a message passed, never its text.
 **3. When people confirm.** (1) the trade loop, (2) the meetup plan, (3) "got it" from each
 person who receives something. A no to the loop, a no-show or a "didn't get it" unwinds it,
 re-lists everyone, and that exact loop is never proposed again; a no to a meetup time moves the
-meetup instead. Before listing an item with nothing asked in return, the agent asks
-"[Give it away] [I want something for it]" unless the student said it was free.
+meetup instead. Two more questions come before the agent acts on its own reading of what a
+student typed: before listing an item with nothing asked in return, "[Give it away] [I want
+something for it]" unless the student said it was free; and before using free times read from a
+DM, "I read that as: you can't do Sat; you're free Sun after 2:00 PM. Right?" with [That's right]
+[Not quite]. Only "That's right" changes the agent's times, and only then can a meetup plan move;
+"Not quite" changes nothing. A misread costs one tap, never a moved meetup.
 
 ## Run it
 
@@ -197,11 +201,14 @@ a restart, pressing an old button disables it and privately asks the student to 
   else becomes `other` with a short kind. Kinds match loosely only in a few ways (a "lamp" fits a
   "desk lamp", plurals and leading counts are ignored, hoodie and sweatshirt are one kind);
   otherwise the words have to agree.
-- Free times are read clause by clause from simple phrases: a day ("sat", "sunday", "weekends")
-  with "free", "available", "can meet" or "works", and an optional range for that day only
-  ("1-3pm", "after 2", "before noon", "morning" 8-12, "afternoon" 12-5, "evening" 5-9). "Not
-  free", "can't do", "busy" or "no" with a day rules that day out. A question or a clause about
-  "you" is never read as the sender's own times; in an accepted trade it is relayed. Meetups are proposed only inside the window
+- Free times are read by rules, clause by clause, from simple phrases: a day ("sat", "sunday",
+  "weekends") with "free", "available", "can meet" or "works", and an optional range for that day
+  only ("1-3pm", "after 2", "before noon", "morning" 8-12, "afternoon" 12-5, "evening" 5-9). "Not
+  free", "can't do" or "busy" with a day rules that day out. A clause that carves a time out of a
+  day ("except 2-3pm", "but not before 2") is left out. The rules still misread everyday phrasings
+  ("I don't mind saturday" reads as can't do, "I'm out of town saturday" isn't read at all), which
+  is why the agent reads its reading back and waits for "That's right". A question or a clause
+  about "you" is never read as the sender's own times; in an accepted trade it is relayed. Meetups are proposed only inside the window
   (this weekend, 10 AM-4 PM, unless a scenario sets one). "Can't make it" is taken to mean the
   time, not the place.
 - One listing per person: one item to give, any number of wants.
