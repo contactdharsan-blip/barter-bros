@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import { Check, FastForward, RotateCcw } from "lucide-react"
 
 import type { ChatLine, SessionView } from "@/api"
@@ -19,10 +19,13 @@ export function DiscordReplay({
   view,
   onPress,
   busy,
+  extra,
 }: {
   view: SessionView
   onPress: (actionId: string) => void
   busy: boolean
+  /** The recorded demo's next DM from the student, shown in the driver once the replay catches up. */
+  extra?: ReactNode
 }) {
   const total = view.chat.length
   const [shown, setShown] = useState(() => (reducedMotion() ? total : Math.min(1, total)))
@@ -100,12 +103,15 @@ export function DiscordReplay({
           </div>
         </div>
       </div>
-      {open.length > 0 && (
+      {(open.length > 0 || (caughtUp && extra)) && (
         <div className="pop glass flex flex-col gap-2 border-emerald-300/30 px-3.5 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_24px_rgba(52,211,153,0.12)]">
           <span className="text-sm font-semibold text-slate-100">
-            Demo driver: tap a button for {me.name.split(" ")[0]}, the way their Discord app would
+            {open.length > 0 || !extra
+              ? `Demo driver: tap a button for ${me.name.split(" ")[0]}, the way their Discord app would`
+              : `Demo driver: send ${me.name.split(" ")[0]}'s next DM, as they would in Discord`}
           </span>
           <div className="flex flex-wrap gap-2">
+            {caughtUp && extra}
             {open.map((a) => (
               <Button key={a.id} variant={a.style === "secondary" ? "outline" : "default"} disabled={busy} onClick={() => onPress(a.id)}>
                 {a.label}

@@ -149,13 +149,13 @@ export const api = {
   seed: (scenario: string) =>
     call<{ session?: string; handle?: string; channel?: Channel; user_ref?: string; bots: number }>(
       "POST",
-      `/api/demo/seed?scenario=${encodeURIComponent(scenario)}`,
+      `./api/demo/seed?scenario=${encodeURIComponent(scenario)}`,
     ),
-  session: (sid: string) => call<SessionView>("GET", `/api/sessions/${sid}`),
+  session: (sid: string) => call<SessionView>("GET", `./api/sessions/${sid}`),
   /** The demo driver: press a button in the student's DM thread, as their Discord client would. */
   press: (channel: Channel, userRef: string, action: string) =>
-    call<{ replies: unknown[] }>("POST", `/api/channels/${channel}/${encodeURIComponent(userRef)}/press`, { action }),
-  reset: () => call<{ ok: boolean }>("POST", "/api/demo/reset"),
+    call<{ replies: unknown[] }>("POST", `./api/channels/${channel}/${encodeURIComponent(userRef)}/press`, { action }),
+  reset: () => call<{ ok: boolean }>("POST", "./api/demo/reset"),
 }
 
 /** Your session, live over SSE. `onGone` fires when the server no longer knows it (a reset). */
@@ -171,7 +171,7 @@ export function useSession(sid: string | null, onGone: () => void) {
       (v) => !closed && setView(v),
       (e) => e instanceof ApiError && e.status === 404 && gone.current(),
     )
-    const es = new EventSource(`/api/events?session=${encodeURIComponent(sid)}`)
+    const es = new EventSource(`./api/events?session=${encodeURIComponent(sid)}`)
     es.addEventListener("session", (e) => setView(JSON.parse((e as MessageEvent).data)))
     es.addEventListener("gone", () => {
       es.close()
@@ -192,7 +192,7 @@ export function useExchange(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return
     setWire([])
-    const es = new EventSource("/api/events")
+    const es = new EventSource("./api/events")
     let pending: WireMessage[] = []
     let frame = 0
     const flush = () => {

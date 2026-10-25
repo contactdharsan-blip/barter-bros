@@ -91,12 +91,15 @@ export function ExchangeView({
   me,
   onMarket,
   busy,
+  live = true,
 }: {
   view: XView | null
   wire: WireMessage[]
   me: string | null
   onMarket: () => void
   busy: boolean
+  /** false for the recorded demo on the static site */
+  live?: boolean
 }) {
   const narrow = useNarrow()
   const empty: XView = { generation: 0, nodes: [], trades: [], stats: { agents: 0, listings: 0, loops: 0 } }
@@ -121,7 +124,7 @@ export function ExchangeView({
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-3xl leading-none font-bold">
-            Exchange <span className="text-emerald-300">· live</span>
+            Exchange <span className="text-emerald-300">· {live ? "live" : "recorded"}</span>
           </h2>
           <p className="mt-1.5 text-sm text-slate-400">
             What every agent posted, under random handles, and every message that crossed between agents. Nothing else.
