@@ -393,6 +393,7 @@ class Wiring(unittest.TestCase):
             self.assertIsInstance(kwargs["embeds"][0], discord.Embed)
             self.assertTrue(ActionButton.__discord_ui_compiled_template__.fullmatch("T12:receipt:no"))
             self.assertFalse(ActionButton.__discord_ui_compiled_template__.fullmatch("T1:dance:yes"))
+            self.assertTrue(ActionButton.__discord_ui_compiled_template__.fullmatch("L4:giveaway:no"))
 
             # A press: the callback disables every button on the message, then calls the service.
             edits, pressed = [], []
