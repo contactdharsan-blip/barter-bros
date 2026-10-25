@@ -159,7 +159,7 @@ class Adapter:
         if getattr(author, "bot", False):
             return
         if message.guild is not None:
-            if me is not None and me in (message.mentions or []):
+            if me is not None and any(u.id == me.id for u in message.mentions or []):
                 await message.channel.send(GUILD_HINT)
             return
         user_ref = str(author.id)
