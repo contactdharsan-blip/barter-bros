@@ -8,7 +8,7 @@
 // playwright-core is borrowed read-only from another checkout; nothing is installed here.
 
 import { spawn } from "node:child_process"
-import { existsSync, mkdirSync } from "node:fs"
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -23,6 +23,20 @@ if (!existsSync(join(ROOT, "web", "dist", "index.html"))) {
   process.exit(2)
 }
 mkdirSync(OUT, { recursive: true })
+
+// Safari needs -webkit-backdrop-filter; the minifier has dropped one twin before. Every blur
+// declaration in the built CSS must ship in both spellings.
+{
+  const assets = join(ROOT, "web", "dist", "assets")
+  const css = readdirSync(assets).filter((f) => f.endsWith(".css")).map((f) => readFileSync(join(assets, f), "utf8")).join("")
+  const webkit = (css.match(/-webkit-backdrop-filter:/g) ?? []).length
+  const plain = (css.match(/(?<!-webkit-)backdrop-filter:/g) ?? []).length
+  if (!webkit || webkit !== plain) {
+    console.error(`smoke FAILED: built CSS has ${webkit} -webkit-backdrop-filter and ${plain} backdrop-filter`)
+    process.exit(1)
+  }
+  console.log(`built CSS: ${webkit} backdrop-filter rules, each with its -webkit- twin`)
+}
 
 const { webkit } = await import(PLAYWRIGHT)
 const server = spawn(join(ROOT, ".venv", "bin", "python"), ["-m", "barter.server", "--port", String(PORT)], {
@@ -83,6 +97,13 @@ async function run(browser, size, viewport) {
   await page.getByRole("button", { name: "Try the demo (be Jordan)" }).waitFor()
   await page.waitForTimeout(600) // let the entrance pop finish
   await shot(page, size, "01-landing")
+  const blur = await page.evaluate(() => {
+    const cs = getComputedStyle(document.querySelector(".glass"))
+    return cs.webkitBackdropFilter || cs.backdropFilter
+  })
+  if (!blur || blur === "none") throw new Error(`${size}: .glass has no backdrop blur in WebKit`)
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
+  if (overflow > 0) throw new Error(`${size}: page scrolls sideways by ${overflow}px`)
 
   await page.getByRole("button", { name: "Try the demo (be Jordan)" }).click()
   await page.getByText("In Discord", { exact: true }).waitFor()
