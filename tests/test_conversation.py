@@ -244,6 +244,19 @@ class TimesConfirmation(Pair):
         self.times_answer("1", second)
         self.assertEqual(self.availability("1"), [Block("SU", 14 * 60, 16 * 60)])
 
+    def test_cheap_readings(self):
+        self.assertNotIn("SA", {b.day for b in (parse_availability("I have work saturday") or NONE).free})
+        t = parse_availability("I'm not busy saturday")
+        self.assertEqual((t.free, t.busy), ([Block("SA", 0, 24 * 60)], ()))
+        t = parse_availability("busy saturday and free sunday")
+        self.assertEqual(([b.day for b in t.free], t.busy), (["SU"], ("SA",)))
+        t = parse_availability("I'm free sunday not saturday")
+        self.assertEqual(([b.day for b in t.free], t.busy), (["SU"], ("SA",)))
+        for hedged in ("free saturday except 2-3pm", "free saturday but not before 2", "I'm free saturday except in the morning"):
+            self.assertNotIn("SA", {b.day for b in (parse_availability(hedged) or NONE).free}, hedged)
+        t = parse_availability("free sat and sun afternoon")
+        self.assertEqual([b.day for b in t.free], ["SA", "SU"])
+
 
 class Relay(Pair):
     def test_after_the_reveal_a_message_reaches_the_others_by_name(self):

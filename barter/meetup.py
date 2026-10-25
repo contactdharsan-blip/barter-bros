@@ -106,7 +106,7 @@ _DAY = r"(?:" + "|".join(sorted(_DAY_WORDS, key=len, reverse=True)) + r")s?|week
 # A clause about the student's own times names a day and says free ("free", "available",
 # "around", "can meet", "can do", "works") or not ("not free", "can't do", "busy", "no").
 # A question or a clause about "you" is about someone else and is left alone.
-_FREE = re.compile(r"\b(?:free|available|around|can meet|can do|works?)\b")
+_FREE = re.compile(r"\b(?:free|available|around|can meet|can do|works)\b")  # not "work": "I have work saturday"
 # A negation counts only when it's about meeting. In a clause that says "free", it has to be close
 # before that word ("I won't be available saturday", "saturday isn't free for me", "not really
 # free"); elsewhere in the clause it's about something else ("free saturday, can't wait", "I don't
@@ -128,7 +128,17 @@ def _not(clause: str) -> bool:
 
 
 _ASKS = re.compile(r"\byou\b|\byour\b|^(?:are|is|do|does|would|could|will|how|what|when)\b")
-_CLAUSE = re.compile(r"(.*?)([,;.!?]+|\s+but\s+|$)")
+# Clauses end at punctuation, "but" (not "but not", which hedges), "and" before another day said
+# free or not ("busy saturday and free sunday"), and before "not <day>" ("free sunday not saturday").
+_CLAUSE = re.compile(
+    rf"(.*?)([,;.!?]+|\s+but\s+(?!not\b)"
+    rf"|\s+and\s+(?=(?:i'?m\s+|i\s+am\s+)?(?:not|free|busy|available|can'?t|cannot)\s+(?:\w+\s+)?(?:on\s+)?(?:{_DAY})\b)"
+    rf"|\s+(?=not\s+(?:on\s+)?(?:{_DAY})\b)|$)"
+)
+# A clause that carves an exception out of a day with a time ("free saturday except 2-3pm", "but not
+# before 2", "until 3") is one the rules can't read safely: it is left out rather than half-read.
+_HEDGE = re.compile(r"\b(?:except|but not|not before|not after|until|till)\b")
+_TIME_SAID = re.compile(r"\d|\b(?:morning|afternoon|evening|night)\b")
 _DAYS_SAID = re.compile(rf"\b({_DAY})\b")
 _PART = {"morning": (8 * 60, 12 * 60), "afternoon": (12 * 60, 17 * 60), "evening": (17 * 60, 21 * 60)}
 _T = r"(\d{1,2})(?::(\d\d))?\s*(am|pm)?"
@@ -190,6 +200,7 @@ def parse_availability(text: str) -> Times | None:
     """("I'm only free sunday afternoon") -> Times(free=[Block('SU', 12:00, 17:00)], busy=(), ...),
     or None when the text says nothing about when the student is or isn't free."""
     low = re.sub(r"\b(?:noon|midday)\b", "12pm", text.lower().replace("\u2019", "'"))
+    low = re.sub(r"\bnot\s+busy\b|\bi\s+(?:don't|dont|do not)\s+work\b", "free", low)  # "not busy saturday"
     free: list[Block] = []
     busy: list[str] = []
     said: list[str] = []
@@ -200,7 +211,8 @@ def parse_availability(text: str) -> Times | None:
             continue
         days = _days(clause)
         asks = "?" in m.group(2) or _ASKS.search(clause)
-        if not days or asks or not (_FREE.search(clause) or _not(clause)):
+        hedged = _HEDGE.search(clause) and _TIME_SAID.search(clause)
+        if not days or asks or hedged or not (_FREE.search(clause) or _not(clause)):
             other = True
             continue
         if _not(clause):
