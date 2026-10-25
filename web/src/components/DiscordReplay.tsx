@@ -42,7 +42,9 @@ export function DiscordReplay({
   }, [shown, total, view.chat])
 
   useEffect(() => {
-    end.current?.scrollIntoView({ block: "end", behavior: reducedMotion() ? "auto" : "smooth" })
+    // scroll the thread, not the page: scrollIntoView also moved the window on every new message
+    const thread = end.current?.closest("[data-slot=scroll-area-viewport]")
+    thread?.scrollTo({ top: thread.scrollHeight, behavior: reducedMotion() ? "auto" : "smooth" })
   }, [shown])
 
   const lines = view.chat.slice(0, shown)
