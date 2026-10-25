@@ -166,6 +166,16 @@ class Conversation(unittest.TestCase):
         run(go())
         self.assertEqual((press.disabled, press.notes), (1, [STALE]))
 
+    def test_a_press_on_someone_elses_trade_says_so(self):
+        self.service.handle_message("discord", "444", "I have a TI-84, need a hoodie")  # known, but not in T1
+        press = Press()
+
+        async def go():
+            self.adapter.start()
+            await self.adapter.on_press(444, "T1:loop:yes", press.disable, press.notify)
+        run(go())
+        self.assertEqual(press.notes, ["That button isn't for a trade you're in."])
+
     def test_guild_messages_are_ignored_unless_the_bot_is_mentioned(self):
         me = NS(id=1)
         quiet, pinged = FakeChannel(), FakeChannel()

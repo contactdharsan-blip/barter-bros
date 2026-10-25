@@ -71,6 +71,7 @@ CHANNELS = ("web", "discord", "imessage")
 BOT_CHANNELS = ("discord", "imessage", "discord", "web", "imessage")  # a mix, for the badges
 WINDOW = Window(("SA",), parse_clock("10:00 AM"), parse_clock("4:00 PM"))
 GOT_IT, DIDNT = "got it", "didn't get it"
+NOT_YOURS = "That button isn't for a trade you're in."
 LIVE = (State.PROPOSED, State.ACCEPTED_BY_ALL, State.MEETUP_AGREED)
 
 Listener = Callable[[str, str | None, dict], None]
@@ -399,8 +400,10 @@ class ExchangeService:
 
     def _trade_for(self, s: Session, trade_id: str) -> Trade:
         trade = self.exchange.trades.get(trade_id)
-        if trade is None or s.handle not in trade.handles:
-            raise ServiceError("no such trade for you", 404)
+        if trade is None:
+            raise ServiceError("no such trade", 404)
+        if s.handle not in trade.handles:
+            raise ServiceError(NOT_YOURS, 403)
         return trade
 
     def vote(self, session_id: str, trade_id: str, yes: bool) -> None:

@@ -173,7 +173,8 @@ class Adapter:
     async def on_press(self, user_id, action_id: str, disable: Callable[[], Awaitable],
                        notify: Callable[[str], Awaitable]) -> None:
         """A button: disable that message's buttons (which answers the interaction at once), then tell
-        the service. `notify` sends the presser a private note when the service refuses."""
+        the service. `notify` sends the presser a private note when the service refuses: an unknown user
+        or trade means the exchange restarted, and a trade they're not in gets the service's own words."""
         await disable()
         try:
             await asyncio.to_thread(self.service.press, CHANNEL, str(user_id), action_id)
